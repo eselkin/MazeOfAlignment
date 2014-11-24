@@ -12,6 +12,6 @@ mWindow::mWindow(QWidget *parent) :
     centralWidget = new QWidget(this); // this is parent
     centralWidget->setObjectName(QString::fromUtf8("centralWidget")); // The only Qwidget.
     myGLWidget = new displayGL(centralWidget);
-    centralWidget->resize(this->width(),this->height());
+    centralWidget->resize(mainScreenSize.width()*.8, mainScreenSize.height()*.8);
     myGLWidget->resize(mainScreenSize.width()*.8, mainScreenSize.height()*.8);
 }
