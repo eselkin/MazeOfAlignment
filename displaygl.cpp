@@ -30,7 +30,8 @@ void displayGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // from clear color above
     glLoadIdentity();
-    drawSideWall(0, 0, 0);
+    drawSideWall(1, 0, 0);
+    swapBuffers();
 }
 
 void displayGL::resizeGL(int w, int h)
