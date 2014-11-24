@@ -22,10 +22,14 @@ protected slots:
 
 protected:
 
+    void drawBackWall(int depth, DIRECTION dir);
+    void drawDoor(bool left_right, int start_depth);
+    void drawSideWall(bool left_right, bool is_door, int start_depth);
+
 private slots:
 
 private:
-
+    double level_r[7],level_g[7], level_b[7];
 
 };
 
