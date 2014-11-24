@@ -1,0 +1,15 @@
+Maze of Alignmet
+Lawful Good 	Neutral Good 	Chaotic Good
+Lawful Neutral 	Neutral 	Chaotic Neutral
+Lawful Evil 	Neutral Evil 	Chaotic Evil
+
+
+Items are a class that would have a
+-string for the name
+-alteration factor stats
+
+Stats are a struct that have
+-Alignment
+-Strength
+-Stamina
+-Skill
