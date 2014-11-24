@@ -38,7 +38,7 @@ void displayGL::paintGL()
     drawSideWall(1, 0, 0, 2);
     drawSideWall(1, 0, 1, 1);
     drawSideWall(1, 0, 2, 0);
-    //swapBuffers();
+    drawBackWall(3,WEST,1);
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -87,12 +87,19 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
 // Postcondition: back wall is drawn at depth of end of walls that are visible
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
-void displayGL::drawBackWall(int depth, DIRECTION dir)
+void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
 {
+    double wallstops[6] = {1.0,0.6,0.4,0.2,0.1,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth >= 5)
         return; // we can't draw a wall that far away, it's too dark to see
-
-
+    double start_x = wallstops[depth];
+    glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
+    glBegin(GL_QUADS);
+        glVertex3f(start_x, start_x,0);
+        glVertex3f(-1*start_x, start_x,0);
+        glVertex3f(-1*start_x, -1.0*start_x,0);
+        glVertex3f(start_x, -1.0*start_x,0);
+    glEnd();
 }
 
 void displayGL::drawDoor(bool left_right, int start_depth)

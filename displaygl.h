@@ -1,6 +1,9 @@
 #ifndef DISPLAYGL_H
 #define DISPLAYGL_H
-
+#if defined(__APPLE__) && defined(__MACH__)
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#endif
 #include <QGLWidget>
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -23,7 +26,7 @@ protected slots:
 
 protected:
 
-    void drawBackWall(int depth, DIRECTION dir);
+    void drawBackWall(int depth, DIRECTION dir, int level);
     void drawDoor(bool left_right, int start_depth);
     void drawSideWall(bool left_right, bool is_door, int start_depth, int level);
 
