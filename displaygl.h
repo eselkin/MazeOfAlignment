@@ -8,6 +8,7 @@ class displayGL : public QGLWidget
 {
     Q_OBJECT
 public:
+    //(fo.o)f
     explicit displayGL(QWidget *parent = 0);
 
 signals:
