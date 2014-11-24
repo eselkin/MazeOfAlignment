@@ -1,5 +1,7 @@
 #include "displaygl.h"
 #include <cmath>
+#include <iostream>
+using namespace std;
 
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(parent)
@@ -30,8 +32,13 @@ void displayGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // from clear color above
     glLoadIdentity();
-    drawSideWall(1, 0, 0);
-    swapBuffers();
+    drawSideWall(0, 0, 0, 2);
+    drawSideWall(0, 0, 1, 1);
+    drawSideWall(0, 0, 2, 0);
+    drawSideWall(1, 0, 0, 2);
+    drawSideWall(1, 0, 1, 1);
+    drawSideWall(1, 0, 2, 0);
+    //swapBuffers();
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -46,7 +53,7 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
-void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth)
+void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int level)
 {
     double wallstops[6] = {1.0,0.6,0.4,0.2,0.1,0}; // anything beyond 5 wall segments out it non-existent in view
 
@@ -67,19 +74,13 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth)
     double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
-    glColor3f(level_r[0], level_g[0], level_b[0]); // Get Color from the World
+    glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glBegin(GL_QUADS);
-        glTexCoord2f(0,1);
         glVertex3f(start_x, up_start_y,0);
-        glTexCoord2f(0,0);
         glVertex3f(end_x, up_end_y,0);
-        glTexCoord2f(1,0);
-        glVertex3f(start_x, -1.0*up_start_y,0);
-        glTexCoord2f(1,1);
         glVertex3f(end_x, -1.0*up_end_y,0);
+        glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
-
-    swapBuffers();
 }
 
 

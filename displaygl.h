@@ -25,7 +25,7 @@ protected:
 
     void drawBackWall(int depth, DIRECTION dir);
     void drawDoor(bool left_right, int start_depth);
-    void drawSideWall(bool left_right, bool is_door, int start_depth);
+    void drawSideWall(bool left_right, bool is_door, int start_depth, int level);
 
 private slots:
 
