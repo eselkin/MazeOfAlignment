@@ -7,7 +7,10 @@ QT += core gui opengl
 SOURCES += main.cpp \
     displaygl.cpp \
     mwindow.cpp \
-    weights.cpp
+    weights.cpp \
+    items.cpp \
+    stats.cpp \
+    adjacency.cpp
 
 include(deployment.pri)
 qtcAddDeployment()

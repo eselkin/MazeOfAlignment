@@ -14,35 +14,10 @@ public:
     double getvalue() const;
 
 private:
-    copy(const stats &other);
+    void copy(const stats &other);
+    void nukem();
     string statname;
     double value;
 };
 
-stats::stats(string stat_name, double val)
-{
-    statname = stat_name;
-    value = val; // can even be negative
-}
-
-stats::~stats()
-{
-    nukem();
-}
-
-string stats::getname() const
-{
-    return statname;
-}
-
-double stats::getvalue() const
-{
-    return value;
-}
-
-stats::copy(const stats &other)
-{
-    statname = other.getname();
-    value = other.getvalue();
-}
 #endif // STATS_H

@@ -1,8 +1,7 @@
 #include "weights.h"
 
 weights::weights()
-{
-}
+{}
 
 // we can add an unlimited number of item or stat requirements to the room's entrance "fee"
 void weights::addItem(string item_name, string identifier)
