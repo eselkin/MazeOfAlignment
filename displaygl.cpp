@@ -1,6 +1,7 @@
 #include "displaygl.h"
 #include <cmath>
 #include <iostream>
+#include "adjacency.h"
 using namespace std;
 
 displayGL::displayGL(QWidget *parent) :

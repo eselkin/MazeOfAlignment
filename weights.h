@@ -13,8 +13,8 @@ public:
     void addItem( string item_name , string identifier);
     void addStat( string stat_name , int value );
 private:
-    vector<items> itemsReq;
-    vector<stats> statsReq; // Required to enter
+    vector< items* > itemsReq;
+    vector< stats* > statsReq; // Required to enter
 };
 
 #endif // WEIGHTS_H
