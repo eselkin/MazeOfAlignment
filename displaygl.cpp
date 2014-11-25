@@ -7,6 +7,11 @@ using namespace std;
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(parent)
 {
+    check[NORTH] = &displayGL::checkNorth;
+    check[SOUTH] = &displayGL::checkSouth;
+    check[EAST] = &displayGL::checkEast;
+    check[WEST] = &displayGL::checkWest;
+
     double r_init = 0.0;
     double g_init = 0.1;
     double b_init = 0.1;
@@ -19,6 +24,7 @@ displayGL::displayGL(QWidget *parent) :
         level_g[i] = g_init;
         level_b[i] = b_init;
     }
+    current_direction = NORTH;
 }
 
 void displayGL::initializeGL()
@@ -33,8 +39,29 @@ void displayGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // from clear color above
     glLoadIdentity();
-    drawSideWall(0, 0, 0, 2);
-    drawSideWall(0, 0, 1, 1);
+
+    //
+    // Turning allows us to calculate what is ahead of us
+    //
+
+
+    weights* forward = check[current_direction](current_room);
+    int count_ahead = current_direction == NORTH? 1 : current_direction == WEST ? -8 : current_direction == SOUTH? -1 : 8;
+
+
+    (current_direction == NORTH) && drawSideWall(0, check[WEST](current_room)->isWall(), 0, 2) && drawSideWall(0, check[EAST](current_room), 0, 2);
+    drawSideWall(1, 0, 1, 1);
+    if (forward)
+    {
+        drawSideWall(0, 0, 0, 2);
+        drawSideWall(0, 0, 1, 1);
+        weights* next = check[current_direction](current_room + count_ahead);
+        if (next)
+        {
+
+        }
+    }
+
     drawSideWall(0, 0, 2, 1);
     drawSideWall(1, 0, 0, 2);
     drawDoor(1, 1);
@@ -80,18 +107,18 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     else
         glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glBegin(GL_QUADS);
-        glVertex3f(start_x, up_start_y,0);
-        glVertex3f(end_x, up_end_y,0);
-        glVertex3f(end_x, -1.0*up_end_y,0);
-        glVertex3f(start_x, -1.0*up_start_y,0);
+    glVertex3f(start_x, up_start_y,0);
+    glVertex3f(end_x, up_end_y,0);
+    glVertex3f(end_x, -1.0*up_end_y,0);
+    glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
     glColor3f(0,0,0); // Get Color from the World
     glLineWidth(2);
     glBegin(GL_LINE_LOOP);
-        glVertex3f(start_x, up_start_y,0);
-        glVertex3f(end_x, up_end_y,0);
-        glVertex3f(end_x, -1.0*up_end_y,0);
-        glVertex3f(start_x, -1.0*up_start_y,0);
+    glVertex3f(start_x, up_start_y,0);
+    glVertex3f(end_x, up_end_y,0);
+    glVertex3f(end_x, -1.0*up_end_y,0);
+    glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
 }
 
@@ -107,10 +134,10 @@ void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
     double start_x = wallstops[depth];
     glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glBegin(GL_QUADS);
-        glVertex3f(start_x, start_x,0);
-        glVertex3f(-1*start_x, start_x,0);
-        glVertex3f(-1*start_x, -1.0*start_x,0);
-        glVertex3f(start_x, -1.0*start_x,0);
+    glVertex3f(start_x, start_x,0);
+    glVertex3f(-1*start_x, start_x,0);
+    glVertex3f(-1*start_x, -1.0*start_x,0);
+    glVertex3f(start_x, -1.0*start_x,0);
     glEnd();
 }
 
