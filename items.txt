@@ -1,7 +1,7 @@
 Maze of Alignmet
-Lawful Good 	Neutral Good 	Chaotic Good
-Lawful Neutral 	Neutral 	Chaotic Neutral
-Lawful Evil 	Neutral Evil 	Chaotic Evil
+0 = Lawful Good 	1 = Neutral Good 	2 = Chaotic Good
+3 = Lawful Neutral 	4 = Neutral 	        5 = Chaotic Neutral
+6 = Lawful Evil 	7 = Neutral Evil 	8 = Chaotic Evil
 
 
 Items are a class that would have a
