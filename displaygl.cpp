@@ -6,14 +6,14 @@ using namespace std;
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(parent)
 {
-    double r_init = 0.2;
+    double r_init = 0.0;
     double g_init = 0.1;
-    double b_init = 0.3;
+    double b_init = 0.1;
     for (uint i = 0; i < 7; i++)
     {
         (i%2) && (r_init+=0.05);
         (i%3) && (g_init+=0.1);
-        (i%5) && (b_init+=0.2);
+        (i%5) && (b_init+=0.15);
         level_r[i] = r_init;
         level_g[i] = g_init;
         level_b[i] = b_init;
@@ -34,11 +34,11 @@ void displayGL::paintGL()
     glLoadIdentity();
     drawSideWall(0, 0, 0, 2);
     drawSideWall(0, 0, 1, 1);
-    drawSideWall(0, 0, 2, 0);
+    drawSideWall(0, 0, 2, 1);
     drawSideWall(1, 0, 0, 2);
-    drawSideWall(1, 0, 1, 1);
-    drawSideWall(1, 0, 2, 0);
-    drawBackWall(3,WEST,1);
+    drawDoor(1, 1);
+    drawSideWall(1, 0, 2, 1);
+    drawBackWall(3,WEST,0);
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -55,7 +55,7 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
 void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int level)
 {
-    double wallstops[6] = {1.0,0.6,0.4,0.2,0.1,0}; // anything beyond 5 wall segments out it non-existent in view
+    double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
 
     /*
      *  |\     |     /|
@@ -74,8 +74,19 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
-    glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
+    if (is_door)
+        glColor3f(.03,.03,.03);
+    else
+        glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glBegin(GL_QUADS);
+        glVertex3f(start_x, up_start_y,0);
+        glVertex3f(end_x, up_end_y,0);
+        glVertex3f(end_x, -1.0*up_end_y,0);
+        glVertex3f(start_x, -1.0*up_start_y,0);
+    glEnd();
+    glColor3f(0,0,0); // Get Color from the World
+    glLineWidth(2);
+    glBegin(GL_LINE_LOOP);
         glVertex3f(start_x, up_start_y,0);
         glVertex3f(end_x, up_end_y,0);
         glVertex3f(end_x, -1.0*up_end_y,0);
@@ -89,8 +100,8 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
 void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
 {
-    double wallstops[6] = {1.0,0.6,0.4,0.2,0.1,0}; // anything beyond 5 wall segments out it non-existent in view
-    if (depth >= 5)
+    double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
+    if (depth > 5)
         return; // we can't draw a wall that far away, it's too dark to see
     double start_x = wallstops[depth];
     glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
@@ -104,5 +115,5 @@ void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
 
 void displayGL::drawDoor(bool left_right, int start_depth)
 {
-
+    drawSideWall(left_right, 1, start_depth, 0);
 }
