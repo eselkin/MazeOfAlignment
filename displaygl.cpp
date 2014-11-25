@@ -39,7 +39,7 @@ void displayGL::paintGL()
     drawSideWall(1, 0, 0, 2);
     drawDoor(1, 1);
     drawSideWall(1, 0, 2, 1);
-    drawBackWall(3,WEST,0);
+    drawBackWall(3, WEST, 0);
 }
 
 void displayGL::resizeGL(int w, int h)
