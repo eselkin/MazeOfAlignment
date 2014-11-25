@@ -17,9 +17,9 @@ displayGL::displayGL(QWidget *parent) :
     double b_init = 0.1;
     for (uint i = 0; i < 7; i++)
     {
-        (i%2) && (r_init+=0.05);
+        (i%2) && (r_init+=0.25);
         (i%3) && (g_init+=0.1);
-        (i%5) && (b_init+=0.15);
+        (i%5) && (b_init+=0.25);
         level_r[i] = r_init;
         level_g[i] = g_init;
         level_b[i] = b_init;

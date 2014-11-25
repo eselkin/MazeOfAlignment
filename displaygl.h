@@ -5,6 +5,9 @@
 #include <OpenGL/glu.h>
 #endif
 #include <QGLWidget>
+#include "weights.h"
+#include "adjacency.h"
+
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
 class displayGL : public QGLWidget
@@ -12,6 +15,7 @@ class displayGL : public QGLWidget
     Q_OBJECT
 public:
     //(fo.o)f
+    typedef weights* (displayGL::*fptr)(int room);
     explicit displayGL(QWidget *parent = 0);
 
 signals:
@@ -34,6 +38,13 @@ private slots:
 
 private:
     double level_r[7],level_g[7], level_b[7];
+    DIRECTION current_direction;
+
+    fptr check[4];
+    weight* checkNorth(int room_number);
+    weight* checkWest(int room_number);
+    weight* checkEast(int room_number);
+    weight* checkSouth(int room_number);
 
 };
 
