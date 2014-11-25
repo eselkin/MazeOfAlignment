@@ -45,22 +45,22 @@ void displayGL::paintGL()
     //
 
 
-    weights* forward = check[current_direction](current_room);
-    int count_ahead = current_direction == NORTH? 1 : current_direction == WEST ? -8 : current_direction == SOUTH? -1 : 8;
+//    weights* forward = check[current_direction](current_room);
+//    //int count_ahead = current_direction == NORTH? 1 : current_direction == WEST ? -8 : current_direction == SOUTH? -1 : 8;
 
 
-    (current_direction == NORTH) && drawSideWall(0, check[WEST](current_room)->isWall(), 0, 2) && drawSideWall(0, check[EAST](current_room), 0, 2);
-    drawSideWall(1, 0, 1, 1);
-    if (forward)
-    {
-        drawSideWall(0, 0, 0, 2);
-        drawSideWall(0, 0, 1, 1);
-        weights* next = check[current_direction](current_room + count_ahead);
-        if (next)
-        {
+//    //(current_direction == NORTH) && drawSideWall(0, check[WEST](current_room)->isWall(), 0, 2) && drawSideWall(0, check[EAST](current_room), 0, 2);
+//    drawSideWall(1, 0, 1, 1);
+//    if (forward)
+//    {
+//        drawSideWall(0, 0, 0, 2);
+//        drawSideWall(0, 0, 1, 1);
+//        weights* next = check[current_direction](current_room + count_ahead);
+//        if (next)
+//        {
 
-        }
-    }
+//        }
+//    }
 
     drawSideWall(0, 0, 2, 1);
     drawSideWall(1, 0, 0, 2);
@@ -120,6 +120,26 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
+}
+
+weights *displayGL::checkNorth(int room_number)
+{
+
+}
+
+weights *displayGL::checkWest(int room_number)
+{
+
+}
+
+weights *displayGL::checkEast(int room_number)
+{
+
+}
+
+weights *displayGL::checkSouth(int room_number)
+{
+
 }
 
 

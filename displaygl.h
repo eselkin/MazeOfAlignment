@@ -39,7 +39,7 @@ private slots:
 private:
     double level_r[7],level_g[7], level_b[7];
     DIRECTION current_direction;
-
+    int current_room;
     fptr check[4];
     weights* checkNorth(int room_number);
     weights* checkWest(int room_number);
