@@ -41,10 +41,10 @@ private:
     DIRECTION current_direction;
 
     fptr check[4];
-    weight* checkNorth(int room_number);
-    weight* checkWest(int room_number);
-    weight* checkEast(int room_number);
-    weight* checkSouth(int room_number);
+    weights* checkNorth(int room_number);
+    weights* checkWest(int room_number);
+    weights* checkEast(int room_number);
+    weights* checkSouth(int room_number);
 
 };
 
