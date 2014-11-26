@@ -7,10 +7,6 @@ using namespace std;
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(parent)
 {
-    check[NORTH] = &displayGL::checkNorth;
-    check[SOUTH] = &displayGL::checkSouth;
-    check[EAST] = &displayGL::checkEast;
-    check[WEST] = &displayGL::checkWest;
 
     double r_init = 0.0;
     double g_init = 0.1;
@@ -46,6 +42,7 @@ void displayGL::paintGL()
     int count_ahead = 0; // forward
     int my_room = current_room;
     int i = 0;
+    weights* forward = NULL;
     do {
         my_room = my_room + count_ahead;
         (current_direction == NORTH)
@@ -61,10 +58,9 @@ void displayGL::paintGL()
                 && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level))
                 && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level));
         count_ahead = countAhead(current_direction);
-        weights* forward = checkAhead(my_room, my_room+count_ahead);
-    } while (forward && i < 3 && !forward.isDoor()); // stops at a door, can't see through it
-    (forward &&
-            forward.isDoor() ? (drawBackWall(i, , current_level)) : (drawBackWall(i, , current_level));
+        forward = checkAhead(my_room, my_room+count_ahead);
+    } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
+    forward && (drawBackWall(i, forward->isDoor(), current_level));
 }
 
 void displayGL::resizeGL(int w, int h)
