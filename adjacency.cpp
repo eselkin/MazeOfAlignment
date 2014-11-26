@@ -1,5 +1,5 @@
 #include "adjacency.h"
-
+#include <iostream>
 Adjacency::Adjacency()
 {
     // Create Levels here
@@ -75,7 +75,8 @@ Adjacency::~Adjacency()
 
 weights *Adjacency::getWeight(int room_num, int next_room, int current_level)
 {
-    if (room_num < 9 || room_num > 55)
+    std::cout << "ERROR: " << room_num << " AND : " << next_room << " NAND " << endl;
+    if (room_num < 9 || room_num > 54)
         return NULL;
     // public function
     return adjacencytable[current_level][room_num][next_room]; // even if NULL
