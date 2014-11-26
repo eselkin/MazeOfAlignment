@@ -6,8 +6,8 @@ Adjacency::Adjacency()
 
     // BLOCKED BOXES
     for (uint i = 0; i < 7; i++)
-        for (uint j = 0; j < 36; j++)
-            for (uint k = 0; k < 36; k++)
+        for (uint j = 0; j < 64; j++)
+            for (uint k = 0; k < 64; k++)
                 adjacencytable[i][j][k] = NULL;
 
     //Level0
@@ -67,4 +67,8 @@ Adjacency::Adjacency()
 
 }
 
-
+weights *Adjacency::getWeight(int room_num, int next_room, int current_level)
+{
+    // public function
+    return adjacencytable[current_level][room_num][next_room]; // even if NULL
+}

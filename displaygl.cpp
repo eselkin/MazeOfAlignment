@@ -43,30 +43,28 @@ void displayGL::paintGL()
     //
     // Turning allows us to calculate what is ahead of us
     //
-
-
-//    weights* forward = check[current_direction](current_room);
-//    //int count_ahead = current_direction == NORTH? 1 : current_direction == WEST ? -8 : current_direction == SOUTH? -1 : 8;
-
-
-//    //(current_direction == NORTH) && drawSideWall(0, check[WEST](current_room)->isWall(), 0, 2) && drawSideWall(0, check[EAST](current_room), 0, 2);
-//    drawSideWall(1, 0, 1, 1);
-//    if (forward)
-//    {
-//        drawSideWall(0, 0, 0, 2);
-//        drawSideWall(0, 0, 1, 1);
-//        weights* next = check[current_direction](current_room + count_ahead);
-//        if (next)
-//        {
-
-//        }
-//    }
-
-    drawSideWall(0, 0, 2, 1);
-    drawSideWall(1, 0, 0, 2);
-    drawDoor(1, 1);
-    drawSideWall(1, 0, 2, 1);
-    drawBackWall(3, WEST, 0);
+    int count_ahead = 0; // forward
+    int my_room = current_room;
+    int i = 0;
+    do {
+        my_room = my_room + count_ahead;
+        (current_direction == NORTH)
+                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level))
+                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level));
+        (current_direction == SOUTH)
+                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level))
+                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level));
+        (current_direction == EAST)
+                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level))
+                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level));
+        (current_direction == WEST)
+                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level))
+                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level));
+        count_ahead = countAhead(current_direction);
+        weights* forward = checkAhead(my_room, my_room+count_ahead);
+    } while (forward && i < 3 && !forward.isDoor()); // stops at a door, can't see through it
+    (forward &&
+            forward.isDoor() ? (drawBackWall(i, , current_level)) : (drawBackWall(i, , current_level));
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -81,7 +79,7 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
-void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int level)
+bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int level)
 {
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
 
@@ -120,33 +118,23 @@ void displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
+    return 1;
 }
 
-weights *displayGL::checkNorth(int room_number)
+weights *displayGL::checkAhead(int room_number, int next_room)
 {
-
+    adjacencyTable.getWeight(room_number, next_room, current_level);
 }
 
-weights *displayGL::checkWest(int room_number)
+int displayGL::countAhead(DIRECTION dir)
 {
-
+    return dir == NORTH? 1 : dir == WEST ? -8 : dir == SOUTH? -1 : 8;
 }
-
-weights *displayGL::checkEast(int room_number)
-{
-
-}
-
-weights *displayGL::checkSouth(int room_number)
-{
-
-}
-
 
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
 // Postcondition: back wall is drawn at depth of end of walls that are visible
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
-void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
+bool displayGL::drawBackWall(int depth, DIRECTION dir, int level)
 {
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth > 5)
@@ -159,9 +147,11 @@ void displayGL::drawBackWall(int depth, DIRECTION dir, int level)
     glVertex3f(-1*start_x, -1.0*start_x,0);
     glVertex3f(start_x, -1.0*start_x,0);
     glEnd();
+    return 1;
 }
 
-void displayGL::drawDoor(bool left_right, int start_depth)
+bool displayGL::drawDoor(bool left_right, int start_depth)
 {
     drawSideWall(left_right, 1, start_depth, 0);
+    return 1;
 }
