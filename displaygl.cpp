@@ -21,7 +21,7 @@ displayGL::displayGL(QWidget *parent) :
         level_g[i] = g_init;
         level_b[i] = b_init;
     }
-    current_direction = WEST;
+    current_direction = SOUTH;
     current_room = 9;
 }
 
