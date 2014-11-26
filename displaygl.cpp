@@ -1,5 +1,6 @@
 #include "displaygl.h"
 #include <cmath>
+#include <QDebug>
 #include <iostream>
 #include "adjacency.h"
 using namespace std;
@@ -8,9 +9,9 @@ displayGL::displayGL(QWidget *parent) :
     QGLWidget(parent)
 {
 
-    double r_init = 0.0;
-    double g_init = 0.1;
-    double b_init = 0.1;
+    double r_init = 0.1;
+    double g_init = 0.3;
+    double b_init = 0.3;
     for (uint i = 0; i < 7; i++)
     {
         (i%2) && (r_init+=0.25);
@@ -21,6 +22,7 @@ displayGL::displayGL(QWidget *parent) :
         level_b[i] = b_init;
     }
     current_direction = NORTH;
+    current_room = 0;
 }
 
 void displayGL::initializeGL()
@@ -45,6 +47,7 @@ void displayGL::paintGL()
     weights* forward = NULL;
     do {
         my_room = my_room + count_ahead;
+        qDebug() << "MY ROOM: " << my_room <<endl;
         (current_direction == NORTH)
                 && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level))
                 && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level));
@@ -58,9 +61,12 @@ void displayGL::paintGL()
                 && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level))
                 && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level));
         count_ahead = countAhead(current_direction);
+        qDebug() << "COUNT AHEAD: " << count_ahead << endl;
         forward = checkAhead(my_room, my_room+count_ahead);
+        i++;
     } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
+    !forward && (drawBackWall(i, 0, current_level));
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -96,6 +102,7 @@ bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
+
     if (is_door)
         glColor3f(.03,.03,.03);
     else
@@ -119,7 +126,7 @@ bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
 
 weights *displayGL::checkAhead(int room_number, int next_room)
 {
-    adjacencyTable.getWeight(room_number, next_room, current_level);
+    return adjacencyTable.getWeight(room_number, next_room, current_level);
 }
 
 int displayGL::countAhead(DIRECTION dir)
@@ -130,11 +137,11 @@ int displayGL::countAhead(DIRECTION dir)
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
 // Postcondition: back wall is drawn at depth of end of walls that are visible
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
-bool displayGL::drawBackWall(int depth, DIRECTION dir, int level)
+bool displayGL::drawBackWall(int depth, int type, int level)
 {
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth > 5)
-        return; // we can't draw a wall that far away, it's too dark to see
+        return 0; // we can't draw a wall that far away, it's too dark to see
     double start_x = wallstops[depth];
     glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glBegin(GL_QUADS);
@@ -146,8 +153,3 @@ bool displayGL::drawBackWall(int depth, DIRECTION dir, int level)
     return 1;
 }
 
-bool displayGL::drawDoor(bool left_right, int start_depth)
-{
-    drawSideWall(left_right, 1, start_depth, 0);
-    return 1;
-}

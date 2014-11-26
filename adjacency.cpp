@@ -20,6 +20,7 @@ Adjacency::Adjacency()
     adjacencytable[0][1][0]->addStat("health", 50);   // cannot go back with no Health
     adjacencytable[0][1][0]->addStat("alignment", 0); // 0-8... 0=Lawful Good .. to go back to the beginning you must be LG
     adjacencytable[0][1][2] = new weights();
+    adjacencytable[0][2][3] = new weights();
     adjacencytable[0][2][8] = new weights();
     adjacencytable[0][8][2] = new weights();
     adjacencytable[0][8][9] = new weights();
@@ -67,8 +68,15 @@ Adjacency::Adjacency()
 
 }
 
+Adjacency::~Adjacency()
+{
+
+}
+
 weights *Adjacency::getWeight(int room_num, int next_room, int current_level)
 {
+    if (room_num < 9 || room_num > 55)
+        return NULL;
     // public function
     return adjacencytable[current_level][room_num][next_room]; // even if NULL
 }

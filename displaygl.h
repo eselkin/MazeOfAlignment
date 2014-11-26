@@ -30,7 +30,7 @@ protected slots:
 
 protected:
 
-    bool drawBackWall(int depth, DIRECTION dir, int level);
+    bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
     bool drawSideWall(bool left_right, bool is_door, int start_depth, int level);
 

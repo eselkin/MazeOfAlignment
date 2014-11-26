@@ -3,6 +3,7 @@
 weights::weights()
 {
     door_type = 0;
+
 }
 
 // we can add an unlimited number of item or stat requirements to the room's entrance "fee"

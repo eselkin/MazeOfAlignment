@@ -13,8 +13,6 @@ public:
 
 protected:
 private:
-    int rownum(int num);
-    int colnum(int num);
     weights* adjacencytable[7][36][36]; // 7 levels of 36x36 weighted adjacencies for 36 rooms per level
 };
 
