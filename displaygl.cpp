@@ -22,7 +22,7 @@ displayGL::displayGL(QWidget *parent) :
         level_b[i] = b_init;
     }
     current_direction = NORTH;
-    current_room = 0;
+    current_room = 9;
 }
 
 void displayGL::initializeGL()
