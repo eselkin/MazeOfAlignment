@@ -26,6 +26,7 @@ signals:
 public slots:
     void initializeGL();
     void paintGL();
+    void paintEvent(QPaintEvent *event);
     void resizeGL(int w, int h);
     void mousePressEvent( QMouseEvent *e );
     void keyPressEvent(QKeyEvent *e);
@@ -43,7 +44,7 @@ private slots:
 
 private:
     QPixmap m_images[40];
-    GLuint m_texture_ids[40]; // Texture IDS
+    GLuint texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];
     DIRECTION current_direction;
     int current_room, current_level;

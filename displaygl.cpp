@@ -1,9 +1,9 @@
 #include "displaygl.h"
 #include <cmath>
 #include <QtOpenGL>
-#include <GL/freeglut.h>
+#include <QPainter>
+#include <QPaintEvent>
 #include <GL/gl.h>
-#include <GL/glut.h>
 #include <GL/glu.h>
 #include <QDebug>
 #include <iostream>
@@ -12,7 +12,7 @@
 using namespace std;
 
 displayGL::displayGL(QWidget *parent) :
-    QGLWidget(parent)
+    QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
 
     double r_init = 0.1;
@@ -60,7 +60,7 @@ void displayGL::loadTextures()
     m_images[10].load("Locked8.png");
     m_images[11].load("Locked9.png");
     m_images[12].load("Locked10.png");
-    glGenTextures(40, m_texture_ids);
+    glGenTextures(40, texture_ids);
     //gluBuild2DMipmaps(GL_TEXTURE_2D, 3,m_images[0].width(), m_images[0].height() , GL_RGB, GL_UNSIGNED_BYTE, &m_images[0]);
     // THIS SHOULD WORK BUT IT'S NOT!
 }
@@ -118,6 +118,11 @@ void displayGL::paintGL()
     !forward && (drawBackWall(i, 0, current_level));
 }
 
+void displayGL::paintEvent(QPaintEvent *event)
+{
+
+}
+
 void displayGL::resizeGL(int w, int h)
 {
 
@@ -164,6 +169,7 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     else // just a wall
         glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
 
+
     glBegin(GL_QUADS);
     glVertex3f(start_x, up_start_y,0);
     glVertex3f(end_x, up_end_y,0);
@@ -180,6 +186,12 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
 
+    QPainter painter;
+    painter.begin(this->parentWidget());
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.translate(100, 100); // put axis in the middle
+
+    painter.end();
     return 1;
 }
 
