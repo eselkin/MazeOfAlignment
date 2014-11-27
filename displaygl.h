@@ -5,6 +5,7 @@
 #include <OpenGL/glu.h>
 #endif
 #include <QGLWidget>
+#include <QPixmap>
 #include "weights.h"
 #include "adjacency.h"
 
@@ -30,13 +31,16 @@ protected slots:
 
 protected:
 
+    void loadTextures();
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
-    bool drawSideWall(bool left_right, bool is_door, int start_depth, int level);
+    bool drawSideWall(bool left_right, int is_door, int start_depth, int level);
 
 private slots:
 
 private:
+    QPixmap m_images[40];
+    GLuint m_texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];
     DIRECTION current_direction;
     int current_room, current_level;

@@ -1,7 +1,13 @@
 #include "displaygl.h"
 #include <cmath>
+#include <QtOpenGL>
+#include <GL/freeglut.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <GL/glu.h>
 #include <QDebug>
 #include <iostream>
+#include <QPixmap>
 #include "adjacency.h"
 using namespace std;
 
@@ -21,8 +27,32 @@ displayGL::displayGL(QWidget *parent) :
         level_g[i] = g_init;
         level_b[i] = b_init;
     }
-    current_direction = SOUTH;
+
+    current_direction = NORTH;
     current_room = 9;
+    loadTextures();
+
+}
+
+void displayGL::loadTextures()
+{
+    glEnable(GL_TEXTURE_2D);
+    m_images[0].load("BackWall.png");
+    m_images[1].load("LeftWall.png");
+    m_images[2].load("UnlockedDoor.png");
+    m_images[3].load("Locked1.png");
+    m_images[4].load("Locked2.png");
+    m_images[5].load("Locked3.png");
+    m_images[6].load("Locked4.png");
+    m_images[7].load("Locked5.png");
+    m_images[8].load("Locked6.png");
+    m_images[9].load("Locked7.png");
+    m_images[10].load("Locked8.png");
+    m_images[11].load("Locked9.png");
+    m_images[12].load("Locked10.png");
+    glGenTextures(40, m_texture_ids);
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 3,m_images[0].width(), m_images[0].height() , GL_RGB, GL_UNSIGNED_BYTE, &m_images[0]);
+    // THIS SHOULD WORK BUT IT'S NOT!
 }
 
 void displayGL::initializeGL()
@@ -41,27 +71,36 @@ void displayGL::paintGL()
     //
     // Turning allows us to calculate what is ahead of us
     //
+
     int count_ahead = 0; // forward
     int my_room = current_room;
     int i = 0;
+
     weights* forward = NULL;
     do {
         my_room = my_room + count_ahead;
-        qDebug() << "MY ROOM: " << my_room <<endl;
-        (current_direction == NORTH)
-                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level))
-                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level));
-        (current_direction == SOUTH)
-                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level))
-                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level));
-        (current_direction == EAST)
-                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level))
-                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level));
-        (current_direction == WEST)
-                && (drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level))
-                && (drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level));
+        if (current_direction == NORTH)
+        {
+            drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST))->isDoor(), i, current_level);
+            drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST))->isDoor(), i, current_level);
+        }
+        else
+            if (current_direction == SOUTH)
+            {
+                drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST))->isDoor(), i, current_level);
+                drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST))->isDoor(), i, current_level);
+            }
+            else
+                if (current_direction == EAST)
+                {
+                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH))->isDoor(), i, current_level);
+                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH))->isDoor(), i, current_level);
+                }
+                else {
+                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH))->isDoor(), i, current_level);
+                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH))->isDoor(), i, current_level);
+                }
         count_ahead = countAhead(current_direction);
-        qDebug() << "COUNT AHEAD: " << count_ahead << endl;
         forward = checkAhead(my_room, my_room+count_ahead);
         i++;
     } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
@@ -81,7 +120,7 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
-bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int level)
+bool displayGL::drawSideWall(bool left_right, int is_door, int start_depth, int level)
 {
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
 
@@ -107,12 +146,17 @@ bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
         glColor3f(.03,.03,.03);
     else
         glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
+
+    glEnable( GL_TEXTURE_2D );
+
     glBegin(GL_QUADS);
-    glVertex3f(start_x, up_start_y,0);
+    glTexCoord3f(0.0,0.0,0.0); glVertex3f(start_x, up_start_y,0);
     glVertex3f(end_x, up_end_y,0);
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
+    glDisable( GL_TEXTURE_2D );
+
     glColor3f(0,0,0); // Get Color from the World
     glLineWidth(2);
     glBegin(GL_LINE_LOOP);
@@ -121,6 +165,7 @@ bool displayGL::drawSideWall(bool left_right, bool is_door, int start_depth, int
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
+
     return 1;
 }
 
