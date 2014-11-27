@@ -29,7 +29,7 @@ displayGL::displayGL(QWidget *parent) :
     }
 
     current_direction = NORTH;
-    current_room = 10;
+    current_room = 9;
     loadTextures();
     init_fp();
 }
@@ -206,7 +206,7 @@ void displayGL::moveForward()
         //
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
-        current_room = current_room + current_direction;
+        current_room = current_room + current_direction-1;
     }
     updateGL();
 }

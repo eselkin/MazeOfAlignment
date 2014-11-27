@@ -17,10 +17,12 @@ Adjacency::Adjacency()
     adjacencytable[0][9][10]->addStat("health", 100);
     adjacencytable[0][9][10]->addStat("alignment", 0); // 0-8... 0=Lawful Good
     adjacencytable[0][10][9] = new weights();
+    adjacencytable[0][10][9]->setDoor(0);
     adjacencytable[0][10][9]->addItem("blue key", "key_blue");
     adjacencytable[0][10][9]->addStat("health", 50);   // cannot go back with no Health
     adjacencytable[0][10][9]->addStat("alignment", 0); // 0-8... 0=Lawful Good .. to go back to the beginning you must be LG
     adjacencytable[0][10][11] = new weights();
+    adjacencytable[0][11][10] = new weights();
     adjacencytable[0][11][19] = new weights();
     adjacencytable[0][19][20] = new weights();
     adjacencytable[0][19][27] = new weights();
