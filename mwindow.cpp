@@ -9,5 +9,6 @@ mWindow::mWindow(QWidget *parent) :
     this->setGeometry(mainScreenSize.width()*.1,mainScreenSize.height()*.1, mainScreenSize.width()*.8, mainScreenSize.height()*.8);
     myGLWidget = new displayGL(this);
     myGLWidget->resize(800,600);
+    myGLWidget->setFocus();
     setCentralWidget(myGLWidget);
 }

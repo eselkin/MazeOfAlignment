@@ -6,6 +6,8 @@
 #endif
 #include <QGLWidget>
 #include <QPixmap>
+#include <QKeyEvent>
+#include <QMouseEvent>
 #include "weights.h"
 #include "adjacency.h"
 
@@ -35,7 +37,7 @@ protected:
     void loadTextures();
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
-    bool drawSideWall(bool left_right, int is_door, int start_depth, int level);
+    bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
 
 private slots:
 
@@ -48,12 +50,12 @@ private:
     Adjacency adjacencyTable;
     weights* checkAhead(int room_number, int next_room);
     int countAhead(DIRECTION dir);
-    //fptr key_fptrs[128];
+    fptr key_fptrs[128];
     void moveForward();
     void moveBackward();
     void turnLeft();
     void turnRight();
-
+    void doNothing();
 };
 
 #endif // DISPLAYGL_H

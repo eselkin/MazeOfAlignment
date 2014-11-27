@@ -30,18 +30,18 @@ displayGL::displayGL(QWidget *parent) :
 
     current_direction = NORTH;
     current_room = 10;
-    //loadTextures();
-    //init_fp();
+    loadTextures();
+    init_fp();
 }
 
 void displayGL::init_fp()
 {
-    //for(uint i = 0; i < 1000; i++)
-        //key_fptrs[i] = NULL;
-    //    key_fptrs[Qt::Key_Up] = key_fptrs[Qt::Key_W] = key_fptrs[Qt::Key_8] = &displayGL::moveForward;
-    //    key_fptrs[Qt::Key_Down] = key_fptrs[Qt::Key_S] = key_fptrs[Qt::Key_2] = &displayGL::moveBackward;
-    //    key_fptrs[Qt::Key_Left] = key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
-    //    key_fptrs[Qt::Key_Right] = key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
+    for(uint i = 0; i < 128; i++)
+        key_fptrs[i] = &displayGL::doNothing;
+    key_fptrs[Qt::Key_W] = key_fptrs[Qt::Key_8] = &displayGL::moveForward;
+    key_fptrs[Qt::Key_S] = key_fptrs[Qt::Key_2] = &displayGL::moveBackward;
+    key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
+    key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
 }
 
 void displayGL::loadTextures()
@@ -91,24 +91,24 @@ void displayGL::paintGL()
         my_room = my_room + count_ahead;
         if (current_direction == NORTH)
         {
-            drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST))->isDoor(), i, current_level);
-            drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST))->isDoor(), i, current_level);
+            drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
+            drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
         }
         else
             if (current_direction == SOUTH)
             {
-                drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST))->isDoor(), i, current_level);
-                drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST))->isDoor(), i, current_level);
+                drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
+                drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
             }
             else
                 if (current_direction == EAST)
                 {
-                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH))->isDoor(), i, current_level);
-                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH))->isDoor(), i, current_level);
+                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
+                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
                 }
                 else {
-                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH))->isDoor(), i, current_level);
-                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH))->isDoor(), i, current_level);
+                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
+                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
                 }
         count_ahead = countAhead(current_direction);
         forward = checkAhead(my_room, my_room+count_ahead);
@@ -127,16 +127,17 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 {
 }
 
-void displayGL::keyPressEvent(QKeyEvent *e)
+void displayGL::keyPressEvent(QKeyEvent *event)
 {
-    // set up function pointers here
-    //(key_fptrs[e->key()]);
-    //qDebug() << "KEY INT IS: " << e->key();
+    if (event->key() < 128 && event->key() >= 0)
+        (this->*(key_fptrs[event->key()]))();
 }
+
+
 
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
-bool displayGL::drawSideWall(bool left_right, int is_door, int start_depth, int level)
+bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, int level)
 {
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
 
@@ -158,9 +159,9 @@ bool displayGL::drawSideWall(bool left_right, int is_door, int start_depth, int 
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
 
-    if (is_door)
+    if (access) // if we are a weight... that is: if there is something on the other side of what we're displaying
         glColor3f(.03,.03,.03);
-    else
+    else // just a wall
         glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
 
     glBegin(GL_QUADS);
@@ -194,44 +195,56 @@ int displayGL::countAhead(DIRECTION dir)
 
 void displayGL::moveForward()
 {
-//    int count_ahead = countAhead(current_direction);
-//    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
-//        return; // Easy out first, less time to compute bad moves
-//    weights* testForward;
-//    if (testForward = checkAhead(current_room, current_room + current_direction) )
-//    {
-//        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
-//        //
-//        // YADA YADA YADA ... player has adequate stats, items, etc.
-//        // testForward has the list of items we must check against our inventory
-//        current_room = current_room + current_direction;
-//    }
+    int count_ahead = countAhead(current_direction);
+    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
+        return; // Easy out first, less time to compute bad moves
+    weights* testForward;
+    if ( (testForward = checkAhead(current_room, current_room + count_ahead)) )
+    {
+        qDebug() << "TRYING BACK : " << current_room << " TO: " << current_room + count_ahead << endl;
+        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
+        //
+        // YADA YADA YADA ... player has adequate stats, items, etc.
+        // testForward has the list of items we must check against our inventory
+        current_room = current_room + current_direction;
+    }
+    //updateGL();
 }
 
 void displayGL::moveBackward()
 {
-//    int count_ahead = -1 * countAhead(current_direction);
-//    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
-//        return; // Easy out first, less time to compute bad moves
-//    weights* testForward;
-//    if (testForward = checkAhead(current_room, current_room + current_direction) )
-//    {
-//        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
-//        //
-//        // YADA YADA YADA ... player has adequate stats, items, etc.
-//        // testForward has the list of items we must check against our inventory
-//        current_room = current_room + current_direction;
-//    }
+    int count_ahead = -1 * countAhead(current_direction);
+    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
+        return; // Easy out first, less time to compute bad moves
+    weights* testForward;
+    qDebug() << "TRYING BACK : " << current_room << " TO: " << current_room + count_ahead << endl;
+
+    if ( (testForward = checkAhead(current_room, current_room + count_ahead)) )
+    {
+        qDebug() << "MOVING BACK " << endl;
+
+        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
+        //
+        // YADA YADA YADA ... player has adequate stats, items, etc.
+        // testForward has the list of items we must check against our inventory
+        current_room = current_room + current_direction;
+    }
+    //updateGL();
 }
 
 void displayGL::turnLeft()
 {
-
+    updateGL();
 }
 
 void displayGL::turnRight()
 {
+    updateGL();
+}
 
+void displayGL::doNothing()
+{
+    // nada
 }
 
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
