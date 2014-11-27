@@ -1,9 +1,9 @@
 #include "weights.h"
+#include <QDebug>
 
 weights::weights()
 {
-    door_type = 0;
-
+    my_door = 0;
 }
 
 // we can add an unlimited number of item or stat requirements to the room's entrance "fee"
@@ -17,12 +17,12 @@ void weights::addStat(string stat_name, int value)
     statsReq.push_back(new stats(stat_name, value));
 }
 
-int weights::isDoor()
+int weights::isDoor() const
 {
-    return door_type;
+    return my_door;
 }
 
 void weights::setDoor(int type)
 {
-    door_type = type;
+    my_door = type;
 }

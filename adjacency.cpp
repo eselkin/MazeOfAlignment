@@ -12,6 +12,7 @@ Adjacency::Adjacency()
 
     //Level0
     adjacencytable[0][9][10] = new weights();
+    adjacencytable[0][9][10]->setDoor(0);
     adjacencytable[0][9][10]->addItem("blue key", "key_blue");
     adjacencytable[0][9][10]->addStat("health", 100);
     adjacencytable[0][9][10]->addStat("alignment", 0); // 0-8... 0=Lawful Good
@@ -53,7 +54,6 @@ Adjacency::~Adjacency()
 
 weights *Adjacency::getWeight(int room_num, int next_room, int current_level)
 {
-    std::cout << "ERROR: " << room_num << " AND : " << next_room << " NAND " << endl;
     if (room_num < 9 || room_num > 54)
         return NULL;
     // public function

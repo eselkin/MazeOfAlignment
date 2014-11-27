@@ -12,11 +12,11 @@ public:
     weights();
     void addItem( string item_name , string identifier);
     void addStat( string stat_name , int value );
-    int isDoor();
+    int isDoor() const;
     void setDoor(int type); // 0 = nothing, 1 = wall, 2 = unlocked door, 3 = locked door
 
 private:
-    int door_type;
+    int my_door;
     vector< items* > itemsReq;
     vector< stats* > statsReq; // Required to enter
 };

@@ -2,7 +2,6 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 QT += core gui opengl
-INCLUDES += -lGLU -lGL -lfreeglut
 
 
 SOURCES += main.cpp \

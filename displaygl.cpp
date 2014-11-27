@@ -29,9 +29,19 @@ displayGL::displayGL(QWidget *parent) :
     }
 
     current_direction = NORTH;
-    current_room = 9;
-    loadTextures();
+    current_room = 10;
+    //loadTextures();
+    //init_fp();
+}
 
+void displayGL::init_fp()
+{
+    //for(uint i = 0; i < 1000; i++)
+        //key_fptrs[i] = NULL;
+    //    key_fptrs[Qt::Key_Up] = key_fptrs[Qt::Key_W] = key_fptrs[Qt::Key_8] = &displayGL::moveForward;
+    //    key_fptrs[Qt::Key_Down] = key_fptrs[Qt::Key_S] = key_fptrs[Qt::Key_2] = &displayGL::moveBackward;
+    //    key_fptrs[Qt::Key_Left] = key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
+    //    key_fptrs[Qt::Key_Right] = key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
 }
 
 void displayGL::loadTextures()
@@ -51,7 +61,7 @@ void displayGL::loadTextures()
     m_images[11].load("Locked9.png");
     m_images[12].load("Locked10.png");
     glGenTextures(40, m_texture_ids);
-    gluBuild2DMipmaps(GL_TEXTURE_2D, 3,m_images[0].width(), m_images[0].height() , GL_RGB, GL_UNSIGNED_BYTE, &m_images[0]);
+    //gluBuild2DMipmaps(GL_TEXTURE_2D, 3,m_images[0].width(), m_images[0].height() , GL_RGB, GL_UNSIGNED_BYTE, &m_images[0]);
     // THIS SHOULD WORK BUT IT'S NOT!
 }
 
@@ -115,7 +125,13 @@ void displayGL::resizeGL(int w, int h)
 
 void displayGL::mousePressEvent(QMouseEvent *e)
 {
+}
 
+void displayGL::keyPressEvent(QKeyEvent *e)
+{
+    // set up function pointers here
+    //(key_fptrs[e->key()]);
+    //qDebug() << "KEY INT IS: " << e->key();
 }
 
 // Basically a draw a vertical trapezoid function
@@ -147,15 +163,12 @@ bool displayGL::drawSideWall(bool left_right, int is_door, int start_depth, int 
     else
         glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
 
-    glEnable( GL_TEXTURE_2D );
-
     glBegin(GL_QUADS);
-    glTexCoord3f(0.0,0.0,0.0); glVertex3f(start_x, up_start_y,0);
+    glVertex3f(start_x, up_start_y,0);
     glVertex3f(end_x, up_end_y,0);
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
-    glDisable( GL_TEXTURE_2D );
 
     glColor3f(0,0,0); // Get Color from the World
     glLineWidth(2);
@@ -177,6 +190,48 @@ weights *displayGL::checkAhead(int room_number, int next_room)
 int displayGL::countAhead(DIRECTION dir)
 {
     return dir == NORTH? 1 : dir == WEST ? -8 : dir == SOUTH? -1 : 8;
+}
+
+void displayGL::moveForward()
+{
+//    int count_ahead = countAhead(current_direction);
+//    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
+//        return; // Easy out first, less time to compute bad moves
+//    weights* testForward;
+//    if (testForward = checkAhead(current_room, current_room + current_direction) )
+//    {
+//        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
+//        //
+//        // YADA YADA YADA ... player has adequate stats, items, etc.
+//        // testForward has the list of items we must check against our inventory
+//        current_room = current_room + current_direction;
+//    }
+}
+
+void displayGL::moveBackward()
+{
+//    int count_ahead = -1 * countAhead(current_direction);
+//    if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
+//        return; // Easy out first, less time to compute bad moves
+//    weights* testForward;
+//    if (testForward = checkAhead(current_room, current_room + current_direction) )
+//    {
+//        // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
+//        //
+//        // YADA YADA YADA ... player has adequate stats, items, etc.
+//        // testForward has the list of items we must check against our inventory
+//        current_room = current_room + current_direction;
+//    }
+}
+
+void displayGL::turnLeft()
+{
+
+}
+
+void displayGL::turnRight()
+{
+
 }
 
 // Precondition: side walls (trapezoids) are drawn and filled with texture?

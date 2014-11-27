@@ -16,7 +16,7 @@ class displayGL : public QGLWidget
     Q_OBJECT
 public:
     //(fo.o)f
-    typedef weights* (displayGL::*fptr)(int room, int next);
+    typedef void (displayGL::*fptr)();
     explicit displayGL(QWidget *parent = 0);
 
 signals:
@@ -26,11 +26,12 @@ public slots:
     void paintGL();
     void resizeGL(int w, int h);
     void mousePressEvent( QMouseEvent *e );
+    void keyPressEvent(QKeyEvent *e);
 
 protected slots:
 
 protected:
-
+    void init_fp();
     void loadTextures();
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
@@ -47,6 +48,11 @@ private:
     Adjacency adjacencyTable;
     weights* checkAhead(int room_number, int next_room);
     int countAhead(DIRECTION dir);
+    //fptr key_fptrs[128];
+    void moveForward();
+    void moveBackward();
+    void turnLeft();
+    void turnRight();
 
 };
 
