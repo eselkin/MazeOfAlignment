@@ -229,11 +229,13 @@ void displayGL::moveBackward()
 
 void displayGL::turnLeft()
 {
+    current_direction = current_direction == NORTH? WEST : current_direction == WEST? SOUTH : current_direction == SOUTH? EAST : NORTH;
     updateGL();
 }
 
 void displayGL::turnRight()
 {
+    current_direction = current_direction == NORTH? EAST: current_direction == EAST? SOUTH : current_direction == SOUTH? WEST: NORTH;
     updateGL();
 }
 
