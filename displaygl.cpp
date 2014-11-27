@@ -199,14 +199,13 @@ void displayGL::moveForward()
     if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
         return; // Easy out first, less time to compute bad moves
     weights* testForward;
-    qDebug() << "TRYING FORWARD: " << current_room << " TO: " << current_room + count_ahead << endl;
     if ( (testForward = checkAhead(current_room, current_room + count_ahead)) )
     {
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
-        current_room = current_room + current_direction-1;
+        current_room = current_room + count_ahead;
     }
     updateGL();
 }
@@ -217,17 +216,13 @@ void displayGL::moveBackward()
     if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
         return; // Easy out first, less time to compute bad moves
     weights* testForward;
-    qDebug() << "TRYING BACK : " << current_room << " TO: " << current_room + count_ahead << endl;
-
     if ( (testForward = checkAhead(current_room, current_room + count_ahead)) )
     {
-        qDebug() << "MOVING BACK " << endl;
-
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
-        current_room = current_room + current_direction;
+        current_room = current_room + count_ahead;
     }
     updateGL();
 }
