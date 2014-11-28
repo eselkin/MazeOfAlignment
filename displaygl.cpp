@@ -12,10 +12,6 @@
 #include "adjacency.h"
 using namespace std;
 
-#ifndef GL_MULTISAMPLE
-#define GL_MULTISAMPLE  0x809D
-#endif
-
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
@@ -70,8 +66,6 @@ void displayGL::loadTextures()
     glGenTextures(40, texture_ids);
     for (uint i = 0 ; i < 2; i++)
     {
-        qDebug() << "TEX--"  << "i:" << i << "TEXID:" << texture_ids[i];
-
         glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -222,14 +216,14 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glEnd();
     glFlush();
     glDisable(GL_TEXTURE_2D);
-    //    glColor3f(0,0,0); // Get Color from the World
-    //    glLineWidth(2);
-    //    glBegin(GL_LINE_LOOP);
-    //    glVertex3f(start_x, up_start_y,0);
-    //    glVertex3f(end_x, up_end_y,0);
-    //    glVertex3f(end_x, -1.0*up_end_y,0);
-    //    glVertex3f(start_x, -1.0*up_start_y,0);
-    //    glEnd();
+    glColor3f(0,0,0); // Get Color from the World
+    glLineWidth(2);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(start_x, up_start_y,0);
+    glVertex3f(end_x, up_end_y,0);
+    glVertex3f(end_x, -1.0*up_end_y,0);
+    glVertex3f(start_x, -1.0*up_start_y,0);
+    glEnd();
     return 1;
 }
 
@@ -306,15 +300,21 @@ bool displayGL::drawBackWall(int depth, int type, int level)
     double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth > 5)
         return 0; // we can't draw a wall that far away, it's too dark to see
+
     double start_x = wallstops[depth];
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
+    glBindTexture(GL_TEXTURE_2D, texture_ids[type]);
     glBegin(GL_QUADS);
-    glVertex3f(start_x, start_x,0);
-    glVertex3f(-1*start_x, start_x,0);
-    glVertex3f(-1*start_x, -1.0*start_x,0);
-    glVertex3f(start_x, -1.0*start_x,0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(start_x, start_x,0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(-1*start_x, start_x,0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(-1*start_x, -1.0*start_x,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, -1.0*start_x,0);
     glEnd();
     glFlush();
+    glDisable(GL_TEXTURE_2D);
     return 1;
 }
 
