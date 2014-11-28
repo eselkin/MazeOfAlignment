@@ -29,7 +29,6 @@ displayGL::displayGL(QWidget *parent) :
         level_b[i] = b_init;
     }
     setAutoFillBackground(false);
-
     current_direction = NORTH;
     current_room = 9;
     init_fp();
@@ -59,15 +58,17 @@ void displayGL::loadTextures()
     //    m_images[10].load("Locked8.png");
     //    m_images[11].load("Locked9.png");
     //    m_images[12].load("Locked10.png");
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glEnable(GL_TEXTURE_2D);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(40, texture_ids);
     for (uint i = 0 ; i < 4; i++)
     {
         glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_images[i].width(), m_images[i].width(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_images[i].bits());
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
     }
     // bind the images to the textures
 }
@@ -77,8 +78,6 @@ void displayGL::initializeGL()
     glClearColor(0,0,0,0); // set clear color buffer bit
     glShadeModel(GL_SMOOTH);
     glDepthFunc(GL_LEQUAL);
-    glEnable(GL_BLEND);
-    glEnable(GL_POLYGON_SMOOTH);
     loadTextures();
 }
 
@@ -120,7 +119,7 @@ void displayGL::paintEvent(QPaintEvent *event)
         i++;
     } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
-    !forward && (drawBackWall(i, 0, current_level));
+    !forward && (drawBackWall(i, 1, current_level));
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -130,7 +129,12 @@ void displayGL::paintEvent(QPaintEvent *event)
 
 void displayGL::resizeGL(int w, int h)
 {
-
+    glViewport(0, 0, (GLsizei) w, (GLsizei) h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0, (GLfloat) w/(GLfloat) h, 1.0, 30.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void displayGL::mousePressEvent(QMouseEvent *e)
@@ -161,7 +165,7 @@ void displayGL::showInfo(QPainter *toPaint)
     QFontMetrics metrics = QFontMetrics(font()); // from http://qt-project.org/doc/qt-4.8/opengl-overpainting.html
     int border = qMax(4, metrics.leading());
     QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
-                                      Qt::AlignCenter | Qt::TextWordWrap, Info);
+                                      Qt::AlignRight | Qt::TextSingleLine, Info);
     toPaint->setRenderHint(QPainter::Antialiasing);
     toPaint->setPen(Qt::white);
     toPaint->drawText((width()-rect.width())/2, border, rect.width(), rect.height(),Qt::AlignRight|Qt::TextSingleLine, Info);
@@ -174,7 +178,7 @@ void displayGL::showInfo(QPainter *toPaint)
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
 bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, int level)
 {
-    double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
+    double wallstops[6] = {2.0,1.5,1.1,.8,0.4,0}; // anything beyond 5 wall segments out it non-existent in view
 
     /*
      *  |\     |     /|
@@ -193,7 +197,7 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
-
+    glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     if (access) // if we are a weight... that is: if there is something on the other side of what we're displaying
@@ -204,14 +208,14 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     else // just a wall
     {
         glColor3f(.1,.1,.1);
-        glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
+        glBindTexture(GL_TEXTURE_2D, texture_ids[1]);
     }
 
     glBegin(GL_QUADS);
-    glTexCoord2f(1.0, 0.0); glVertex3f(end_x, -1.0*up_end_y,0);
-    glTexCoord2f(0.0, 0.0); glVertex3f(end_x, up_end_y,0);
-    glTexCoord2f(0.0, 1.0); glVertex3f(start_x, up_start_y,0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(start_x, -1.0*up_start_y,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(start_x,-1.0,-1.*start_depth-1);
+    glTexCoord2f(0.0, 1.0); glVertex3f(start_x, 1.0,-1.*start_depth-1);
+    glTexCoord2f(1.0, 1.0); glVertex3f(end_x,   1.0,-1.*start_depth-2);
+    glTexCoord2f(1.0, 0.0); glVertex3f(end_x,  -1.0,-1.*start_depth-2);
     glEnd();
     glFlush();
     glDisable(GL_TEXTURE_2D);
@@ -288,21 +292,20 @@ void displayGL::doNothing()
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
 bool displayGL::drawBackWall(int depth, int type, int level)
 {
-    double wallstops[6] = {1.0,0.5,0.35,0.25,0,0}; // anything beyond 5 wall segments out it non-existent in view
+    double wallstops[6] = {2.0,1.5,1.1,.8,0.4,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth > 5)
         return 0; // we can't draw a wall that far away, it's too dark to see
 
     double start_x = wallstops[depth];
 
-    glEnable(GL_TEXTURE_2D);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture_ids[type]);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 1.0); glVertex3f(start_x, start_x,0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(-1*start_x, start_x,0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(-1*start_x, -1.0*start_x,0);
-    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, -1.0*start_x,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-start_x,-1.0,(-1*depth)-1);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-start_x, 1.0,(-1*depth)-1);
+    glTexCoord2f(1.0, 1.0); glVertex3f( start_x, 1.0,(-1*depth)-1);
+    glTexCoord2f(1.0, 0.0); glVertex3f( start_x,-1.0,(-1*depth)-1);
     glEnd();
     glFlush();
     glDisable(GL_TEXTURE_2D);
