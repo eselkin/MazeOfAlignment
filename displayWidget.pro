@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 QT += core gui opengl
-LIBS += -lglut -lGLU
+LIBS += -lGLU
 
 SOURCES += main.cpp \
     displaygl.cpp \
