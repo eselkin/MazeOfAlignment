@@ -5,7 +5,7 @@
 #include <OpenGL/glu.h>
 #endif
 #include <QGLWidget>
-#include <QPixmap>
+#include <QImage>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include "weights.h"
@@ -25,11 +25,12 @@ signals:
 
 public slots:
     void initializeGL();
-    void paintGL();
-    void paintEvent(QPaintEvent *event);
+    //void paintGL();
     void resizeGL(int w, int h);
+    void paintEvent(QPaintEvent *event);
     void mousePressEvent( QMouseEvent *e );
     void keyPressEvent(QKeyEvent *e);
+    void showInfo(QPainter *toPaint);
 
 protected slots:
 
@@ -43,7 +44,7 @@ protected:
 private slots:
 
 private:
-    QPixmap m_images[40];
+    QImage m_images[40];
     GLuint texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];
     DIRECTION current_direction;

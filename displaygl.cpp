@@ -8,8 +8,13 @@
 #include <QDebug>
 #include <iostream>
 #include <QPixmap>
+#include <QString>
 #include "adjacency.h"
 using namespace std;
+
+#ifndef GL_MULTISAMPLE
+#define GL_MULTISAMPLE  0x809D
+#endif
 
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
@@ -27,6 +32,7 @@ displayGL::displayGL(QWidget *parent) :
         level_g[i] = g_init;
         level_b[i] = b_init;
     }
+    setAutoFillBackground(false);
 
     current_direction = NORTH;
     current_room = 9;
@@ -46,42 +52,48 @@ void displayGL::init_fp()
 
 void displayGL::loadTextures()
 {
-    glEnable(GL_TEXTURE_2D);
-    m_images[0].load("BackWall.png");
-    m_images[1].load("LeftWall.png");
-    m_images[2].load("UnlockedDoor.png");
-    m_images[3].load("Locked1.png");
-    m_images[4].load("Locked2.png");
-    m_images[5].load("Locked3.png");
-    m_images[6].load("Locked4.png");
-    m_images[7].load("Locked5.png");
-    m_images[8].load("Locked6.png");
-    m_images[9].load("Locked7.png");
-    m_images[10].load("Locked8.png");
-    m_images[11].load("Locked9.png");
-    m_images[12].load("Locked10.png");
-    glGenTextures(40, texture_ids);
-    //gluBuild2DMipmaps(GL_TEXTURE_2D, 3,m_images[0].width(), m_images[0].height() , GL_RGB, GL_UNSIGNED_BYTE, &m_images[0]);
-    // THIS SHOULD WORK BUT IT'S NOT!
+    m_images[0] = convertToGLFormat(QImage("BackWall.png", "PNG"));
+    m_images[1] = convertToGLFormat(QImage("Wall.png", "PNG"));
+    //    m_images[2].load("UnlockedDoor.png");
+    //    m_images[3].load("Locked1.png");
+    //    m_images[4].load("Locked2.png");
+    //    m_images[5].load("Locked3.png");
+    //    m_images[6].load("Locked4.png");
+    //    m_images[7].load("Locked5.png");
+    //    m_images[8].load("Locked6.png");
+    //    m_images[9].load("Locked7.png");
+    //    m_images[10].load("Locked8.png");
+    //    m_images[11].load("Locked9.png");
+    //    m_images[12].load("Locked10.png");
+    for (uint i = 0 ; i < 2; i++)
+    {
+        glGenTextures(1, &texture_ids[i]);
+        qDebug() << "TEX: " << texture_ids[i];
+
+        glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_images[i].width(), m_images[i].width(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_images[i].bits());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    }
+    // bind the images to the textures
 }
 
 void displayGL::initializeGL()
 {
-    glShadeModel(GL_SMOOTH);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
     glClearColor(0,0,0,0); // set clear color buffer bit
+    glShadeModel(GL_SMOOTH);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_MULTISAMPLE);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-void displayGL::paintGL()
+void displayGL::paintEvent(QPaintEvent *event)
 {
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // from clear color above
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-
-    //
-    // Turning allows us to calculate what is ahead of us
-    //
-
     int count_ahead = 0; // forward
     int my_room = current_room;
     int i = 0;
@@ -116,11 +128,11 @@ void displayGL::paintGL()
     } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
-}
 
-void displayGL::paintEvent(QPaintEvent *event)
-{
-
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    showInfo(&painter);
+    painter.end();
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -136,6 +148,31 @@ void displayGL::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() < 128 && event->key() >= 0)
         (this->*(key_fptrs[event->key()]))();
+}
+
+void displayGL::showInfo(QPainter *toPaint)
+{
+    QString Info = tr("Direction: ");
+
+    if (current_direction == NORTH)
+        Info.append(tr("NORTH"));
+    else
+        if (current_direction == SOUTH)
+            Info.append(tr("SOUTH"));
+        else
+            if (current_direction == EAST)
+                Info.append(tr("EAST"));
+            else
+                Info.append(tr("WEST"));
+
+    QFontMetrics metrics = QFontMetrics(font()); // from http://qt-project.org/doc/qt-4.8/opengl-overpainting.html
+    int border = qMax(4, metrics.leading());
+    QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
+                                      Qt::AlignCenter | Qt::TextWordWrap, Info);
+    toPaint->setRenderHint(QPainter::Antialiasing);
+    toPaint->setPen(Qt::white);
+    toPaint->drawText((width()-rect.width())/2, border, rect.width(), rect.height(),Qt::AlignRight|Qt::TextSingleLine, Info);
+    update();
 }
 
 
@@ -165,16 +202,23 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     double up_end_y = abs(end_x);
 
     if (access) // if we are a weight... that is: if there is something on the other side of what we're displaying
-        glColor3f(.03,.03,.03);
+    {
+        glColor3f(.35,.35,.35);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
+    }
     else // just a wall
-        glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
-
+    {
+        glColor3f(.35,.35,.35);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
+   }
 
     glBegin(GL_QUADS);
-    glVertex3f(start_x, up_start_y,0);
-    glVertex3f(end_x, up_end_y,0);
-    glVertex3f(end_x, -1.0*up_end_y,0);
-    glVertex3f(start_x, -1.0*up_start_y,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, up_start_y,0);
+    glTexCoord2f(0.0, 1.0); glVertex3f(end_x, up_end_y,0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(end_x, -1.0*up_end_y,0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
 
     glColor3f(0,0,0); // Get Color from the World
@@ -185,13 +229,6 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glVertex3f(end_x, -1.0*up_end_y,0);
     glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
-
-    QPainter painter;
-    painter.begin(this->parentWidget());
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.translate(100, 100); // put axis in the middle
-
-    painter.end();
     return 1;
 }
 
@@ -219,6 +256,7 @@ void displayGL::moveForward()
         // testForward has the list of items we must check against our inventory
         current_room = current_room + count_ahead;
     }
+    update();
     updateGL();
 }
 
@@ -236,6 +274,7 @@ void displayGL::moveBackward()
         // testForward has the list of items we must check against our inventory
         current_room = current_room + count_ahead;
     }
+    update();
     updateGL();
 }
 
@@ -243,12 +282,14 @@ void displayGL::turnLeft()
 {
     current_direction = current_direction == NORTH? WEST : current_direction == WEST? SOUTH : current_direction == SOUTH? EAST : NORTH;
     updateGL();
+    update();
 }
 
 void displayGL::turnRight()
 {
     current_direction = current_direction == NORTH? EAST: current_direction == EAST? SOUTH : current_direction == SOUTH? WEST: NORTH;
     updateGL();
+    update();
 }
 
 void displayGL::doNothing()
@@ -272,6 +313,7 @@ bool displayGL::drawBackWall(int depth, int type, int level)
     glVertex3f(-1*start_x, -1.0*start_x,0);
     glVertex3f(start_x, -1.0*start_x,0);
     glEnd();
+    glFlush();
     return 1;
 }
 
