@@ -211,8 +211,8 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glBegin(GL_QUADS);
     glTexCoord2f(1.0, 1.0); glVertex3f(start_x, up_start_y,0);
     glTexCoord2f(0.0, 1.0); glVertex3f(end_x, up_end_y,0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(end_x, -1.0*up_end_y,0);
-    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, -1.0*up_start_y,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(end_x, -1.0*up_end_y,0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
     glFlush();
     glDisable(GL_TEXTURE_2D);
