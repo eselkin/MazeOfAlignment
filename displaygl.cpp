@@ -29,8 +29,9 @@ displayGL::displayGL(QWidget *parent) :
         level_b[i] = b_init;
     }
     setAutoFillBackground(false);
-    current_direction = NORTH;
-    current_room = 9;
+    current_direction = WEST;
+    current_level = 1;
+    current_room = 17;
     init_fp();
 }
 
@@ -161,7 +162,7 @@ void displayGL::showInfo(QPainter *toPaint)
                 Info.append(tr("EAST"));
             else
                 Info.append(tr("WEST"));
-
+    Info.append( "     Room: ").append(QString::number(current_room));
     QFontMetrics metrics = QFontMetrics(font()); // from http://qt-project.org/doc/qt-4.8/opengl-overpainting.html
     int border = qMax(4, metrics.leading());
     QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
