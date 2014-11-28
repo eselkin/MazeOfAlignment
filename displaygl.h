@@ -20,7 +20,7 @@ public:
     //(fo.o)f
     typedef void (displayGL::*fptr)();
     explicit displayGL(QWidget *parent = 0);
-
+    ~displayGL();
 signals:
 
 public slots:
@@ -57,6 +57,8 @@ private:
     void moveBackward();
     void turnLeft();
     void turnRight();
+    void PickUpItem();
+    void DropItem();
     void doNothing();
 };
 

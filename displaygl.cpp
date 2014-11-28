@@ -35,6 +35,11 @@ displayGL::displayGL(QWidget *parent) :
     init_fp();
 }
 
+displayGL::~displayGL()
+{
+
+}
+
 void displayGL::init_fp()
 {
     for(uint i = 0; i < 128; i++)
@@ -43,6 +48,8 @@ void displayGL::init_fp()
     key_fptrs[Qt::Key_S] = key_fptrs[Qt::Key_2] = &displayGL::moveBackward;
     key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
     key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
+    key_fptrs[Qt::Key_Space] = &displayGL::PickUpItem;
+    key_fptrs[Qt::Key_P] = &displayGL::DropItem;
 }
 
 void displayGL::loadTextures()
@@ -50,19 +57,13 @@ void displayGL::loadTextures()
     m_images[0] = convertToGLFormat(QImage("BackWall.png", "PNG"));
     m_images[1] = convertToGLFormat(QImage("Wall.png", "PNG"));
     m_images[2] = convertToGLFormat(QImage("LockedDoor1.png", "PNG"));
-    //    m_images[4].load("Locked2.png");
-    //    m_images[5].load("Locked3.png");
-    //    m_images[6].load("Locked4.png");
-    //    m_images[7].load("Locked5.png");
-    //    m_images[8].load("Locked6.png");
-    //    m_images[9].load("Locked7.png");
-    //    m_images[10].load("Locked8.png");
-    //    m_images[11].load("Locked9.png");
-    //    m_images[12].load("Locked10.png");
+    m_images[3] = convertToGLFormat(QImage("LockedDoor2.png", "PNG"));
+    m_images[4] = convertToGLFormat(QImage("LockedDoor3.png", "PNG"));
+    m_images[5] = convertToGLFormat(QImage("LockedDoor4.png", "PNG"));
     glEnable(GL_TEXTURE_2D);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(40, texture_ids);
-    for (uint i = 0 ; i < 4; i++)
+    for (uint i = 0 ; i < 6; i++)
     {
         glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -87,6 +88,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
+
     int count_ahead = 0; // forward
     int my_room = current_room;
     int i = 0;
@@ -118,14 +120,15 @@ void displayGL::paintEvent(QPaintEvent *event)
         count_ahead = countAhead(current_direction);
         forward = checkAhead(my_room, my_room+count_ahead);
         i++;
-    } while (forward && i < 3 && !forward->isDoor()); // stops at a door, can't see through it
+    } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
-    !forward && (drawBackWall(i, 1, current_level));
+    !forward && (drawBackWall(i, 0, current_level));
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
     painter.end();
+
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -179,7 +182,7 @@ void displayGL::showInfo(QPainter *toPaint)
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
 bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, int level)
 {
-    double wallstops[6] = {2.0,1.5,1.1,.8,0.4,0}; // anything beyond 5 wall segments out it non-existent in view
+    double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
 
     /*
      *  |\     |     /|
@@ -201,6 +204,7 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
     if (access) // if we are a weight... that is: if there is something on the other side of what we're displaying
     {
         glColor3f(.35,.35,.35);
@@ -283,6 +287,20 @@ void displayGL::turnRight()
     update();
 }
 
+void displayGL::PickUpItem()
+{
+    // removes item from room and puts it in player's inventory
+    // on screen list will appear with ability to select item to pick
+    // return will select the item
+    // left right keys will select items
+}
+
+void displayGL::DropItem()
+{
+    // adds item to room
+    // on screen list will appear with ability to select item to drop
+}
+
 void displayGL::doNothing()
 {
     // nada
@@ -293,13 +311,12 @@ void displayGL::doNothing()
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
 bool displayGL::drawBackWall(int depth, int type, int level)
 {
-    double wallstops[6] = {2.0,1.5,1.1,.8,0.4,0}; // anything beyond 5 wall segments out it non-existent in view
+    double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
     if (depth > 5)
         return 0; // we can't draw a wall that far away, it's too dark to see
 
     double start_x = wallstops[depth];
 
-    glColor3f(level_r[level], level_g[level], level_b[level]); // Get Color from the World
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture_ids[type]);
     glBegin(GL_QUADS);

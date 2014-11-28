@@ -74,8 +74,14 @@ Adjacency::Adjacency()
     adjacencytable[1][10][9] = new weights();
     adjacencytable[1][9][17] = new weights();
     adjacencytable[1][17][9] = new weights();
+    adjacencytable[1][17][9]->setDoor(2);
+    adjacencytable[1][9][17]->setDoor(2);
     adjacencytable[1][17][18] = new weights();
+    adjacencytable[1][17][18]->setDoor(3);
     adjacencytable[1][18][17] = new weights();
+    adjacencytable[1][18][17]->setDoor(3);
+    adjacencytable[1][17][18]->setDoor(4);
+    adjacencytable[1][18][17]->setDoor(4);
     adjacencytable[1][18][19] = new weights();
     adjacencytable[1][19][18] = new weights();
     adjacencytable[1][11][19] = new weights();
@@ -97,10 +103,14 @@ Adjacency::Adjacency()
     adjacencytable[1][33][25] = new weights();
     adjacencytable[1][33][34] = new weights();
     adjacencytable[1][34][33] = new weights();
+    adjacencytable[1][34][33]->setDoor(2);
+    adjacencytable[1][33][34]->setDoor(2);
     adjacencytable[1][33][41] = new weights();
     adjacencytable[1][41][33] = new weights();
     adjacencytable[1][41][42] = new weights();
     adjacencytable[1][42][41] = new weights();
+    adjacencytable[1][41][42]->setDoor(2);
+    adjacencytable[1][42][41]->setDoor(2);
     adjacencytable[1][42][34] = new weights();
     adjacencytable[1][42][43] = new weights();
     adjacencytable[1][43][42] = new weights();
@@ -116,6 +126,8 @@ Adjacency::Adjacency()
     adjacencytable[1][21][29] = new weights();
     adjacencytable[1][21][22] = new weights();
     adjacencytable[1][22][21] = new weights();
+    adjacencytable[1][21][22]->setDoor(4);
+    adjacencytable[1][22][21]->setDoor(4);
     adjacencytable[1][22][30] = new weights();
     adjacencytable[1][30][38] = new weights();
     adjacencytable[1][38][30] = new weights();
