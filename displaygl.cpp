@@ -208,7 +208,7 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     else // just a wall
     {
         glColor3f(.1,.1,.1);
-        glBindTexture(GL_TEXTURE_2D, texture_ids[1]);
+        glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
     }
 
     glBegin(GL_QUADS);
