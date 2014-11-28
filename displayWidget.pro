@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     weights.cpp \
     items.cpp \
     stats.cpp \
-    adjacency.cpp
+    adjacency.cpp \
+    room.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -21,7 +22,9 @@ HEADERS += \
     adjacency.h \
     weights.h \
     stats.h \
-    items.h
+    items.h \
+    room.h \
+    allItems.h
 
 OTHER_FILES += \
     items.txt

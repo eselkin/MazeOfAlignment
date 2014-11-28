@@ -8,7 +8,8 @@ class stats
 {
 
 public:
-    stats(string stat_name, double val);
+    stats(string stat_name="", double val=0.0);
+
     ~stats();
     string getname() const;
     double getvalue() const;

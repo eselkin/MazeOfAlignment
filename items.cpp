@@ -1,9 +1,10 @@
 #include "items.h"
 
-items::items(const string& name, const string& identifier)
+items::items(const string& name, const string& identifier, stats stat_to_add)
 {
     itemname = name;
     item_id = identifier;
+    stat_add = stat_to_add;
 }
 
 items::items(const items &other)
@@ -19,6 +20,11 @@ items &items::operator=(const items &other)
         copy(other);
     }
     return *this;
+}
+
+items::~items()
+{
+
 }
 
 string items::getName() const

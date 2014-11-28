@@ -28,6 +28,7 @@ Adjacency::Adjacency()
     adjacencytable[0][19][20]->setDoor(1);
     adjacencytable[0][20][19] = new weights();
     adjacencytable[0][19][27] = new weights();
+    adjacencytable[0][19][27]->setDoor(1);
     adjacencytable[0][27][19] = new weights();
     adjacencytable[0][20][12] = new weights();
     adjacencytable[0][12][20] = new weights();
@@ -36,6 +37,7 @@ Adjacency::Adjacency()
     adjacencytable[0][21][22] = new weights();
     adjacencytable[0][22][21] = new weights();
     adjacencytable[0][22][14] = new weights();
+    adjacencytable[0][22][14]->setDoor(2);
     adjacencytable[0][14][22] = new weights();
     adjacencytable[0][27][35] = new weights();
     adjacencytable[0][35][27] = new weights();
@@ -48,6 +50,7 @@ Adjacency::Adjacency()
     adjacencytable[0][36][37] = new weights();
     adjacencytable[0][37][36] = new weights();
     adjacencytable[0][37][38] = new weights();
+    adjacencytable[0][37][38]->setDoor(2);
     adjacencytable[0][38][37] = new weights();
     adjacencytable[0][38][46] = new weights();
     adjacencytable[0][46][38] = new weights();
