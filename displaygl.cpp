@@ -36,7 +36,6 @@ displayGL::displayGL(QWidget *parent) :
 
     current_direction = NORTH;
     current_room = 9;
-    loadTextures();
     init_fp();
 }
 
@@ -65,18 +64,18 @@ void displayGL::loadTextures()
     //    m_images[10].load("Locked8.png");
     //    m_images[11].load("Locked9.png");
     //    m_images[12].load("Locked10.png");
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(40, texture_ids);
     for (uint i = 0 ; i < 2; i++)
     {
-        glGenTextures(1, &texture_ids[i]);
-        qDebug() << "TEX: " << texture_ids[i];
+        qDebug() << "TEX--"  << "i:" << i << "TEXID:" << texture_ids[i];
 
         glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_images[i].width(), m_images[i].width(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_images[i].bits());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_images[i].width(), m_images[i].width(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_images[i].bits());
     }
     // bind the images to the textures
 }
@@ -86,12 +85,13 @@ void displayGL::initializeGL()
     glClearColor(0,0,0,0); // set clear color buffer bit
     glShadeModel(GL_SMOOTH);
     glDepthFunc(GL_LEQUAL);
-    glEnable(GL_MULTISAMPLE);
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    loadTextures();
 }
 
 void displayGL::paintEvent(QPaintEvent *event)
 {
+    glMatrixMode(GL_MODELVIEW);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     int count_ahead = 0; // forward
@@ -201,34 +201,35 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     double up_start_y = abs(start_x);
     double up_end_y = abs(end_x);
 
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
     if (access) // if we are a weight... that is: if there is something on the other side of what we're displaying
     {
         glColor3f(.35,.35,.35);
-        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
     }
     else // just a wall
     {
-        glColor3f(.35,.35,.35);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
-   }
+        glColor3f(.1,.1,.1);
+        glBindTexture(GL_TEXTURE_2D, texture_ids[1]);
+    }
 
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, up_start_y,0);
+    glTexCoord2f(1.0, 1.0); glVertex3f(start_x, up_start_y,0);
     glTexCoord2f(0.0, 1.0); glVertex3f(end_x, up_end_y,0);
-    glTexCoord2f(1.0, 1.0); glVertex3f(end_x, -1.0*up_end_y,0);
-    glTexCoord2f(1.0, 0.0); glVertex3f(start_x, -1.0*up_start_y,0);
+    glTexCoord2f(1.0, 0.0); glVertex3f(end_x, -1.0*up_end_y,0);
+    glTexCoord2f(0.0, 0.0); glVertex3f(start_x, -1.0*up_start_y,0);
     glEnd();
-
-    glColor3f(0,0,0); // Get Color from the World
-    glLineWidth(2);
-    glBegin(GL_LINE_LOOP);
-    glVertex3f(start_x, up_start_y,0);
-    glVertex3f(end_x, up_end_y,0);
-    glVertex3f(end_x, -1.0*up_end_y,0);
-    glVertex3f(start_x, -1.0*up_start_y,0);
-    glEnd();
+    glFlush();
+    glDisable(GL_TEXTURE_2D);
+    //    glColor3f(0,0,0); // Get Color from the World
+    //    glLineWidth(2);
+    //    glBegin(GL_LINE_LOOP);
+    //    glVertex3f(start_x, up_start_y,0);
+    //    glVertex3f(end_x, up_end_y,0);
+    //    glVertex3f(end_x, -1.0*up_end_y,0);
+    //    glVertex3f(start_x, -1.0*up_start_y,0);
+    //    glEnd();
     return 1;
 }
 
