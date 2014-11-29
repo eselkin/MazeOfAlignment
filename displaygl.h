@@ -59,6 +59,7 @@ private:
     void turnRight();
     void PickUpItem();
     void DropItem();
+    bool in_inventory, in_rm_inventory;
     void doNothing();
 };
 

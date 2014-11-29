@@ -2,12 +2,14 @@
 #define ROOM_H
 #include <vector>
 #include "items.h"
-#include "allItems.h"
 
+
+typedef unsigned int uint;
 class room
 {
 public:
     room();
+    ~room();
     void addItem(items newitem);
 
 private:

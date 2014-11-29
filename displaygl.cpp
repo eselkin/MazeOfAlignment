@@ -10,6 +10,7 @@
 #include <QPixmap>
 #include <QString>
 #include "adjacency.h"
+#include "roomlist.h"
 using namespace std;
 
 displayGL::displayGL(QWidget *parent) :
@@ -127,6 +128,8 @@ void displayGL::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
+
+    painter.drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
     painter.end();
 
 }
@@ -147,8 +150,22 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 void displayGL::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() < 128 && event->key() >= 0)
-        (this->*(key_fptrs[event->key()]))();
+    if (in_rm_inventory){
+        switch(event->key())
+        {
+        case Qt::Key_Left:
+
+            break;
+        case Qt::Key_Right:
+
+            break;
+        case Qt::Key_Escape:
+            in_rm_inventory = false;
+            break;
+        }
+    } else
+        if (event->key() < 128 && event->key() >= 0)
+            (this->*(key_fptrs[event->key()]))();
 }
 
 void displayGL::showInfo(QPainter *toPaint)
@@ -227,6 +244,30 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     return 1;
 }
 
+// Precondition: side walls (trapezoids) are drawn and filled with texture?
+// Postcondition: back wall is drawn at depth of end of walls that are visible
+// Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
+bool displayGL::drawBackWall(int depth, int type, int level)
+{
+    double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
+    if (depth > 5)
+        return 0; // we can't draw a wall that far away, it's too dark to see
+
+    double start_x = wallstops[depth];
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture_ids[type]);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-start_x,-1.0,(-1*depth)-1);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-start_x, 1.0,(-1*depth)-1);
+    glTexCoord2f(1.0, 1.0); glVertex3f( start_x, 1.0,(-1*depth)-1);
+    glTexCoord2f(1.0, 0.0); glVertex3f( start_x,-1.0,(-1*depth)-1);
+    glEnd();
+    glFlush();
+    glDisable(GL_TEXTURE_2D);
+    return 1;
+}
+
 weights *displayGL::checkAhead(int room_number, int next_room)
 {
     return adjacencyTable.getWeight(room_number, next_room, current_level);
@@ -293,6 +334,10 @@ void displayGL::PickUpItem()
     // on screen list will appear with ability to select item to pick
     // return will select the item
     // left right keys will select items
+    in_rm_inventory = true;
+    QPainter toPaint(this); // paint in the opengl
+    toPaint.end();
+
 }
 
 void displayGL::DropItem()
@@ -304,29 +349,5 @@ void displayGL::DropItem()
 void displayGL::doNothing()
 {
     // nada
-}
-
-// Precondition: side walls (trapezoids) are drawn and filled with texture?
-// Postcondition: back wall is drawn at depth of end of walls that are visible
-// Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
-bool displayGL::drawBackWall(int depth, int type, int level)
-{
-    double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
-    if (depth > 5)
-        return 0; // we can't draw a wall that far away, it's too dark to see
-
-    double start_x = wallstops[depth];
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture_ids[type]);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-start_x,-1.0,(-1*depth)-1);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-start_x, 1.0,(-1*depth)-1);
-    glTexCoord2f(1.0, 1.0); glVertex3f( start_x, 1.0,(-1*depth)-1);
-    glTexCoord2f(1.0, 0.0); glVertex3f( start_x,-1.0,(-1*depth)-1);
-    glEnd();
-    glFlush();
-    glDisable(GL_TEXTURE_2D);
-    return 1;
 }
 

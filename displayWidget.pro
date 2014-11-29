@@ -24,7 +24,8 @@ HEADERS += \
     stats.h \
     items.h \
     room.h \
-    allItems.h
+    allItems.h \
+    roomlist.h
 
 OTHER_FILES += \
     items.txt
