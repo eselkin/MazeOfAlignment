@@ -1,6 +1,10 @@
 #include "displaygl.h"
 #include <cmath>
 #include <QtOpenGL>
+#include <QtGui>
+#include <QBrush>
+#include <QtCore>
+#include <QRect>
 #include <QPainter>
 #include <QPaintEvent>
 #include <GL/gl.h>
@@ -128,10 +132,9 @@ void displayGL::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
-
-    painter.drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
+    showminimap(&painter);
+    update();
     painter.end();
-
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -344,6 +347,44 @@ void displayGL::DropItem()
 {
     // adds item to room
     // on screen list will appear with ability to select item to drop
+}
+
+void displayGL::showminimap(QPainter *painter)
+{
+    painter->setRenderHint(QPainter::Antialiasing);
+    QRect border(width()-height()/5,height()-height()/5, height()/5,height()/5);
+    QRect minimap(width()-height()/5.1, height()-height()/5.1,height()/5.1,height()/5.1);
+    QBrush borderbrush(Qt::red);
+    painter->setBrush(borderbrush);
+    painter->fillRect(border, borderbrush);
+    QBrush minimapbrush(Qt::black);
+    painter->setBrush(minimapbrush);
+    painter->fillRect(minimap,minimapbrush);
+    painter->drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
+    QPen Player0(Qt::red);
+    QPen Player1(Qt::blue);
+    QPen Player2(Qt::yellow);
+    QPen Player3(Qt::white);
+    QPen RoomPen(Qt::gray);
+    RoomPen.setWidth(6);
+    Player0.setWidth(6);
+    Player1.setWidth(6);
+    Player2.setWidth(6);
+    Player3.setWidth(6);
+    uint k = 9; // starting
+    double starting_x = width()-height()/5.1 + 10;
+    double starting_y = height()-4;
+    for (uint i = 1; i < 7; i++)
+    { // done constraints
+        for (uint j = 1; j < 7; j++)
+        {
+            // ask server to return array of room where Players are
+            painter->setPen(RoomPen);
+            painter->drawPoint(starting_x+(i*6),starting_y-(i*6));
+            k++;
+        }
+        k+=2;
+    }
 }
 
 void displayGL::doNothing()
