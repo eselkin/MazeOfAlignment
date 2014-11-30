@@ -6,6 +6,11 @@ stats::stats(string stat_name, double val)
     value = val; // can even be negative
 }
 
+stats::stats(const stats &other)
+{
+    copy(other);
+}
+
 stats::~stats()
 {
     nukem();

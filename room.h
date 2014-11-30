@@ -5,6 +5,7 @@
 
 
 typedef unsigned int uint;
+
 class room
 {
 public:

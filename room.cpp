@@ -53,7 +53,7 @@ void room::copy(const room &other)
         avail_contents.push_back(new items(*other.getItems()[i]));
     other_size = other.getStats().size();
     for (uint i = 0; i < other_size; i++)
-        stat_alterations.push_back(new items(*other.getStats()[i]));
+        stat_alterations.push_back(new stats(*other.getStats()[i]));
 }
 
 void room::nukem()

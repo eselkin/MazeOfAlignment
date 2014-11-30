@@ -9,7 +9,7 @@ class stats
 
 public:
     stats(string stat_name="", double val=0.0);
-
+    stats(const stats &other);
     ~stats();
     string getname() const;
     double getvalue() const;
