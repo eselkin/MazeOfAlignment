@@ -3,6 +3,7 @@
 #include "room.h"
 #include "allItems.h"
 // make a list of rooms here
-room myroom[7][64];
+room my_room;
+my_room.addItem(key_blue);
 
 #endif // ROOMLIST_H
