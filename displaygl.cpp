@@ -133,8 +133,8 @@ void displayGL::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    showInfo(&painter);
-    showitems(&painter);
+    showInfo(&painter); // show the info at the top of the screen
+    showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
     painter.end();
 }
@@ -205,7 +205,7 @@ void displayGL::showInfo(QPainter *toPaint)
 bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, int level)
 {
     double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
-
+    level = level;
     /*
      *  |\     |     /|
      *  | \    |    / |
@@ -221,8 +221,6 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
 
     double start_x = wallstops[start_depth] * (left_right ? 1 : -1);
     double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
-    double up_start_y = abs(start_x);
-    double up_end_y = abs(end_x);
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -254,8 +252,9 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
 // Draws a rectangle at the center of the dispaly (dimensions depend on depth, color depends on direction??)
 bool displayGL::drawBackWall(int depth, int type, int level)
 {
+    level=level;
     double wallstops[6] = {2.0,1.5,1.1,.8,0.6,0}; // anything beyond 5 wall segments out it non-existent in view
-    if (depth > 5)
+    if (depth > 4)
         return 0; // we can't draw a wall that far away, it's too dark to see
 
     double start_x = wallstops[depth];
@@ -360,6 +359,7 @@ bool displayGL::showitems(QPainter *painter)
         filename.append(".png");
         painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())).scaledToHeight(60));
     }
+    return true;
 }
 
 void displayGL::showminimap()
