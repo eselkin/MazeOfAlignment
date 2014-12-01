@@ -41,9 +41,9 @@ vector<items *> room::getItems() const
     return avail_contents;
 }
 
-void room::addItem(items newitem)
+void room::addItem(items *newitem)
 {
-    avail_contents.push_back(new items(newitem));
+    avail_contents.push_back(newitem);
 }
 
 void room::copy(const room &other)

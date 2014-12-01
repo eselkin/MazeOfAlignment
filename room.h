@@ -16,7 +16,7 @@ public:
 
     vector<stats*> getStats() const;
     vector<items*> getItems() const;
-    void addItem(items newitem);
+    void addItem(items *newitem);
 
 private:
     void copy(const room &other);

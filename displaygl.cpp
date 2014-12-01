@@ -134,7 +134,6 @@ void displayGL::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
-
     showitems(&painter);
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
     painter.end();
