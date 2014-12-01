@@ -366,23 +366,53 @@ void displayGL::showminimap(QPainter *painter)
     QPen Player2(Qt::yellow);
     QPen Player3(Qt::white);
     QPen RoomPen(Qt::gray);
-    RoomPen.setWidth(6);
-    Player0.setWidth(6);
-    Player1.setWidth(6);
-    Player2.setWidth(6);
-    Player3.setWidth(6);
+    RoomPen.setWidth(15);
+    Player0.setWidth(15);
+    Player1.setWidth(15);
+    Player2.setWidth(15);
+    Player3.setWidth(15);
     uint k = 9; // starting
-    double starting_x = width()-height()/5.1 + 10;
-    double starting_y = height()-4;
+    double starting_x = width()-height()/5.1 + 20;
+    double starting_y;
     for (uint i = 1; i < 7; i++)
     { // done constraints
-        for (uint j = 1; j < 7; j++)
+        starting_y = height()-20;
+        for (uint j = 0; j < 6; j++)
         {
-            // ask server to return array of room where Players are
             painter->setPen(RoomPen);
-            painter->drawPoint(starting_x+(i*6),starting_y-(i*6));
+            painter->drawPoint(starting_x,starting_y-(j*25));
+            // ask server to return array of room where Players are
+            // if (serverresponse...)
+
+            // THIS IS JUST A TEST NOT TO BE USED IN THE GAME!
+            switch(rand()%5) // give a chance for just grey square
+            {
+            case 0:
+            case 1:
+                painter->setPen(Player1);
+                painter->drawPoint(starting_x,starting_y-(j*25));
+                break;
+            case 2:
+                painter->setPen(Player2);
+                painter->drawPoint(starting_x,starting_y-(j*25));
+                break;
+            case 3:
+                painter->setPen(Player3);
+                painter->drawPoint(starting_x,starting_y-(j*25));
+                break;
+            default:
+                break;
+            }
+
+            // show myself, yes have in program
+            if (current_room == k)
+            {
+                painter->setPen(Player0);
+                painter->drawPoint(starting_x,starting_y-(j*25));
+            }
             k++;
         }
+        starting_x = starting_x + 25;
         k+=2;
     }
 }
