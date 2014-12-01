@@ -10,6 +10,7 @@
 #include <QMouseEvent>
 #include "weights.h"
 #include "adjacency.h"
+#include "roomlist.h"
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -44,6 +45,7 @@ protected:
 private slots:
 
 private:
+    roomlist the_rooms;
     QImage m_images[40];
     GLuint texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];
@@ -61,6 +63,7 @@ private:
     void DropItem();
     bool in_inventory, in_rm_inventory;
     void doNothing();
+    bool showitems(QPainter *painter);
     bool showminimap(QPainter *painter);
     void showminimap(); // the function pointer function
     bool show_map;

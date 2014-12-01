@@ -11,7 +11,9 @@ SOURCES += main.cpp \
     items.cpp \
     stats.cpp \
     adjacency.cpp \
-    room.cpp
+    room.cpp \
+    roomlist.cpp \
+    allItems.cpp
 
 include(deployment.pri)
 qtcAddDeployment()

@@ -134,8 +134,9 @@ void displayGL::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
-    painter.drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
-    (show_map) && showminimap(&painter);
+
+    showitems(&painter);
+    (show_map) && showminimap(&painter); // no ifs or buts, but one and
     painter.end();
 }
 
@@ -349,6 +350,17 @@ void displayGL::DropItem()
 {
     // adds item to room
     // on screen list will appear with ability to select item to drop
+}
+
+bool displayGL::showitems(QPainter *painter)
+{
+    uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
+    for (uint i = 0; i < item_size; i++)
+    {
+        string filename =  the_rooms.rooms[current_level][current_room]->getItems()[i]->getId();
+        filename.append(".png");
+        painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())).scaledToHeight(60));
+    }
 }
 
 void displayGL::showminimap()
