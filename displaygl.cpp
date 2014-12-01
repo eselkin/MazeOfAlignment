@@ -38,6 +38,7 @@ displayGL::displayGL(QWidget *parent) :
     current_level = 1;
     current_room = 17;
     init_fp();
+    show_map = false;
 }
 
 displayGL::~displayGL()
@@ -53,6 +54,7 @@ void displayGL::init_fp()
     key_fptrs[Qt::Key_S] = key_fptrs[Qt::Key_2] = &displayGL::moveBackward;
     key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
     key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
+    key_fptrs[Qt::Key_M] = key_fptrs[Qt::Key_5] = &displayGL::showminimap;
     key_fptrs[Qt::Key_Space] = &displayGL::PickUpItem;
     key_fptrs[Qt::Key_P] = &displayGL::DropItem;
 }
@@ -132,8 +134,8 @@ void displayGL::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     showInfo(&painter);
-    showminimap(&painter);
-    update();
+    painter.drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
+    (show_map) && showminimap(&painter);
     painter.end();
 }
 
@@ -349,7 +351,12 @@ void displayGL::DropItem()
     // on screen list will appear with ability to select item to drop
 }
 
-void displayGL::showminimap(QPainter *painter)
+void displayGL::showminimap()
+{
+    show_map = !show_map;
+}
+
+bool displayGL::showminimap(QPainter *painter)
 {
     painter->setRenderHint(QPainter::Antialiasing);
     QRect border(width()-height()/5,height()-height()/5, height()/5,height()/5);
@@ -360,7 +367,6 @@ void displayGL::showminimap(QPainter *painter)
     QBrush minimapbrush(Qt::black);
     painter->setBrush(minimapbrush);
     painter->fillRect(minimap,minimapbrush);
-    painter->drawImage(this->width()/2,this->height()/1.1,QImage("key_gold.png").scaledToHeight(60));
     QPen Player0(Qt::red);
     QPen Player1(Qt::blue);
     QPen Player2(Qt::yellow);
@@ -384,6 +390,10 @@ void displayGL::showminimap(QPainter *painter)
             // ask server to return array of room where Players are
             // if (serverresponse...)
 
+
+            //
+            //            DANGER
+            //
             // THIS IS JUST A TEST NOT TO BE USED IN THE GAME!
             switch(rand()%5) // give a chance for just grey square
             {
@@ -415,6 +425,7 @@ void displayGL::showminimap(QPainter *painter)
         starting_x = starting_x + 25;
         k+=2;
     }
+    return true;
 }
 
 void displayGL::doNothing()
