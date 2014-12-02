@@ -41,6 +41,7 @@ protected:
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
     bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
+    void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
 private slots:
 
