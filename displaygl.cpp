@@ -172,6 +172,7 @@ void displayGL::keyPressEvent(QKeyEvent *event)
 {
     if (in_rm_inventory)
     {
+        items* item_to_get;
         int num_items_here = the_rooms.rooms[current_level][current_room]->getItems().size();
         switch(event->key())
         {
@@ -180,6 +181,19 @@ void displayGL::keyPressEvent(QKeyEvent *event)
             break;
         case Qt::Key_Right:
             ((item_at+1) < num_items_here) && item_at++;
+            break;
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            (item_at >= 0 && item_at < num_items_here) &&
+                    (item_to_get = the_rooms.rooms[current_level][current_room]->removeItem(item_at));
+            //
+            ///
+            // then add to the player!
+            ///
+            //
+
+            glFlush();
+            in_rm_inventory = false;
             break;
         case Qt::Key_Escape:
             in_rm_inventory = false;
@@ -205,7 +219,9 @@ void displayGL::showInfo(QPainter *toPaint)
             else
                 Info.append(tr("WEST"));
     Info.append( "     Room: ").append(QString::number(current_room));
-    QFontMetrics metrics = QFontMetrics(font()); // from http://qt-project.org/doc/qt-4.8/opengl-overpainting.html
+    QFont font("times", 10);
+    toPaint->setFont(font);
+    QFontMetrics metrics = QFontMetrics(font); // from http://qt-project.org/doc/qt-4.8/opengl-overpainting.html
     int border = qMax(4, metrics.leading());
     QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
                                       Qt::AlignRight | Qt::TextSingleLine, Info);
@@ -378,7 +394,7 @@ bool displayGL::showitems(QPainter *painter)
     {
         string filename =  the_rooms.rooms[current_level][current_room]->getItems()[i]->getId();
         filename.append(".png");
-        painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())).scaledToHeight(60));
+        painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())));
     }
     return true;
 }
@@ -429,7 +445,7 @@ bool displayGL::showminimap(QPainter *painter)
     Player2.setWidth(12);
     Player3.setWidth(12);
     uint k = 9; // starting
-    double starting_x = width()-height()/5.1 + 18;
+    double starting_x = width()-height()/5.1 + 20;
     double starting_y;
     for (uint i = 1; i < 7; i++)
     { // done constraints
@@ -473,7 +489,7 @@ bool displayGL::showminimap(QPainter *painter)
             }
             k++;
         }
-        starting_x = starting_x + 18;
+        starting_x = starting_x + 20;
         k+=2;
     }
     return true;

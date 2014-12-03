@@ -46,6 +46,16 @@ void room::addItem(items *newitem)
     avail_contents.push_back(newitem);
 }
 
+items *room::removeItem(int item_num)
+{
+    items* temp = avail_contents[item_num];
+    vector<items*>::iterator vIT = avail_contents.begin();
+    int i = 0;
+    for (; i < item_num && vIT != avail_contents.end(); vIT++, i++);
+    avail_contents.erase(vIT); // remove it from the contents of the room
+    return temp;
+}
+
 void room::copy(const room &other)
 {
     uint other_size = other.getItems().size();

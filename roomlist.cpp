@@ -13,5 +13,6 @@ roomlist::roomlist()
     rooms[1][17]->addItem(listofitems.itemlist["key_gold"]);
     rooms[1][17]->addItem(listofitems.itemlist["orb_win"]);
     rooms[1][17]->addItem(listofitems.itemlist["key_black"]);
+    rooms[1][17]->addItem(listofitems.itemlist["weapon_spear"]);
 }
 
