@@ -148,6 +148,9 @@ void displayGL::resizeGL(int w, int h)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
+
+// http://nehe.gamedev.net/article/replacement_for_gluperspective/21002/
+// replacing GLU which is not present on Mac in standard OpenGL
 void displayGL::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar )
 {
     const GLdouble pi = 3.1415926535897932384626433832795;
