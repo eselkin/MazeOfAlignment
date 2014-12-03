@@ -63,9 +63,11 @@ private:
     void PickUpItem();
     void DropItem();
     bool in_inventory, in_rm_inventory;
+    int  item_at;
     void doNothing();
     bool showitems(QPainter *painter);
     bool showminimap(QPainter *painter);
+    bool showthisitem(QPainter *painter);
     void showminimap(); // the function pointer function
     bool show_map;
 };

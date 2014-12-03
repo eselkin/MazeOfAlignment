@@ -136,6 +136,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     showInfo(&painter); // show the info at the top of the screen
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
+    (in_rm_inventory) && showthisitem(&painter);
     painter.end();
     update();
 }
@@ -169,14 +170,16 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 void displayGL::keyPressEvent(QKeyEvent *event)
 {
-    if (in_rm_inventory){
+    if (in_rm_inventory)
+    {
+        int num_items_here = the_rooms.rooms[current_level][current_room]->getItems().size();
         switch(event->key())
         {
         case Qt::Key_Left:
-
+            ((item_at-1) >= 0) && item_at--;
             break;
         case Qt::Key_Right:
-
+            ((item_at+1) < num_items_here) && item_at++;
             break;
         case Qt::Key_Escape:
             in_rm_inventory = false;
@@ -348,16 +351,18 @@ void displayGL::turnRight()
 
 void displayGL::PickUpItem()
 {
+    // space bar sets the bool to true if there are items in the room
+    int num_items_here = the_rooms.rooms[current_level][current_room]->getItems().size();
+
     // removes item from room and puts it in player's inventory
     // on screen list will appear with ability to select item to pick
     // return will select the item
     // left right keys will select items
-    in_rm_inventory = true;
-
-    QPainter toPaint(this); // paint in the opengl
-
-    toPaint.end();
-
+    if (num_items_here > 0)
+    {
+        in_rm_inventory = true;
+        item_at = 0; // space bar resets to the first item in the vector
+    }
 }
 
 void displayGL::DropItem()
@@ -374,6 +379,25 @@ bool displayGL::showitems(QPainter *painter)
         string filename =  the_rooms.rooms[current_level][current_room]->getItems()[i]->getId();
         filename.append(".png");
         painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())).scaledToHeight(60));
+    }
+    return true;
+}
+
+bool displayGL::showthisitem(QPainter *painter)
+{
+    uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
+    if (item_at >= 0 && item_at < item_size)
+    {
+        string filename =  the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getId();
+        filename.append(".png");
+        QRect bg((this->width()/2)-20, (this->height()/2)-20, 100, 100); // a square to put the item in
+        QBrush bgbrush(Qt::black);
+        QPen bgoutline(Qt::darkGray);
+        bgoutline.setWidth(2);
+        painter->setPen(bgoutline);
+        painter->fillRect(bg, bgbrush);
+        painter->drawRect(bg); // outline the box
+        painter->drawImage(this->width()/2,this->height()/2,QImage(QString(filename.c_str())).scaledToWidth(60));
     }
     return true;
 }
@@ -405,15 +429,15 @@ bool displayGL::showminimap(QPainter *painter)
     Player2.setWidth(12);
     Player3.setWidth(12);
     uint k = 9; // starting
-    double starting_x = width()-height()/5.1 + 15;
+    double starting_x = width()-height()/5.1 + 18;
     double starting_y;
     for (uint i = 1; i < 7; i++)
     { // done constraints
-        starting_y = height()-15;
+        starting_y = height()-20;
         for (uint j = 0; j < 6; j++)
         {
             painter->setPen(RoomPen);
-            painter->drawPoint(starting_x,starting_y-(j*15));
+            painter->drawPoint(starting_x,starting_y-(j*20));
             // ask server to return array of room where Players are
             // if (serverresponse...)
 
@@ -427,15 +451,15 @@ bool displayGL::showminimap(QPainter *painter)
             case 0:
             case 1:
                 painter->setPen(Player1);
-                painter->drawPoint(starting_x,starting_y-(j*15));
+                painter->drawPoint(starting_x,starting_y-(j*20));
                 break;
             case 2:
                 painter->setPen(Player2);
-                painter->drawPoint(starting_x,starting_y-(j*15));
+                painter->drawPoint(starting_x,starting_y-(j*20));
                 break;
             case 3:
                 painter->setPen(Player3);
-                painter->drawPoint(starting_x,starting_y-(j*15));
+                painter->drawPoint(starting_x,starting_y-(j*20));
                 break;
             default:
                 break;
@@ -445,11 +469,11 @@ bool displayGL::showminimap(QPainter *painter)
             if (current_room == k)
             {
                 painter->setPen(Player0);
-                painter->drawPoint(starting_x,starting_y-(j*15));
+                painter->drawPoint(starting_x,starting_y-(j*20));
             }
             k++;
         }
-        starting_x = starting_x + 15;
+        starting_x = starting_x + 18;
         k+=2;
     }
     return true;
