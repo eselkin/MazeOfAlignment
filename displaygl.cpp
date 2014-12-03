@@ -137,7 +137,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
     painter.end();
-    //update();
+    update();
 }
 
 void displayGL::resizeGL(int w, int h)
