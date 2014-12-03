@@ -399,21 +399,21 @@ bool displayGL::showminimap(QPainter *painter)
     QPen Player2(Qt::yellow);
     QPen Player3(Qt::white);
     QPen RoomPen(Qt::gray);
-    RoomPen.setWidth(15);
-    Player0.setWidth(15);
-    Player1.setWidth(15);
-    Player2.setWidth(15);
-    Player3.setWidth(15);
+    RoomPen.setWidth(12);
+    Player0.setWidth(12);
+    Player1.setWidth(12);
+    Player2.setWidth(12);
+    Player3.setWidth(12);
     uint k = 9; // starting
-    double starting_x = width()-height()/5.1 + 20;
+    double starting_x = width()-height()/5.1 + 15;
     double starting_y;
     for (uint i = 1; i < 7; i++)
     { // done constraints
-        starting_y = height()-20;
+        starting_y = height()-15;
         for (uint j = 0; j < 6; j++)
         {
             painter->setPen(RoomPen);
-            painter->drawPoint(starting_x,starting_y-(j*25));
+            painter->drawPoint(starting_x,starting_y-(j*15));
             // ask server to return array of room where Players are
             // if (serverresponse...)
 
@@ -427,15 +427,15 @@ bool displayGL::showminimap(QPainter *painter)
             case 0:
             case 1:
                 painter->setPen(Player1);
-                painter->drawPoint(starting_x,starting_y-(j*25));
+                painter->drawPoint(starting_x,starting_y-(j*15));
                 break;
             case 2:
                 painter->setPen(Player2);
-                painter->drawPoint(starting_x,starting_y-(j*25));
+                painter->drawPoint(starting_x,starting_y-(j*15));
                 break;
             case 3:
                 painter->setPen(Player3);
-                painter->drawPoint(starting_x,starting_y-(j*25));
+                painter->drawPoint(starting_x,starting_y-(j*15));
                 break;
             default:
                 break;
@@ -445,11 +445,11 @@ bool displayGL::showminimap(QPainter *painter)
             if (current_room == k)
             {
                 painter->setPen(Player0);
-                painter->drawPoint(starting_x,starting_y-(j*25));
+                painter->drawPoint(starting_x,starting_y-(j*15));
             }
             k++;
         }
-        starting_x = starting_x + 25;
+        starting_x = starting_x + 15;
         k+=2;
     }
     return true;
