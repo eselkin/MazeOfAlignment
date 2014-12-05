@@ -1,10 +1,11 @@
-#include <iostream>
+#include <QCoreApplication>
+#include "moralityserver.h"
 
-using namespace std;
-
-int main()
+int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
-    return 0;
-}
+    QCoreApplication a(argc, argv);
 
+    MoralityServer Server;
+    Server.StartServer();
+    return a.exec();
+}

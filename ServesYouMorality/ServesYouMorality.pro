@@ -1,11 +1,25 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2014-12-04T23:07:05
+#
+#-------------------------------------------------
+
+QT       += core
+QT       += network
+QT       -= gui
+
+TARGET = ServesYouMorality
+CONFIG   += console
+
+CONFIG   -= app_bundle
+
 TEMPLATE = app
-CONFIG += console
-CONFIG -= app_bundle
-CONFIG += qt
-CONFIG += network
 
-SOURCES += main.cpp
 
-include(deployment.pri)
-qtcAddDeployment()
+SOURCES += main.cpp \
+    moralityserver.cpp \
+    runnablemaze.cpp
 
+HEADERS += \
+    moralityserver.h \
+    runnablemaze.h
