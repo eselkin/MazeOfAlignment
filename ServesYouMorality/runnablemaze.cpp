@@ -24,9 +24,11 @@ void RunnableMaze::run()
 
 
     // Where we interact with the socket
-    socket.write("Connected to runnable maze server");
+    socket.write("Connected to runnable maze server\r\n\r\n\r\n");
     socket.flush();
     socket.waitForBytesWritten();
-    socket.close();
+
+
+    socket.close(); // close the socket
 
 }
