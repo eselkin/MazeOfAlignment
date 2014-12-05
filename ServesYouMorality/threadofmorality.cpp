@@ -20,7 +20,6 @@ void ThreadOfMorality::run()
     // DirectConnection is Threaded, but isn't this dangerous for overloading the system
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(socket, SIGNAL(), this, SLOT());
 
     qDebug() << getSocketDescriptor() << " client connected.";
 
@@ -37,14 +36,11 @@ void ThreadOfMorality::readyRead()
     //    LOCATION::1,2                 // Level, Room... thus everyone should be on the same level
     //     WINNING::                    // SocketDescriptor just won the level
     //       SCORE::                    // We can have it "display" everyones score
+
     //....
     // This will then signal the server (parent) and that will then in turn signal all the threads.
     //....
-    // RESPOND TO THE CLIENT REQUEST HERE!
-    // Response to the client would be more difficult and would have to have repeating keys for which we can use regular expressions to split
-    //    LOCATION::ID1-1,ID2-4,ID3-19 // {socket descriptor that your computer would turn into player 0, 1, 2, ... n players
-    //    WINNING ::ID                 // Which socket descriptor won
-    //    SCORE   ::ID1-900,ID2-100000 // etc.
+    emit commandToServer(Data);
 }
 
 void ThreadOfMorality::disconnected()
