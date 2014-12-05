@@ -25,6 +25,9 @@ void MoralityServer::incomingConnection(int handle)
     RunnableMaze* task = new RunnableMaze;
     task->setAutoDelete(true);
     task->setSocketDesc(handle);
-    // connection requests
+    // connection requests // do thins
     PoolOfMorality->start(task);
+
+
+    //ta
 }

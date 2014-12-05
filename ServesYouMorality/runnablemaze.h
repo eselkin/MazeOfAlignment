@@ -7,9 +7,9 @@
 
 class RunnableMaze : public QRunnable
 {
-    Q_OBJECT
 public:
-    explicit RunnableMaze(QObject *parent = 0);
+    RunnableMaze();
+
     int getSocketDesc();
     void setSocketDesc(int sd);
 

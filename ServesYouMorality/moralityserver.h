@@ -5,6 +5,7 @@
 #include <QThreadPool>
 #include <QDebug>
 #include "runnablemaze.h"
+
 class MoralityServer : public QTcpServer
 {
     Q_OBJECT

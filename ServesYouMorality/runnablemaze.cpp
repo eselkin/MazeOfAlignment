@@ -1,6 +1,6 @@
 #include "runnablemaze.h"
 
-RunnableMaze::RunnableMaze(QObject *parent)
+RunnableMaze::RunnableMaze()
 {
 }
 
