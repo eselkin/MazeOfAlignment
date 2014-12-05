@@ -2,9 +2,8 @@
 #define MORALITYSERVER_H
 
 #include <QTcpServer>
-#include <QThreadPool>
 #include <QDebug>
-#include "runnablemaze.h"
+#include <QVector>
 
 class MoralityServer : public QTcpServer
 {
@@ -16,12 +15,15 @@ public:
 signals:
 
 protected:
-    void incomingConnection(int handle);
+    void incomingConnection(qint64 handle);
 
 public slots:
 
 private:
-    QThreadPool *PoolOfMorality;
+    qint32 num_clients;
+    qint8 level;                 // everyone is on one level
+    QVector<qint64> descriptors; // when joined, order matters for locations
+    QVector<qint8>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
 };
 
 #endif // MORALITYSERVER_H

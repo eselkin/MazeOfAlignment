@@ -1,11 +1,9 @@
 #include "moralityserver.h"
+#include "threadofmorality.h"
 
 MoralityServer::MoralityServer(QObject *parent) :
     QTcpServer(parent)
 {
-    PoolOfMorality = new QThreadPool(this);
-    PoolOfMorality->setMaxThreadCount(6); // set this
-
 }
 
 void MoralityServer::StartServer()
@@ -20,14 +18,12 @@ void MoralityServer::StartServer()
     }
 }
 
-void MoralityServer::incomingConnection(int handle)
+void MoralityServer::incomingConnection(qintptr socketDescriptor)
 {
-    RunnableMaze* task = new RunnableMaze;
-    task->setAutoDelete(true);
-    task->setSocketDesc(handle);
-    // connection requests // do thins
-    PoolOfMorality->start(task);
-
-
-    //ta
+    qDebug() << "Socket: " << socketDescriptor << " connecting.";
+    ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    descriptors << *socketDescriptor;
+    locations << 0;
+    thread->start();
 }

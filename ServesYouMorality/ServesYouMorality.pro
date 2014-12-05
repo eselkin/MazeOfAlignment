@@ -18,8 +18,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     moralityserver.cpp \
-    runnablemaze.cpp
+    threadofmorality.cpp
 
 HEADERS += \
     moralityserver.h \
-    runnablemaze.h
+    threadofmorality.h
