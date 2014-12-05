@@ -19,15 +19,18 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError e);
+    void commandToServer(qint64 ID, QByteArray packetcommand);
 
 public slots:
     void readyRead();
     void disconnected();
-    void commandSocket(QByteArray thebytes);
-    // should be encoded
+    void commandToSocket(QByteArray thebytes);
+    // should be encapsulated
     // packets of 512bytes or less beginning with the #bytes// so we'll know if whatever stripped of these bytes was complete
-    // the client will then receive this data on it's connection until it has received enough bytes and then packages that
-    // Then
+    // the client will then receive this data on it's connection until it has received enough bytes
+    // Not sure what recourse if there weren't enough
+
+
 private:
     QTcpSocket *socket;
     qintptr socketDescriptor;

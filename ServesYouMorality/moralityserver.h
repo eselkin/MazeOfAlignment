@@ -13,11 +13,13 @@ public:
     void StartServer();
 
 signals:
+    void sendCommand(QByteArray packetcommand);
 
 protected:
     void incomingConnection(qint64 handle);
 
 public slots:
+    void getCommand(qint64 PlayerID,  QByteArray packetcommand);
 
 private:
     qint32 num_clients;
