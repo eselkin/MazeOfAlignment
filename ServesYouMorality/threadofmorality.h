@@ -11,7 +11,7 @@ class ThreadOfMorality : public QThread
 {
     Q_OBJECT
 public:
-    explicit ThreadOfMorality(qintptr ID, QObject *parent = 0);
+    explicit ThreadOfMorality(qint64 ID, QObject *parent = 0);
     void run();
 
     qintptr getSocketDescriptor() const;
