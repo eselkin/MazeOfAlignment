@@ -19,15 +19,15 @@ public slots:
     void getCommand(qint64 PlayerID,  QByteArray packetcommand);
 
 protected:
-    void incomingConnection(qintptr socketDescriptor);
+    void incomingConnection(int socketDescriptor);
+    void moveToLocation(qint64 PlayerID, int newloc);
+    QString getLocations();
 
 private:
     qint32 num_clients;
     qint8 level;                 // everyone is on one level
     QVector<qint64> descriptors; // when joined, order matters for locations
-    QVector<qint8>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
-    QString getLocations();
-    QString setLocation(qint64 PlayerID, qint8 newlocation);
+    QVector<int>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
 };
 
 #endif // MORALITYSERVER_H

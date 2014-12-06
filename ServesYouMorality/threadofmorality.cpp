@@ -1,15 +1,16 @@
 #include "threadofmorality.h"
+#include <QDebug>
 
-ThreadOfMorality::ThreadOfMorality(qintptr ID, QObject *parent) :
+ThreadOfMorality::ThreadOfMorality(qint64 ID, QObject *parent) :
     QThread(parent)
 {
-    this->socketDescriptor = ID;
+    this->socketDescriptor = new qint64(ID);
 }
 
 void ThreadOfMorality::run()
 {
     qDebug() << "Thread started" << endl;
-    socket = new QTcpSocket();
+    socket = new QTcpSocket;
 
     if (!socket->setSocketDescriptor(*getSocketDescriptor()))
     {
@@ -22,15 +23,15 @@ void ThreadOfMorality::run()
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
-    qDebug() << getSocketDescriptor() << " client connected.";
+    qDebug() << *getSocketDescriptor() << " client connected.";
 
     exec(); // execute and hold in memory
 }
 
 void ThreadOfMorality::readyRead()
 {
-    QByteArray Data = socket->readAll(); // read all when signaled that it is ready
-    qDebug() << "client with desc: " << socketDescriptor << " sent: " << Data << endl;
+    QByteArray Data = socket->readLine(10000); // read all when signaled that it is ready
+    qDebug() << "client with desc: " << *socketDescriptor << " sent: " << Data << endl;
 
     // BREAK UP THE CLIENT REQUEST HERE
     //
@@ -54,8 +55,8 @@ void ThreadOfMorality::disconnected()
 
 void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
- qDebug() << "HELLO" << endl;
-
+    qDebug() << "BYTE:" << thebytes <<endl;
+    socket->write(thebytes);
 }
 
 qintptr ThreadOfMorality::getSocketDescriptor() const
