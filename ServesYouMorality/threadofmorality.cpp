@@ -3,13 +3,14 @@
 ThreadOfMorality::ThreadOfMorality(qintptr ID, QObject *parent) :
     QThread(parent)
 {
-    setSocketDescriptor(ID);
+    this->socketDescriptor = ID;
 }
 
 void ThreadOfMorality::run()
 {
     qDebug() << "Thread started" << endl;
     socket = new QTcpSocket();
+
     if (!socket->setSocketDescriptor(*getSocketDescriptor()))
     {
         // error out
@@ -53,7 +54,7 @@ void ThreadOfMorality::disconnected()
 
 void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
-
+ qDebug() << "HELLO" << endl;
 
 }
 

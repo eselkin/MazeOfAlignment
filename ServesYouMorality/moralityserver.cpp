@@ -94,10 +94,10 @@ QString MoralityServer::getLocations()
 
 void MoralityServer::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << "Socket: " << socketDescriptor << " connecting.";
+    qDebug() << "Socket: " << *socketDescriptor << " connecting.";
     ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(commandToServer(QByteArray)), this, SLOT(getCommand(QByteArray)));
+    connect(thread, SIGNAL(commandToServer(qint64,QByteArray)), this, SLOT(getCommand(qint64,QByteArray)));
     connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
     descriptors << *socketDescriptor;
     locations << 0;

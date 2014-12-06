@@ -15,11 +15,11 @@ public:
 signals:
     void sendCommand(QByteArray packetcommand);
 
-protected:
-    void incomingConnection(qintptr socketDescriptor);
-
 public slots:
     void getCommand(qint64 PlayerID,  QByteArray packetcommand);
+
+protected:
+    void incomingConnection(qintptr socketDescriptor);
 
 private:
     qint32 num_clients;
