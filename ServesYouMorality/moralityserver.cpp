@@ -2,7 +2,6 @@
 #include <QStringList>
 #include <QString>
 #include <QMutex>
-#include <QDebug>
 MoralityServer::MoralityServer(QObject *parent) :
     QTcpServer(parent)
 {
@@ -28,21 +27,17 @@ void MoralityServer::getCommand(qint64 PlayerID, QByteArray packetcommand)
     //    WINNING ::ID                 // Which socket descriptor won
     //    SCORE   ::ID1-900,ID2-100000 // etc.
     QString incomingcommand(packetcommand);
-    if (!incomingcommand.contains("//") || !incomingcommand.contains("::"))
-        return; // DONT DO ANYTHING WITH EMPTY LINES
     QStringList BytesCommand = incomingcommand.split("//",QString::SkipEmptyParts);
     qint16 bytesize(BytesCommand[0].toInt());
-    //    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
-    //        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
+    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
+        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
     QStringList CKeyVal = BytesCommand[1].split("::", QString::SkipEmptyParts);
     QString commandString;
     if (CKeyVal[0] == "LOCATION")
     {
         commandString="LOCATION::";
-        qDebug() << CKeyVal[1] << endl;
-        int newlocation = CKeyVal[1].toInt();
-        qDebug() << newlocation << endl;
-        moveToLocation(PlayerID, newlocation);
+        qint8 newlocation = CKeyVal[1].toInt();
+        setLocation(PlayerID, newlocation);
         commandString.append(getLocations());
     }
     else if (CKeyVal[0] == "WINNING")
@@ -60,24 +55,23 @@ void MoralityServer::getCommand(qint64 PlayerID, QByteArray packetcommand)
     {
         return;
     }
-    QString command;
-    command = QString::number(commandString.size());
-    command.append(tr("//"));
-    command.append(commandString);
+    QDataStream dataStream;
+    dataStream << QString::number(commandString.size());
+    dataStream << tr("//").toAscii();
+    dataStream << commandString.toAscii();
     QByteArray newPacketCommand;
-    newPacketCommand.append(command);
-    qDebug() << "THE PACKET: " << newPacketCommand <<endl;
+    dataStream >> newPacketCommand ;
     emit sendCommand(newPacketCommand);
 }
 
-void MoralityServer::moveToLocation(qint64 PlayerID, int newloc)
+QString MoralityServer::setLocation(qint64 PlayerID, qint8 newlocation)
 {
+    QMutex thisMutex;
+    thisMutex.lock();
     int i = 0;
     for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
     // i is ID location
-    QMutex thisMutex;
-    thisMutex.lock();
-    locations[i] = newloc;
+    locations[i] = newlocation;
     thisMutex.unlock();
 }
 
@@ -98,14 +92,14 @@ QString MoralityServer::getLocations()
     return templocations;
 }
 
-void MoralityServer::incomingConnection(int socketDescriptor)
+void MoralityServer::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << "Socket: " << socketDescriptor << " connecting.";
+    qDebug() << "Socket: " << *socketDescriptor << " connecting.";
     ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     connect(thread, SIGNAL(commandToServer(qint64,QByteArray)), this, SLOT(getCommand(qint64,QByteArray)));
     connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
-    descriptors.push_back(socketDescriptor);
-    locations.push_back(0);
+    descriptors << *socketDescriptor;
+    locations << 0;
     thread->start();
 }
