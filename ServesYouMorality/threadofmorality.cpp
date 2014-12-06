@@ -10,7 +10,7 @@ void ThreadOfMorality::run()
 {
     qDebug() << "Thread started" << endl;
     socket = new QTcpSocket();
-    if (!socket->socketDescriptor(getSocketDescriptor()))
+    if (!socket->setSocketDescriptor(*getSocketDescriptor()))
     {
         // error out
         emit error(socket->error());
@@ -41,7 +41,7 @@ void ThreadOfMorality::readyRead()
     //....
     // This will then signal the server (parent) and that will then in turn signal all the threads.
     //....
-    emit commandToServer(Data);
+    emit commandToServer(socket->socketDescriptor(), Data);
 }
 
 void ThreadOfMorality::disconnected()
@@ -53,6 +53,7 @@ void ThreadOfMorality::disconnected()
 
 void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
+
 
 }
 
