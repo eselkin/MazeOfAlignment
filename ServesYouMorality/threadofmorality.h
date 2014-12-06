@@ -5,13 +5,22 @@
 #include <QTcpSocket>
 #include <QDebug>
 
-typedef qint64* qintptr;
+#ifdef __linux__
+typedef qint32* qintptr;
+#endif
+
+///
+/// CHANGE THE ABOVE TYPEDEF TO ADD #ifdef __APPLE__
+/// and the same next two lines if you get an error building
+/// on Apple... Windows Qt has a typedef for qintptr already
+/// in QtGlobal
+///
 
 class ThreadOfMorality : public QThread
 {
     Q_OBJECT
 public:
-    explicit ThreadOfMorality(qint64 ID, QObject *parent = 0);
+    explicit ThreadOfMorality(qint32 ID, QObject *parent = 0);
     void run();
 
     qintptr getSocketDescriptor() const;
@@ -19,7 +28,7 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError e);
-    void commandToServer(qint64 ID, QByteArray packetcommand);
+    void commandToServer(qint32 ID, QByteArray packetcommand);
 
 public slots:
     void readyRead();

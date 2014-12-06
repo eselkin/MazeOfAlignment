@@ -1,10 +1,10 @@
 #include "threadofmorality.h"
 #include <QDebug>
 
-ThreadOfMorality::ThreadOfMorality(qint64 ID, QObject *parent) :
+ThreadOfMorality::ThreadOfMorality(qint32 ID, QObject *parent) :
     QThread(parent)
 {
-    this->socketDescriptor = new qint64(ID);
+    this->socketDescriptor = new qint32(ID);
 }
 
 void ThreadOfMorality::run()
@@ -30,6 +30,10 @@ void ThreadOfMorality::run()
 
 void ThreadOfMorality::readyRead()
 {
+    /// READY READ ALLOWS US TO KNOW IF SOME DATA HAS COME IN ON THE SOCKET OF THIS THREAD, THEN EMITS
+    /// A SIGNAL THAT GETS TAKEN UP BY A SLOT IN THE SERVER AND THEN REDISTRIBUTED AS NECCESSARY TO ALL
+    /// THREADS
+
     QByteArray Data = socket->readLine(10000); // read all when signaled that it is ready
     qDebug() << "client with desc: " << *socketDescriptor << " sent: " << Data << endl;
 
@@ -57,6 +61,7 @@ void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
     qDebug() << "BYTE:" << thebytes <<endl;
     socket->write(thebytes);
+    socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
 }
 
 qintptr ThreadOfMorality::getSocketDescriptor() const

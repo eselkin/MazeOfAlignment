@@ -16,17 +16,17 @@ signals:
     void sendCommand(QByteArray packetcommand);
 
 public slots:
-    void getCommand(qint64 PlayerID,  QByteArray packetcommand);
+    void getCommand(qint32 PlayerID,  QByteArray packetcommand);
 
 protected:
     void incomingConnection(int socketDescriptor);
-    void moveToLocation(qint64 PlayerID, int newloc);
+    void moveToLocation(qint32 PlayerID, int newloc);
     QString getLocations();
 
 private:
     qint32 num_clients;
     qint8 level;                 // everyone is on one level
-    QVector<qint64> descriptors; // when joined, order matters for locations
+    QVector<qint32> descriptors; // when joined, order matters for locations
     QVector<int>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
 };
 

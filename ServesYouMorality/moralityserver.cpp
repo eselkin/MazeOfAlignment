@@ -20,7 +20,7 @@ void MoralityServer::StartServer()
     }
 }
 
-void MoralityServer::getCommand(qint64 PlayerID, QByteArray packetcommand)
+void MoralityServer::getCommand(qint32 PlayerID, QByteArray packetcommand)
 {
     // RESPOND TO THE CLIENT REQUEST HERE!
     // Response to the client would be more difficult and would have to have repeating keys for which we can use regular expressions to split
@@ -70,7 +70,7 @@ void MoralityServer::getCommand(qint64 PlayerID, QByteArray packetcommand)
     emit sendCommand(newPacketCommand);
 }
 
-void MoralityServer::moveToLocation(qint64 PlayerID, int newloc)
+void MoralityServer::moveToLocation(qint32 PlayerID, int newloc)
 {
     int i = 0;
     for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
@@ -103,7 +103,7 @@ void MoralityServer::incomingConnection(int socketDescriptor)
     qDebug() << "Socket: " << socketDescriptor << " connecting.";
     ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(commandToServer(qint64,QByteArray)), this, SLOT(getCommand(qint64,QByteArray)));
+    connect(thread, SIGNAL(commandToServer(qint32,QByteArray)), this, SLOT(getCommand(qint32,QByteArray)));
     connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
     descriptors.push_back(socketDescriptor);
     locations.push_back(0);
