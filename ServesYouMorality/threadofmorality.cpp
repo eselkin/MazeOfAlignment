@@ -30,6 +30,7 @@ void ThreadOfMorality::readyRead()
 {
     QByteArray Data = socket->readAll(); // read all when signaled that it is ready
     qDebug() << "client with desc: " << socketDescriptor << " sent: " << Data << endl;
+
     // BREAK UP THE CLIENT REQUEST HERE
     //
     // HEADER KEY ::VALUE               // Meaning
@@ -48,6 +49,11 @@ void ThreadOfMorality::disconnected()
     qDebug() << socketDescriptor << " Disconnected";
     socket->deleteLater();
     exit(0);
+}
+
+void ThreadOfMorality::commandToSocket(QByteArray thebytes)
+{
+
 }
 
 qintptr ThreadOfMorality::getSocketDescriptor() const

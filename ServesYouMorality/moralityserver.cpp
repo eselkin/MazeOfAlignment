@@ -2,6 +2,7 @@
 #include "threadofmorality.h"
 #include <QStringList>
 #include <QString>
+#include <QMutex>
 MoralityServer::MoralityServer(QObject *parent) :
     QTcpServer(parent)
 {
@@ -32,18 +33,56 @@ void MoralityServer::getCommand(qint64 PlayerID, QByteArray packetcommand)
     if (BytesCommand[1].size() != bytesize)
         qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
     QStringList CKeyVal = BytesCommand[1].split("::", QString::SkipEmptyParts);
+    QString commandString;
     switch(CKeyVal[0])
     {
     case "LOCATION":
+        commandString="LOCATION::";
+        qint8 newlocation = CKeyVal[1].toInt();
+        setLocation(PlayerID, newlocation);
+        commandString.append(getLocations());
         break;
     case "WINNING":
+        commandString="WINNING::";
+        commandString.append(PlayerID);
         break;
     case "SCORE":
+        //        commandString="SCORE::";
+        //        commandString.append() NOT SURE ABOUT THIS YET SCORE OR ALIGNMENT
+        //        IT COULD BE DISPLAYED SOMEHOW
         break;
     }
-
     QByteArray newPacketCommand(commandString);
-    //emit sendCommand(newPacketCommand);
+    newPacketCommand.prepend(tr("//"));
+    newPacketCommand.prepend(QString::number(commandString.size()));
+    emit sendCommand(newPacketCommand);
+}
+
+QString MoralityServer::setLocation(qint64 PlayerID, qint8 newlocation)
+{
+    QMutex thisMutex;
+    thisMutex.lock();
+    int i = 0;
+    for (; i < descriptors.size() && descriptor[i] != PlayerID ; i++);
+    // i is ID location
+    locations[i] = newlocation;
+    thisMutex.unlock();
+}
+
+QString MoralityServer::getLocations()
+{
+    QString templocations;
+    QMutex thisMutex;
+    for (int i = 0; i < descriptors.size(); i++)
+    {
+        (i != 0) && (templocations.append(tr(",")));
+        thisMutex.lock(); // block access so we have the most relevant locations and descriptors
+        templocations.append(QString::number(descriptors[i]));
+        templocations.append(tr("-"));
+        templocations.append(QString::number(locations[i]));
+        thisMutex.unlock();
+    }
+    return templocations;
 }
 
 void MoralityServer::incomingConnection(qintptr socketDescriptor)
