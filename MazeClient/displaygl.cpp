@@ -438,6 +438,7 @@ void displayGL::showminimap()
 
 bool displayGL::showminimap(QPainter *painter)
 {
+
     painter->setRenderHint(QPainter::Antialiasing);
     QRect border(width()-height()/5,height()-height()/5, height()/5,height()/5);
     QRect minimap(width()-height()/5.1, height()-height()/5.1,height()/5.1,height()/5.1);
@@ -449,18 +450,18 @@ bool displayGL::showminimap(QPainter *painter)
     painter->fillRect(minimap,minimapbrush);
     QPen Player0(Qt::red);
     QPen RoomPen(Qt::gray);
-    RoomPen.setWidth(12);
+    RoomPen.setWidth(15);
     Player0.setWidth(12);
     uint k = 9; // starting
-    double starting_x = width()-height()/5.1 + 20;
+    double starting_x = width()-height()/5.1 + 10;
     double starting_y;
     for (uint i = 1; i < 7; i++)
     { // done constraints
-        starting_y = height()-20;
+        starting_y = height()-21;
         for (uint j = 0; j < 6; j++)
         {
             painter->setPen(RoomPen);
-            painter->drawPoint(starting_x,starting_y-(j*20));
+            painter->drawPoint(starting_x,starting_y-(j*21));
             // ask server to return array of room where Players are
             // if (serverresponse...)
 
@@ -487,30 +488,33 @@ bool displayGL::showminimap(QPainter *painter)
             //            default:
             //                break;
             //            }
-            QMutex thismutex;
-            thismutex.lock();
+            qDebug() << "HERE" << endl;
+            QMutex thisMutex;
+            thisMutex.lock();
             QVector<int> temp(PlayerLocations);
-            thismutex.unlock();
 
-            for (int m = 0; m < temp.size(); i++)
+            qDebug() << "tempsize:" << temp.size() << endl;
+            for (int m = 0; m < temp.size(); m++)
             {
+                qDebug() << "temp[" << m << "]: "<< temp[m] << endl;
                 if (temp[m] == k)
                 {
                     QPen Player1(QColor(m*.5, m*.3, m*.4));
                     Player1.setWidth(12);
                     painter->setPen(Player1);
-                    painter->drawPoint(starting_x,starting_y-(j*20));
+                    painter->drawPoint(starting_x,starting_y-(j*21));
                 }
             }
+            thisMutex.unlock();
             // show myself, yes have in program
             if (current_room == k)
             {
                 painter->setPen(Player0);
-                painter->drawPoint(starting_x,starting_y-(j*20));
+                painter->drawPoint(starting_x,starting_y-(j*21));
             }
             k++;
         }
-        starting_x = starting_x + 20;
+        starting_x = starting_x + 21;
         k+=2;
     }
     return true;
