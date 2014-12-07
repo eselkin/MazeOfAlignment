@@ -33,7 +33,7 @@ public slots:
     void mousePressEvent( QMouseEvent *e );
     void keyPressEvent(QKeyEvent *e);
     void showInfo(QPainter *toPaint);
-
+    void ChangeLocations(QStringList playerlocations);
 protected slots:
 
 protected:

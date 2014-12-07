@@ -21,6 +21,7 @@ displayGL::displayGL(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
     Evil = new NetworkOfAlignment("127.0.0.1",9966);
+    connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     double r_init = 0.1;
     double g_init = 0.3;
     double b_init = 0.3;
@@ -231,6 +232,16 @@ void displayGL::showInfo(QPainter *toPaint)
     update();
 }
 
+void displayGL::ChangeLocations(QStringList playerlocations)
+{
+    PlayerLocations.clear();
+    for (int i = 0; i < playerlocations.size(); i++)
+    {
+        QStringList player_loc = playerlocations[i].split("-");
+        PlayerLocations.push_back(player_loc[1].toInt());
+    }
+}
+
 
 
 // Basically a draw a vertical trapezoid function
@@ -329,6 +340,7 @@ void displayGL::moveForward()
         // testForward has the list of items we must check against our inventory
         current_room = current_room + count_ahead;
     }
+    Evil->moveToServer(current_room);
     update();
     updateGL();
 }
@@ -347,6 +359,7 @@ void displayGL::moveBackward()
         // testForward has the list of items we must check against our inventory
         current_room = current_room + count_ahead;
     }
+    Evil->moveToServer(current_room);
     update();
     updateGL();
 }
@@ -435,15 +448,9 @@ bool displayGL::showminimap(QPainter *painter)
     painter->setBrush(minimapbrush);
     painter->fillRect(minimap,minimapbrush);
     QPen Player0(Qt::red);
-    QPen Player1(Qt::blue);
-    QPen Player2(Qt::yellow);
-    QPen Player3(Qt::white);
     QPen RoomPen(Qt::gray);
     RoomPen.setWidth(12);
     Player0.setWidth(12);
-    Player1.setWidth(12);
-    Player2.setWidth(12);
-    Player3.setWidth(12);
     uint k = 9; // starting
     double starting_x = width()-height()/5.1 + 20;
     double starting_y;
@@ -462,25 +469,39 @@ bool displayGL::showminimap(QPainter *painter)
             //            DANGER
             //
             // THIS IS JUST A TEST NOT TO BE USED IN THE GAME!
-            switch(rand()%5) // give a chance for just grey square
-            {
-            case 0:
-            case 1:
-                painter->setPen(Player1);
-                painter->drawPoint(starting_x,starting_y-(j*20));
-                break;
-            case 2:
-                painter->setPen(Player2);
-                painter->drawPoint(starting_x,starting_y-(j*20));
-                break;
-            case 3:
-                painter->setPen(Player3);
-                painter->drawPoint(starting_x,starting_y-(j*20));
-                break;
-            default:
-                break;
-            }
+            //            switch(rand()%5) // give a chance for just grey square
+            //            {
+            //            case 0:
+            //            case 1:
+            //                painter->setPen(Player1);
+            //                painter->drawPoint(starting_x,starting_y-(j*20));
+            //                break;
+            //            case 2:
+            //                painter->setPen(Player2);
+            //                painter->drawPoint(starting_x,starting_y-(j*20));
+            //                break;
+            //            case 3:
+            //                painter->setPen(Player3);
+            //                painter->drawPoint(starting_x,starting_y-(j*20));
+            //                break;
+            //            default:
+            //                break;
+            //            }
+            QMutex thismutex;
+            thismutex.lock();
+            QVector<int> temp(PlayerLocations);
+            thismutex.unlock();
 
+            for (int m = 0; m < temp.size(); i++)
+            {
+                if (temp[m] == k)
+                {
+                    QPen Player1(QColor(m*.5, m*.3, m*.4));
+                    Player1.setWidth(12);
+                    painter->setPen(Player1);
+                    painter->drawPoint(starting_x,starting_y-(j*20));
+                }
+            }
             // show myself, yes have in program
             if (current_room == k)
             {

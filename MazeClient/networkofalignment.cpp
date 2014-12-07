@@ -100,6 +100,20 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
     }
 }
 
+void NetworkOfAlignment::moveToServer(int current_room)
+{
+    QString command = "LOCATION::";
+    command.append(QString::number(current_room));
+    int packetsize = command.size();
+    command.prepend(tr("//"));
+    command.prepend(QString::number(packetsize));
+    QByteArray newCommand;
+    qDebug() << "STRING:" << command <<endl;
+
+    newCommand.append(command);
+    ct_socket->write(newCommand);
+}
+
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
 {
     // blah, the one from the Qt Tutorials on Fortune network client, but no message boxes... that's silly here

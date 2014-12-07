@@ -28,6 +28,7 @@ public slots:
     void disconnected();
     void SessionOpened();
     void commandToClient(QByteArray packetcommand);
+    void moveToServer(int current_room);
 
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);
