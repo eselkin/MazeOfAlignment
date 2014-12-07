@@ -47,6 +47,7 @@ private slots:
 
 private:
     roomlist the_rooms;
+    QVector<int> PlayerLocations;
     QImage m_images[40];
     GLuint texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];

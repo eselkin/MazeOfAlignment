@@ -10,7 +10,7 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
-
+#include <QDebug>
 
 // NETWORKING CLIENT
 class NetworkOfAlignment : public QObject
@@ -21,11 +21,12 @@ public:
 
 signals:
     void commandToThread(QByteArray packetcommand);
+    void LocationsChanged(QStringList playerlocations);
 
 public slots:
     void readyRead();
     void disconnected();
-    void commandToClient(QByteArray thebytes);
+    void commandToClient(QByteArray packetcommand);
 
 private:
     QString ct_name;
