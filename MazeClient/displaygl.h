@@ -11,6 +11,7 @@
 #include "weights.h"
 #include "adjacency.h"
 #include "roomlist.h"
+#include "networkofalignment.h"
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -46,6 +47,7 @@ protected:
 private slots:
 
 private:
+    NetworkOfAlignment *Evil;
     roomlist the_rooms;
     QVector<int> PlayerLocations;
     QImage m_images[40];

@@ -20,7 +20,7 @@ using namespace std;
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-
+    Evil = new NetworkOfAlignment("127.0.0.1",9966);
     double r_init = 0.1;
     double g_init = 0.3;
     double b_init = 0.3;

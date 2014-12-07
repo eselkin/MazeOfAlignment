@@ -1,4 +1,5 @@
 #include "networkofalignment.h"
+#include <QNetworkSession>
 #include <QStringList>
 #include <QDebug>
 
@@ -17,6 +18,28 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
     s_port = serverPort;
     // MAKE THE CONNECTION
     ct_socket->connectToHost(s_address, s_port);
+
+    // DIRECTLY COPIED FROM ... AND I'm not 100% sure we need it
+    //    http://qt-project.org/doc/qt-5/qtnetwork-fortuneclient-client-cpp.html
+    QNetworkConfigurationManager manager;
+    if (manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired) {
+        // Get saved network configuration
+        QSettings settings(QSettings::UserScope, QLatin1String("QtProject"));
+        settings.beginGroup(QLatin1String("QtNetwork"));
+        const QString id = settings.value(QLatin1String("DefaultNetworkConfiguration")).toString();
+        settings.endGroup();
+
+        // If the saved network configuration is not currently discovered use the system default
+        QNetworkConfiguration config = manager.configurationFromIdentifier(id);
+        if ((config.state() & QNetworkConfiguration::Discovered) !=
+                QNetworkConfiguration::Discovered) {
+            config = manager.defaultConfiguration();
+        }
+
+        ct_session = new QNetworkSession(config, this);
+        connect(ct_session, SIGNAL(opened()), this, SLOT(sessionOpened()));
+        ct_session->open();
+    }
 
 }
 
@@ -76,6 +99,8 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
 
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
 {
+    // blah, the one from the Qt Tutorials on Fortune network client, but no message boxes... that's silly here
+    // http://qt-project.org/doc/qt-5/qtnetwork-fortuneclient-example.html
     switch (socketError)
     {
     case QAbstractSocket::RemoteHostClosedError:
@@ -87,6 +112,6 @@ void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
         qDebug() << "SERVER NOT FOUND AT ADDRESS: " << s_address << " AND PORT: " << s_port <<endl;
         break;
     default:
-        qDebug << tcpSocket->errorString();
+        qDebug() << ct_socket->errorString();
     }
 }
