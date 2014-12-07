@@ -8,11 +8,11 @@ MoralityServer::MoralityServer(QObject *parent) :
 {
 }
 
-void MoralityServer::StartServer()
+void MoralityServer::StartServer(int myport)
 {
-    if (this->listen(QHostAddress::Any, 9966))
+    if (this->listen(QHostAddress::Any, myport))
     {
-        qDebug() << "Server Started...";
+        qDebug() << "Server Started... on" << this->serverAddress();
     }
     else
     {
@@ -70,6 +70,24 @@ void MoralityServer::getCommand(qint32 PlayerID, QByteArray packetcommand)
     emit sendCommand(newPacketCommand);
 }
 
+void MoralityServer::removeplayer(qint32 PlayerID)
+{
+    int i = 0;
+    for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
+    // i is ID location
+    QMutex thisMutex;
+    thisMutex.lock();
+
+    descriptors.remove(i);
+    locations.remove(i);
+    thisMutex.unlock();
+    // do not send out info of new locations here
+    // because seems to happen before socket gets
+    // destroyed leading to a crash! Not NULL ptr
+    // dereference, but just as bad!
+
+}
+
 void MoralityServer::moveToLocation(qint32 PlayerID, int newloc)
 {
     int i = 0;
@@ -105,6 +123,7 @@ void MoralityServer::incomingConnection(int socketDescriptor)
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     connect(thread, SIGNAL(commandToServer(qint32,QByteArray)), this, SLOT(getCommand(qint32,QByteArray)));
     connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
+    connect(thread, SIGNAL(socketdisconnect(qint32)), this, SLOT(removeplayer(qint32)));
     descriptors.push_back(socketDescriptor);
     locations.push_back(0);
     thread->start();

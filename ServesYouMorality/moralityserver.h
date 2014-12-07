@@ -5,19 +5,38 @@
 #include <QDebug>
 #include <QVector>
 
+
+
+///
+/// The MoralityServer class...
+/// This is the server, run from a parent with an instance of it and then
+/// run it with the start server... listening on a 8byte or less port that
+/// you pass the StartServer(qint8) member function
+///
+/// From the main server thread connections are made and pushed to threads
+/// where a socket is formed and connected. Details about the thread are handled
+/// in threadofmorality.h
+///
+/// In incommingConnection member function a signal/slot connections are bound
+/// so when text to the server is emitted by the thread's socket (connection from client)
+/// We interpret that here as a command that must meet some specification.
+/// The specifications are lengthofcommandprefixanddata//COMMANDPREFIX::DATA
+///
+///
+
 class MoralityServer : public QTcpServer
 {
     Q_OBJECT
 public:
     explicit MoralityServer(QObject *parent = 0);
-    void StartServer();
+    void StartServer(int port);
 
 signals:
     void sendCommand(QByteArray packetcommand);
 
 public slots:
     void getCommand(qint32 PlayerID,  QByteArray packetcommand);
-
+    void removeplayer(qint32 PlayerID);
 protected:
     void incomingConnection(int socketDescriptor);
     void moveToLocation(qint32 PlayerID, int newloc);

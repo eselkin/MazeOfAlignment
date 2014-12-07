@@ -28,12 +28,14 @@ public:
 
 signals:
     void error(QTcpSocket::SocketError e);
+    void socketdisconnect(qint32 SD); // issue disconnect so server can catch it and remove player info
     void commandToServer(qint32 ID, QByteArray packetcommand);
 
 public slots:
     void readyRead();
     void disconnected();
     void commandToSocket(QByteArray thebytes);
+
     // should be encapsulated
     // packets of 512bytes or less beginning with the #bytes// so we'll know if whatever stripped of these bytes was complete
     // the client will then receive this data on it's connection until it has received enough bytes
