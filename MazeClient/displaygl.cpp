@@ -15,25 +15,29 @@
 #include <QString>
 #include "adjacency.h"
 #include "roomlist.h"
+#include <QSound>
+#include <phonon/MediaObject>
+#include <phonon/AudioOutput>
+#include <phonon/Path>
+
 using namespace std;
 
 displayGL::displayGL(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
+    // GOSH, playing media files on Qt is crazy!
+    //    Phonon::MediaObject *mediaObject = new Phonon::MediaObject(this);
+    //    mediaObject->setCurrentSource(Phonon::MediaSource("./song.wav"));
+    //    Phonon::AudioOutput *audioOutput =
+    //            new Phonon::AudioOutput(Phonon::MusicCategory, this);
+    //    Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);
+    //    mediaObject->play();
+
     Evil = new NetworkOfAlignment("127.0.0.1",9966);
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     double r_init = 0.1;
     double g_init = 0.3;
     double b_init = 0.3;
-    for (uint i = 0; i < 7; i++)
-    {
-        (i%2) && (r_init+=0.25);
-        (i%3) && (g_init+=0.1);
-        (i%5) && (b_init+=0.25);
-        level_r[i] = r_init;
-        level_g[i] = g_init;
-        level_b[i] = b_init;
-    }
     setAutoFillBackground(false);
     current_direction = WEST;
     current_level = 1;
@@ -102,28 +106,42 @@ void displayGL::paintEvent(QPaintEvent *event)
     int i = 0;
 
     weights* forward = NULL;
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    bool playerahead = false;
+    int playerdepth = 0;
+    int playerid = 0;
+
     do {
         my_room = my_room + count_ahead;
         if (current_direction == NORTH)
         {
             drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
             drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
+            for (int k = 0; k < PlayerLocations.size(); k++)
+                (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
         }
         else
             if (current_direction == SOUTH)
             {
                 drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
                 drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
+                for (int k = 0; k < PlayerLocations.size(); k++)
+                    (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
             }
             else
                 if (current_direction == EAST)
                 {
                     drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
                     drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
+                    for (int k = 0; k < PlayerLocations.size(); k++)
+                        (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
                 }
                 else {
                     drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
                     drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
+                    for (int k = 0; k < PlayerLocations.size(); k++)
+                        (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
                 }
         count_ahead = countAhead(current_direction);
         forward = checkAhead(my_room, my_room+count_ahead);
@@ -132,8 +150,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
 
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    (playerahead) && (drawEnemy(playerid, playerdepth, &painter)) && (playerdepth = playerahead = 0);
     showInfo(&painter); // show the info at the top of the screen
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
@@ -165,6 +182,7 @@ void displayGL::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, G
 
     glFrustum( -fW, fW, -fH, fH, zNear, zFar );
 }
+
 void displayGL::mousePressEvent(QMouseEvent *e)
 {
 }
@@ -234,15 +252,16 @@ void displayGL::showInfo(QPainter *toPaint)
 
 void displayGL::ChangeLocations(QStringList playerlocations)
 {
+    QMutex thisMutex;
+    thisMutex.lock();
     PlayerLocations.clear();
     for (int i = 0; i < playerlocations.size(); i++)
     {
         QStringList player_loc = playerlocations[i].split("-");
         PlayerLocations.push_back(player_loc[1].toInt());
     }
+    thisMutex.unlock();
 }
-
-
 
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
@@ -315,6 +334,7 @@ bool displayGL::drawBackWall(int depth, int type, int level)
     glDisable(GL_TEXTURE_2D);
     return 1;
 }
+
 
 weights *displayGL::checkAhead(int room_number, int next_room)
 {
@@ -410,6 +430,14 @@ bool displayGL::showitems(QPainter *painter)
         painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())));
     }
     return true;
+}
+bool displayGL::drawEnemy(int player, int size, QPainter *painter)
+{
+    int newsize = 500/size;
+    QMutex thisMutex;
+    thisMutex.lock();
+    painter->drawImage(this->width()/2, this->height()/2, QImage("./troll.png").scaledToHeight(newsize));
+    thisMutex.unlock();
 }
 
 bool displayGL::showthisitem(QPainter *painter)

@@ -12,6 +12,7 @@
 #include "adjacency.h"
 #include "roomlist.h"
 #include "networkofalignment.h"
+#include <QSound>
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -34,6 +35,7 @@ public slots:
     void keyPressEvent(QKeyEvent *e);
     void showInfo(QPainter *toPaint);
     void ChangeLocations(QStringList playerlocations);
+
 protected slots:
 
 protected:
@@ -43,7 +45,7 @@ protected:
     bool drawDoor(bool left_right, int start_depth);
     bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
     void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-
+    bool drawEnemy(int player, int size, QPainter *painter);
 private slots:
 
 private:

@@ -2,6 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 QT += core gui opengl network
+QT += phonon
 
 TARGET = MazeOfAlignment
 

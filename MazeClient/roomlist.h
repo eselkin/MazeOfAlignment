@@ -7,8 +7,11 @@
 struct roomlist
 {
     roomlist();
+    ~roomlist();
     allItems listofitems;
     room *rooms[7][64];
+
+public:
 };
 
 #endif // ROOMLIST_H

@@ -103,8 +103,8 @@ Adjacency::Adjacency()
     adjacencytable[1][33][25] = new weights();
     adjacencytable[1][33][34] = new weights();
     adjacencytable[1][34][33] = new weights();
-    adjacencytable[1][34][33]->setDoor(2);
-    adjacencytable[1][33][34]->setDoor(2);
+    adjacencytable[1][34][33]->setDoor(5);
+    adjacencytable[1][33][34]->setDoor(5);
     adjacencytable[1][33][41] = new weights();
     adjacencytable[1][41][33] = new weights();
     adjacencytable[1][41][42] = new weights();

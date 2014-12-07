@@ -16,3 +16,11 @@ roomlist::roomlist()
     rooms[1][17]->addItem(listofitems.itemlist["weapon_spear"]);
 }
 
+roomlist::~roomlist()
+{
+    for (uint i = 0; i <7; i++)
+    {
+        for (uint j = 0; j < 64; j++)
+            delete rooms[i][j];
+    }
+}
