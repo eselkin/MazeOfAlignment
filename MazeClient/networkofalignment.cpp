@@ -2,8 +2,8 @@
 #include <QStringList>
 #include <QDebug>
 
-NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, QObject *parent) :
-    QObject(parent)
+NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QObject *parent) :
+    QObject(parent), ct_session(0)
 {
     // Create the socket
     ct_socket  = new QTcpSocket(this); // we connect the socket to this because it is not a thread, but an instance of an object
@@ -12,7 +12,11 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, QObject *parent) :
     ct_IPaddrs = QNetworkInterface::allAddresses();
     // when we receive a readyRead() from the thread of the server, we read it as a command coming from the server
     connect( ct_socket, SIGNAL(readyRead()), this, SLOT( readyRead()) );
-
+    connect( ct_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
+    s_address = serverIPaddr;
+    s_port = serverPort;
+    // MAKE THE CONNECTION
+    ct_socket->connectToHost(s_address, s_port);
 
 }
 
@@ -65,5 +69,24 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
     } else if (CKeyVal[0] == "WINNING")
     {
         // someone won, maybe even us so check it
+        // advance to the next level if it exists...
+        // If not, compare points? and end.
+    }
+}
+
+void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
+{
+    switch (socketError)
+    {
+    case QAbstractSocket::RemoteHostClosedError:
+        break;
+    case QAbstractSocket::HostNotFoundError:
+        qDebug() << "SERVER NOT FOUND AT ADDRESS: " << s_address << " AND PORT: " << s_port <<endl;
+        break;
+    case QAbstractSocket::ConnectionRefusedError:
+        qDebug() << "SERVER NOT FOUND AT ADDRESS: " << s_address << " AND PORT: " << s_port <<endl;
+        break;
+    default:
+        qDebug << tcpSocket->errorString();
     }
 }

@@ -17,7 +17,7 @@ class NetworkOfAlignment : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetworkOfAlignment(QString serverIPaddr, QObject *parent = 0);
+    explicit NetworkOfAlignment(QString serverIPaddr, int serverPort, QObject *parent = 0);
 
 signals:
     void commandToThread(QByteArray packetcommand);
@@ -28,10 +28,16 @@ public slots:
     void disconnected();
     void commandToClient(QByteArray packetcommand);
 
+private slots:
+    void displayError(QAbstractSocket::SocketError socketError);
+
 private:
     QString ct_name;
     QList<QHostAddress> ct_IPaddrs;
     QTcpSocket *ct_socket;
+    QNetworkSession *ct_session;
+    QString s_address;
+    int s_port;
 };
 
 #endif // NETWORKOFALIGNMENT_H

@@ -54,7 +54,7 @@ void ThreadOfMorality::disconnected()
 {
     qDebug() << *socketDescriptor << " Disconnected";
     socket->deleteLater();
-    emit socketdisconnect(*socketDescriptor); // delete player info from database
+    emit socketdisconnect(*socketDescriptor); // delete player info from data to be broadcast and tracked
     exit(0);
 }
 
