@@ -12,7 +12,7 @@ void MoralityServer::StartServer(int myport)
 {
     if (this->listen(QHostAddress::Any, myport))
     {
-        qDebug() << "Server Started... on" << this->serverAddress();
+        qDebug() << "Server Started... at " << serverAddress() << " and port: " << this->serverPort();
     }
     else
     {
@@ -92,7 +92,7 @@ void MoralityServer::moveToLocation(qint32 PlayerID, int newloc)
 {
     int i = 0;
     for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
-    // i is ID location
+    // i is ID location in QVector
     QMutex thisMutex;
     thisMutex.lock();
     locations[i] = newloc;
