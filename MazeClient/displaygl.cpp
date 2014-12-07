@@ -488,24 +488,28 @@ bool displayGL::showminimap(QPainter *painter)
             //            default:
             //                break;
             //            }
-            qDebug() << "HERE" << endl;
             QMutex thisMutex;
             thisMutex.lock();
             QVector<int> temp(PlayerLocations);
-
-            qDebug() << "tempsize:" << temp.size() << endl;
+            thisMutex.unlock();
             for (int m = 0; m < temp.size(); m++)
             {
-                qDebug() << "temp[" << m << "]: "<< temp[m] << endl;
                 if (temp[m] == k)
                 {
-                    QPen Player1(QColor(m*.5, m*.3, m*.4));
+                    qDebug() << "temp[" << m << "]: "<< temp[m] << endl;
+                    QPen Player1;
+                    if (!(m%2))
+                        Player1.setColor(QColor((m+3), (m+3), (m+3)*50));
+                    else if (!(m%3))
+                        Player1.setColor(QColor((m+3)*50, (m+3), (m+3)*50));
+                    else if (!(m%5))
+                        Player1.setColor(QColor((m+3), (m+3)*30, (m+3)));
+
                     Player1.setWidth(12);
                     painter->setPen(Player1);
                     painter->drawPoint(starting_x,starting_y-(j*21));
                 }
             }
-            thisMutex.unlock();
             // show myself, yes have in program
             if (current_room == k)
             {
