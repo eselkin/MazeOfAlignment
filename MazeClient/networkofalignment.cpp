@@ -9,7 +9,22 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, QObject *parent) :
     ct_name    = QHostInfo::localHostName();
     ct_IPaddrs = QNetworkInterface::allAddresses();
     // when we receive a readyRead() from the thread of the server, we read it as a command coming from the server
-    connect( ct_socket, SIGNAL(readyRead()), this, SLOT(commandFromServer()) );
+    connect( ct_socket, SIGNAL(readyRead()), this, SLOT(readyRead()) );
 
+
+}
+
+void NetworkOfAlignment::readyRead()
+{
+
+}
+
+void NetworkOfAlignment::disconnected()
+{
+
+}
+
+void NetworkOfAlignment::commandToClient(QByteArray thebytes)
+{
 
 }

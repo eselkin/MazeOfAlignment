@@ -3,7 +3,13 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include <QHostAddress>
+#include <QNetworkInterface>
+#include <QHostInfo>
 #include <QTcpSocket>
+#include <QString>
+#include <QStringList>
+#include <QList>
 
 
 // NETWORKING CLIENT
@@ -14,8 +20,14 @@ public:
     explicit NetworkOfAlignment(QString serverIPaddr, QObject *parent = 0);
 
 signals:
+    void commandToThread(QByteArray packetcommand);
 
 public slots:
+    void readyRead();
+    void disconnected();
+    void commandToClient(QByteArray thebytes);
+
+private:
     QString ct_name;
     QList<QHostAddress> ct_IPaddrs;
     QTcpSocket *ct_socket;
