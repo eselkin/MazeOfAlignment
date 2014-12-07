@@ -1,7 +1,9 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-QT += core gui opengl
+QT += core gui opengl network
+
+TARGET = MazeOfAlignment
 
 SOURCES += main.cpp \
     displaygl.cpp \
@@ -12,7 +14,8 @@ SOURCES += main.cpp \
     adjacency.cpp \
     room.cpp \
     roomlist.cpp \
-    allItems.cpp
+    allItems.cpp \
+    networkofalignment.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -26,7 +29,8 @@ HEADERS += \
     items.h \
     room.h \
     allItems.h \
-    roomlist.h
+    roomlist.h \
+    networkofalignment.h
 
 OTHER_FILES += \
     items.txt
