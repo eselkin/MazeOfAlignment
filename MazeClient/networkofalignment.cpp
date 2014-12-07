@@ -21,6 +21,9 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
 
     // DIRECTLY COPIED FROM ... AND I'm not 100% sure we need it
     //    http://qt-project.org/doc/qt-5/qtnetwork-fortuneclient-client-cpp.html
+
+    // ACTUALLY WE DON'T NEED IT BUT IT SAVES THE NETWORK STATE.... SO MAYBE SOMEDAY WE CAN USE IT OR TWEAK IT
+
     QNetworkConfigurationManager manager;
     if (manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired) {
         // Get saved network configuration
@@ -50,7 +53,7 @@ void NetworkOfAlignment::readyRead()
     /// THREADS
 
     QByteArray Data = ct_socket->readLine(10000); // read all when signaled that it is ready
-    qDebug() << "Severe sent: " << Data << endl;
+    qDebug() << "Server sent: " << Data << endl;
 
     // BREAK UP THE CLIENT REQUEST HERE
     //
@@ -114,4 +117,22 @@ void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
     default:
         qDebug() << ct_socket->errorString();
     }
+}
+
+void NetworkOfAlignment::SessionOpened()
+{
+    // DIRECTLY COPIED FROM ... AND I'm not 100% sure we need it
+    //    http://qt-project.org/doc/qt-5/qtnetwork-fortuneclient-client-cpp.html
+    // Save the used configuration
+        QNetworkConfiguration config = ct_session->configuration();
+        QString id;
+        if (config.type() == QNetworkConfiguration::UserChoice)
+            id = ct_session->sessionProperty(QLatin1String("UserChoiceConfiguration")).toString();
+        else
+            id = config.identifier();
+
+        QSettings settings(QSettings::UserScope, QLatin1String("QtProject"));
+        settings.beginGroup(QLatin1String("QtNetwork"));
+        settings.setValue(QLatin1String("DefaultNetworkConfiguration"), id);
+        settings.endGroup();
 }

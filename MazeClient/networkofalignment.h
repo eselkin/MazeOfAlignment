@@ -26,6 +26,7 @@ signals:
 public slots:
     void readyRead();
     void disconnected();
+    void SessionOpened();
     void commandToClient(QByteArray packetcommand);
 
 private slots:
