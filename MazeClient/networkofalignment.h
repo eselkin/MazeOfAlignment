@@ -2,6 +2,9 @@
 #define NETWORKOFALIGNMENT_H
 
 #include <QObject>
+#include <QtNetwork>
+#include <QTcpSocket>
+
 
 // NETWORKING CLIENT
 class NetworkOfAlignment : public QObject
@@ -13,7 +16,9 @@ public:
 signals:
 
 public slots:
-
+    QString ct_name;
+    QList<QHostAddress> ct_IPaddrs;
+    QTcpSocket *ct_socket;
 };
 
 #endif // NETWORKOFALIGNMENT_H
