@@ -11,7 +11,7 @@ class NetworkOfAlignment : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetworkOfAlignment(QObject *parent = 0);
+    explicit NetworkOfAlignment(QString serverIPaddr, QObject *parent = 0);
 
 signals:
 
