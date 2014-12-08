@@ -149,7 +149,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
-    (playerahead) && (drawEnemy(playerid, playerdepth, &painter));
+    //(playerahead) && (drawEnemy(playerid, playerdepth, &painter));
     playerdepth = 0;
     playerid = 0;
     playerahead = 0;
