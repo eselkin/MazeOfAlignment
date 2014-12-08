@@ -8,8 +8,10 @@
 #include <QPainter>
 #include <QPaintEvent>
 
+#ifdef __WIN32__||__LINUX__
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
 
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
