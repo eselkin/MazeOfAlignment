@@ -38,7 +38,7 @@ displayGL::displayGL(QWidget *parent) :
     //    Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);
     //    mediaObject->play();
 
-    Evil =  new NetworkOfAlignment("127.0.0.1",9966);
+    Evil =  new NetworkOfAlignment("192.168.1.115",9966);
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     setAutoFillBackground(false);
     current_direction = WEST;

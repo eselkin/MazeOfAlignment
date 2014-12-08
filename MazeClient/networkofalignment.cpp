@@ -52,7 +52,7 @@ void NetworkOfAlignment::readyRead()
     /// A SIGNAL THAT GETS TAKEN UP BY A SLOT IN THE SERVER AND THEN REDISTRIBUTED AS NECCESSARY TO ALL
     /// THREADS
 
-    QByteArray Data = ct_socket->readLine(); // read all when signaled that it is ready
+    QByteArray Data = ct_socket->readAll(); // read all when signaled that it is ready
     qDebug() << "Server sent: " << Data << endl;
 
     // BREAK UP THE CLIENT REQUEST HERE
@@ -75,6 +75,7 @@ void NetworkOfAlignment::disconnected()
 
 void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
 {
+    qDebug() << "READING FROM SERVER" <<endl;
     QString incomingcommand(packetcommand);
     if (!incomingcommand.contains("//") || !incomingcommand.contains("::"))
         return; // DONT DO ANYTHING WITH EMPTY LINES
