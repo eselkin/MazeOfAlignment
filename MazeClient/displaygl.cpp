@@ -7,8 +7,15 @@
 #include <QRect>
 #include <QPainter>
 #include <QPaintEvent>
+
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#endif
+
 #include <QDebug>
 #include <iostream>
 #include <QPixmap>
@@ -31,9 +38,6 @@ displayGL::displayGL(QWidget *parent) :
 
     Evil =  new NetworkOfAlignment("127.0.0.1",9966);
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
-    double r_init = 0.1;
-    double g_init = 0.3;
-    double b_init = 0.3;
     setAutoFillBackground(false);
     current_direction = WEST;
     current_level = 1;
