@@ -114,6 +114,7 @@ void NetworkOfAlignment::moveToServer(int current_room)
     newCommand.append(command);
     ct_socket->write(newCommand);
     ct_socket->write("\r\n");
+    ct_socket->flush();
 }
 
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)

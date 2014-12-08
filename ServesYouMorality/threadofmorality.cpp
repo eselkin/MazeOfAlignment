@@ -63,7 +63,6 @@ void ThreadOfMorality::commandToSocket(QByteArray thebytes)
     socket->write(thebytes);
     socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
     socket->flush();
-    socket->waitForReadyRead();
 }
 
 int ThreadOfMorality::getSocketDescriptor() const
