@@ -2,8 +2,6 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 QT += core gui opengl network
-QT += phonon
-
 TARGET = MazeOfAlignment
 
 SOURCES += main.cpp \
@@ -18,8 +16,6 @@ SOURCES += main.cpp \
     allItems.cpp \
     networkofalignment.cpp
 
-include(deployment.pri)
-qtcAddDeployment()
 
 HEADERS += \
     displaygl.h \

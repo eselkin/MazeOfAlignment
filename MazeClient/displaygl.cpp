@@ -15,10 +15,6 @@
 #include <QString>
 #include "adjacency.h"
 #include "roomlist.h"
-#include <QSound>
-#include <phonon/MediaObject>
-#include <phonon/AudioOutput>
-#include <phonon/Path>
 
 using namespace std;
 
@@ -33,7 +29,7 @@ displayGL::displayGL(QWidget *parent) :
     //    Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);
     //    mediaObject->play();
 
-    Evil = new NetworkOfAlignment("127.0.0.1",9966);
+    Evil =  new NetworkOfAlignment("127.0.0.1",9966);
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     double r_init = 0.1;
     double g_init = 0.3;
@@ -149,15 +145,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
-    if (playerahead)
-    {
-        double newsize = 500/playerdepth;
-        double high = this->height()/2;
-        double wide = this->width()/2;
-        QImage troll("./troll.png");
-        painter.drawImage(wide, high, troll.scaledToHeight(newsize));
-    }
-    //(playerahead) && (drawEnemy(playerid, playerdepth, &painter));
+    (playerahead) && (drawEnemy(playerid, playerdepth, &painter));
     playerdepth = 0;
     playerid = 0;
     playerahead = 0;
@@ -446,13 +434,10 @@ bool displayGL::drawEnemy(int player, int size, QPainter *painter)
     double newsize = 500/size;
     double high = this->height()/2;
     double wide = this->width()/2;
-    QMutex thisMutex;
-    thisMutex.lock();
-    QImage troll;
-    troll.load("./troll.png");
+    QImage troll("./weapon_spear.png");
     painter->drawImage(wide, high, troll.scaledToHeight(newsize));
-    thisMutex.unlock();
     update();
+    return true;
 }
 
 bool displayGL::showthisitem(QPainter *painter)

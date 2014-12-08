@@ -35,17 +35,19 @@ signals:
     void sendCommand(QByteArray packetcommand);
 
 public slots:
-    void getCommand(qint32 PlayerID,  QByteArray packetcommand);
-    void removeplayer(qint32 PlayerID);
+    void getCommand(int PlayerID,  QByteArray packetcommand);
+    void removeplayer(int PlayerID);
+
 protected:
     void incomingConnection(int socketDescriptor);
-    void moveToLocation(qint32 PlayerID, int newloc);
+    void moveToLocation(int PlayerID, int newloc);
     QString getLocations();
 
 private:
     qint32 num_clients;
     qint8 level;                 // everyone is on one level
-    QVector<qint32> descriptors; // when joined, order matters for locations
+    QVector< ThreadOfMorality *> threads; // vector of thread pointers
+    QVector<int> descriptors; // when joined, order matters for locations
     QVector<int>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
 };
 

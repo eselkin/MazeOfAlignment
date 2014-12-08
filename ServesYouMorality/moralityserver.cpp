@@ -20,8 +20,9 @@ void MoralityServer::StartServer(int myport)
     }
 }
 
-void MoralityServer::getCommand(qint32 PlayerID, QByteArray packetcommand)
+void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
 {
+    qDebug() << "GETTING COMMAND FROM THE THREAD" <<endl;
     // RESPOND TO THE CLIENT REQUEST HERE!
     // Response to the client would be more difficult and would have to have repeating keys for which we can use regular expressions to split
     //    LOCATION::ID1-1,ID2-4,ID3-19 // {socket descriptor that your computer would turn into player 0, 1, 2, ... n players
@@ -67,17 +68,24 @@ void MoralityServer::getCommand(qint32 PlayerID, QByteArray packetcommand)
     QByteArray newPacketCommand;
     newPacketCommand.append(command);
     qDebug() << "THE PACKET: " << newPacketCommand <<endl;
-    emit sendCommand(newPacketCommand);
+
+    QMutex thisMutex;
+    thisMutex.lock();
+    int thread_num = threads.size();
+    for (int i = 0; i < thread_num; i++)
+        threads[i]->commandToSocket(newPacketCommand);
+    thisMutex.unlock();
+    // Instead of emit, which wasn't getting to the right location and Qt complained even though it is the correct way to do things
+    // emit sendCommand(newPacketCommand);
 }
 
-void MoralityServer::removeplayer(qint32 PlayerID)
+void MoralityServer::removeplayer(int PlayerID)
 {
     int i = 0;
     for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
     // i is ID location
     QMutex thisMutex;
     thisMutex.lock();
-
     descriptors.remove(i);
     locations.remove(i);
     thisMutex.unlock();
@@ -88,7 +96,7 @@ void MoralityServer::removeplayer(qint32 PlayerID)
 
 }
 
-void MoralityServer::moveToLocation(qint32 PlayerID, int newloc)
+void MoralityServer::moveToLocation(int PlayerID, int newloc)
 {
     int i = 0;
     for (; i < descriptors.size() && descriptors[i] != PlayerID ; i++);
@@ -120,10 +128,10 @@ void MoralityServer::incomingConnection(int socketDescriptor)
 {
     qDebug() << "Socket: " << socketDescriptor << " connecting.";
     ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
+    threads.push_back(thread); // keep a hold of the thread addresses for broadcast to their slots since the SIGNAL/SLOT WAY CAUSES PROBLEMS
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(commandToServer(qint32,QByteArray)), this, SLOT(getCommand(qint32,QByteArray)));
-    connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
-    connect(thread, SIGNAL(socketdisconnect(qint32)), this, SLOT(removeplayer(qint32)));
+    connect(thread, SIGNAL(commandToServer(int,QByteArray)), this, SLOT(getCommand(int,QByteArray)));
+    connect(thread, SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
     descriptors.push_back(socketDescriptor);
     locations.push_back(0);
     thread->start();

@@ -12,7 +12,6 @@
 #include "adjacency.h"
 #include "roomlist.h"
 #include "networkofalignment.h"
-#include <QSound>
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 

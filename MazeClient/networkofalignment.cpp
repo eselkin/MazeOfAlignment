@@ -52,7 +52,7 @@ void NetworkOfAlignment::readyRead()
     /// A SIGNAL THAT GETS TAKEN UP BY A SLOT IN THE SERVER AND THEN REDISTRIBUTED AS NECCESSARY TO ALL
     /// THREADS
 
-    QByteArray Data = ct_socket->readLine(10000); // read all when signaled that it is ready
+    QByteArray Data = ct_socket->readLine(); // read all when signaled that it is ready
     qDebug() << "Server sent: " << Data << endl;
 
     // BREAK UP THE CLIENT REQUEST HERE
@@ -80,8 +80,8 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         return; // DONT DO ANYTHING WITH EMPTY LINES
     QStringList BytesCommand = incomingcommand.split("//",QString::SkipEmptyParts);
     qint16 bytesize(BytesCommand[0].toInt());
-    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
-        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
+    //    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
+    //        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
     QStringList CKeyVal = BytesCommand[1].split("::", QString::SkipEmptyParts);
     if (CKeyVal[0] == "LOCATION")
     {
@@ -112,6 +112,7 @@ void NetworkOfAlignment::moveToServer(int current_room)
 
     newCommand.append(command);
     ct_socket->write(newCommand);
+    ct_socket->write("\r\n");
 }
 
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)

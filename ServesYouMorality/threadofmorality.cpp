@@ -1,10 +1,9 @@
 #include "threadofmorality.h"
 #include <QDebug>
 
-ThreadOfMorality::ThreadOfMorality(qint32 ID, QObject *parent) :
-    QThread(parent)
+ThreadOfMorality::ThreadOfMorality(int ID, QObject *parent) :
+    QThread(parent), socketDescriptor(ID)
 {
-    this->socketDescriptor = new qint32(ID);
 }
 
 void ThreadOfMorality::run()
@@ -12,7 +11,7 @@ void ThreadOfMorality::run()
     qDebug() << "Thread started" << endl;
     socket = new QTcpSocket;
 
-    if (!socket->setSocketDescriptor(*getSocketDescriptor()))
+    if (!socket->setSocketDescriptor(getSocketDescriptor()))
     {
         // error out
         emit error(socket->error());
@@ -22,8 +21,7 @@ void ThreadOfMorality::run()
     // DirectConnection is Threaded, but isn't this dangerous for overloading the system
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-
-    qDebug() << *getSocketDescriptor() << " client connected.";
+    qDebug() << getSocketDescriptor() << " client connected.";
 
     exec(); // execute and hold in memory
 }
@@ -33,9 +31,10 @@ void ThreadOfMorality::readyRead()
     /// READY READ ALLOWS US TO KNOW IF SOME DATA HAS COME IN ON THE SOCKET OF THIS THREAD, THEN EMITS
     /// A SIGNAL THAT GETS TAKEN UP BY A SLOT IN THE SERVER AND THEN REDISTRIBUTED AS NECCESSARY TO ALL
     /// THREADS
+    qDebug() << "READING DATA FROM SOCKET..." << endl;
+    QByteArray Data = socket->readAll(); // read all when signaled that it is ready
 
-    QByteArray Data = socket->readLine(10000); // read all when signaled that it is ready
-    qDebug() << "client with desc: " << *socketDescriptor << " sent: " << Data << endl;
+    qDebug() << "client with desc: " << socketDescriptor << " sent: " << Data << endl;
 
     // BREAK UP THE CLIENT REQUEST HERE
     //
@@ -52,9 +51,9 @@ void ThreadOfMorality::readyRead()
 
 void ThreadOfMorality::disconnected()
 {
-    qDebug() << *socketDescriptor << " Disconnected";
+    qDebug() << socketDescriptor << " Disconnected";
     socket->deleteLater();
-    emit socketdisconnect(*socketDescriptor); // delete player info from data to be broadcast and tracked
+    emit socketdisconnect(socketDescriptor); // delete player info from data to be broadcast and tracked
     exit(0);
 }
 
@@ -65,12 +64,12 @@ void ThreadOfMorality::commandToSocket(QByteArray thebytes)
     socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
 }
 
-qintptr ThreadOfMorality::getSocketDescriptor() const
+int ThreadOfMorality::getSocketDescriptor() const
 {
     return socketDescriptor;
 }
 
-void ThreadOfMorality::setSocketDescriptor(const qintptr &value)
+void ThreadOfMorality::setSocketDescriptor(const int& value)
 {
     socketDescriptor = value;
 }

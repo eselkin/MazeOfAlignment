@@ -5,14 +5,10 @@
 #include <QTcpSocket>
 #include <QDebug>
 
-#ifdef __linux__
-typedef qint32* qintptr;
-#endif
-
 ///
 /// CHANGE THE ABOVE TYPEDEF TO ADD #ifdef __APPLE__
 /// and the same next two lines if you get an error building
-/// on Apple... Windows Qt has a typedef for qintptr already
+/// on Apple... Windows Qt has a typedef for int already
 /// in QtGlobal
 ///
 
@@ -38,16 +34,16 @@ class ThreadOfMorality : public QThread
 {
     Q_OBJECT
 public:
-    explicit ThreadOfMorality(qint32 ID, QObject *parent = 0);
+    explicit ThreadOfMorality(int ID, QObject *parent = 0);
     void run();
 
-    qintptr getSocketDescriptor() const;
-    void setSocketDescriptor(const qintptr &value);
+    int getSocketDescriptor() const;
+    void setSocketDescriptor(const int &value);
 
 signals:
     void error(QTcpSocket::SocketError e);
-    void socketdisconnect(qint32 SD); // issue disconnect so server can catch it and remove player info
-    void commandToServer(qint32 ID, QByteArray packetcommand);
+    void socketdisconnect(int SD); // issue disconnect so server can catch it and remove player info
+    void commandToServer(int ID, QByteArray packetcommand);
 
 public slots:
     void readyRead();
@@ -56,7 +52,7 @@ public slots:
 
 private:
     QTcpSocket *socket;
-    qintptr socketDescriptor;
+    int socketDescriptor;
 };
 
 #endif // THREADOFMORALITY_H
