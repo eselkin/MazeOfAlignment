@@ -149,8 +149,18 @@ void displayGL::paintEvent(QPaintEvent *event)
     } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
-
-    (playerahead) && (drawEnemy(playerid, playerdepth, &painter)) && (playerdepth = playerahead = 0);
+    if (playerahead)
+    {
+        double newsize = 500/playerdepth;
+        double high = this->height()/2;
+        double wide = this->width()/2;
+        QImage troll("./troll.png");
+        painter.drawImage(wide, high, troll.scaledToHeight(newsize));
+    }
+    //(playerahead) && (drawEnemy(playerid, playerdepth, &painter));
+    playerdepth = 0;
+    playerid = 0;
+    playerahead = 0;
     showInfo(&painter); // show the info at the top of the screen
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
@@ -433,11 +443,16 @@ bool displayGL::showitems(QPainter *painter)
 }
 bool displayGL::drawEnemy(int player, int size, QPainter *painter)
 {
-    int newsize = 500/size;
+    double newsize = 500/size;
+    double high = this->height()/2;
+    double wide = this->width()/2;
     QMutex thisMutex;
     thisMutex.lock();
-    painter->drawImage(this->width()/2, this->height()/2, QImage("./troll.png").scaledToHeight(newsize));
+    QImage troll;
+    troll.load("./troll.png");
+    painter->drawImage(wide, high, troll.scaledToHeight(newsize));
     thisMutex.unlock();
+    update();
 }
 
 bool displayGL::showthisitem(QPainter *painter)
