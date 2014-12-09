@@ -22,6 +22,7 @@ public:
     vector<Question*> getQuestions() const; // non const
     void addItem(items *newitem);
     void addQuestion(Question *newQuestion);
+    void delQuestion(int num);
     items* removeItem(int item_num);
 
 private:

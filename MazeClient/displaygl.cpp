@@ -519,7 +519,8 @@ bool displayGL::answerQuestion(int ans)
 {
     // answers the question attaches the stat to the player and deletes the question.
     // it has already checked for appropriateness of the answer
-
+    thePlayer.addStat(the_rooms.rooms[current_level][current_room]->getQuestions()[0]->questionstats[ans]);
+    the_rooms.rooms[current_level][current_room]->delQuestion(0);
 }
 
 bool displayGL::showthisitem(QPainter *painter)

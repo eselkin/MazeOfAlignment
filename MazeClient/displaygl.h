@@ -12,6 +12,7 @@
 #include "adjacency.h"
 #include "roomlist.h"
 #include "networkofalignment.h"
+#include "player.h"
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -76,6 +77,7 @@ private:
     bool showthisitem(QPainter *painter);
     void showminimap(); // the function pointer function
     bool show_map;
+    player thePlayer;
 };
 
 #endif // DISPLAYGL_H

@@ -71,6 +71,17 @@ void room::addQuestion(Question *newQuestion)
     room_questions.push_back(newQuestion);
 }
 
+void room::delQuestion(int num)
+{
+    int i = 0;
+    vector<Question *>::iterator it;
+    for (it = room_questions.begin(); i < num; it++)
+    {
+        i++;
+        room_questions.erase(it);
+    }
+}
+
 items *room::removeItem(int item_num)
 {
     items* temp = avail_contents[item_num];
