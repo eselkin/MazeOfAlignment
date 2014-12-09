@@ -76,6 +76,30 @@ roomlist::roomlist()
     q5->addAnswer("d. Openly and defiantly declare your love for your significant other and publicly propose marriage");
     q5->addStat(new stats("Chaotic",4));
     rooms[1][54]->addQuestion(q5);
+
+    Question* q6 = new Question;
+    q6->changeQuestion("Do you respect the laws and the authorities of your community?");
+    q6->addAnswer("a. Yes, unerringly!");
+    q6->addStat(new stats("Lawful",25));
+    q6->addAnswer("b. Yes, rules are necessary for society to function, even though you know power corrupts and some people take advantage of the rules");
+    q6->addStat(new stats("Good",10));
+    q6->addAnswer("c. If it suits you to; there are some laws you can’t agree with and/or cannot respect");
+    q6->addStat(new stats("Neutral",10));
+    q6->addAnswer("d. You have a problem with authority and/or you break rules to break them");
+    q6->addStat(new stats("Chaotic",25));
+//    rooms[1][54]->addQuestion(q6);
+
+    Question* q7 = new Question;
+    q7->changeQuestion("What is the best use of excess wealth?");
+    q7->addAnswer("a. There is no such thing; use it to obtain more wealth");
+    q7->addStat(new stats("Neutral",15));
+    q7->addAnswer("b. Help those in need of money");
+    q7->addStat(new stats("Good",5));
+    q7->addAnswer("c. Use it to prevent others from obtaining similar wealth");
+    q7->addStat(new stats("Evil",20));
+    q7->addAnswer("d. Spend it on yourself, your family, and/or friends");
+    q7->addStat(new stats("Neutral",5));
+//    rooms[1][54]->addQuestion(q7);
 }
 
 roomlist::~roomlist()
