@@ -29,7 +29,53 @@ roomlist::roomlist()
     q1->addStat(new stats("Chaotic",5));
     rooms[1][9]->addQuestion(q1);
 
+    Question* q2 = new Question;
+    q2->changeQuestion("You need to cross a narrow bridge currently being guarded by a 'Black Knight.' How do you approach this obstacle?");
+    q2->addAnswer("a. Challenge the Black Knight to a duel to death");
+    q2->addStat(new stats("Chaotic",5));
+    q2->addAnswer("b. Invite the Black Knight to join your quest, using reason and honorable incentives to persuade him.");
+    q2->addStat(new stats("Good",5));
+    q2->addAnswer("c. Sneak up on him and assassinate him; there is no such thing as an unfair advantage!");
+    q2->addStat(new stats("Evil",10));
+    q2->addAnswer("d. Snipe him (with whatever means) from far away; if he chases, he's no longer blocking the bridge, and if he doesn't, you'll just keep sniping!");
+    q2->addStat(new stats("Evil",5));
+    rooms[1][19]->addQuestion(q2);
 
+    Question* q3 = new Question;
+    q3->changeQuestion("You find your way blocked by a locked door. You...");
+    q3->addAnswer("a. Look for the key in logical places");
+    q3->addStat(new stats("Lawful",5));
+    q3->addAnswer("b. Pick the lock");
+    q3->addStat(new stats("Neutral",5));
+    q3->addAnswer("c. Kick it or knock it down");
+    q3->addStat(new stats("Chaotic",5));
+    q3->addAnswer("d. Knock nicely?");
+    q3->addStat(new stats("Good",10));
+    rooms[1][28]->addQuestion(q3);
+
+    Question* q4 = new Question;
+    q4->changeQuestion("You've been persuaded to give a loan to a friend of a friend. You...");
+    q4->addAnswer("a. Write up a contract, recording all the terms and the signatures of all parties");
+    q4->addStat(new stats("Lawful",25));
+    q4->addAnswer("b. Make it known you expect to be repaid, but keep the terms flexible");
+    q4->addStat(new stats("Good",5));
+    q4->addAnswer("c. Charged interest");
+    q4->addStat(new stats("Neutral",5));
+    q4->addAnswer("d. Don’t care about the exact amount; they just owe you a favor later");
+    q4->addStat(new stats("Chaotic",2));
+    rooms[1][42]->addQuestion(q4);
+
+    Question* q5 = new Question;
+    q5->changeQuestion("Your family disapproves of your significant other because of philosophical/religious/family feud reasons. You...");
+    q5->addAnswer("a. Keep your silence, evade their questions, and don’t really care what they think");
+    q5->addStat(new stats("Neutral",5));
+    q5->addAnswer("b. Go back and forth to try to explain get both sides to compromise");
+    q5->addStat(new stats("Lawful",5));
+    q5->addAnswer("c. Respect your family’s wishes and break off your relationship");
+    q5->addStat(new stats("Good",5));
+    q5->addAnswer("d. Openly and defiantly declare your love for your significant other and publicly propose marriage");
+    q5->addStat(new stats("Chaotic",4));
+    rooms[1][54]->addQuestion(q5);
 }
 
 roomlist::~roomlist()

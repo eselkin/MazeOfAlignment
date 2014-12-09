@@ -522,6 +522,7 @@ bool displayGL::answerQuestion(int ans)
     thePlayer.addStat(the_rooms.rooms[current_level][current_room]->getQuestions()[0]->questionstats[ans]);
     the_rooms.rooms[current_level][current_room]->delQuestion(1);
     update();
+    return true;
 }
 
 bool displayGL::showthisitem(QPainter *painter)
