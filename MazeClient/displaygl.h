@@ -45,10 +45,12 @@ protected:
     bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
     void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
     bool drawEnemy(int player, int size, QPainter *painter);
+    bool drawQuestion(int current_level, int current_room, QPainter *painter);
+    bool answerQuestion(int ans);
 private slots:
 
 private:
-    NetworkOfAlignment *Evil;
+    NetworkOfAlignment *Evil; // Just for fun, this is the network connection for the client
     roomlist the_rooms;
     QVector<int> PlayerLocations;
     QImage m_images[40];
@@ -66,8 +68,8 @@ private:
     void turnRight();
     void PickUpItem();
     void DropItem();
-    bool in_inventory, in_rm_inventory;
-    int  item_at;
+    bool in_inventory, in_rm_inventory, in_question;
+    int  item_at, num_answers;
     void doNothing();
     bool showitems(QPainter *painter);
     bool showminimap(QPainter *painter);

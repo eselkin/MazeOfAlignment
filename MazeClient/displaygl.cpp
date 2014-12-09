@@ -38,7 +38,9 @@ displayGL::displayGL(QWidget *parent) :
     //    Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);
     //    mediaObject->play();
 
-    Evil =  new NetworkOfAlignment("192.168.1.76",9966);
+
+    Evil =  new NetworkOfAlignment("192.168.1.76",9966); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
+    // Will make a messagebox with line input for this address later or scan for ips with open 9966 port
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     setAutoFillBackground(false);
     current_direction = WEST;
@@ -151,7 +153,12 @@ void displayGL::paintEvent(QPaintEvent *event)
     } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
+
     //(playerahead) && (drawEnemy(playerid, playerdepth, &painter));
+
+    if (the_rooms.rooms[current_level][current_room]->getQuestions().size() > 0)
+        drawQuestion(current_level, current_room, &painter);
+
     playerdepth = 0;
     playerid = 0;
     playerahead = 0;
@@ -193,6 +200,7 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 void displayGL::keyPressEvent(QKeyEvent *event)
 {
+
     if (in_rm_inventory)
     {
         items* item_to_get;
@@ -222,9 +230,34 @@ void displayGL::keyPressEvent(QKeyEvent *event)
             in_rm_inventory = false;
             break;
         }
-    } else
-        if (event->key() < 128 && event->key() >= 0)
-            (this->*(key_fptrs[event->key()]))();
+    }
+    else
+        if (in_question)
+        {
+            switch(event->key())
+            {
+            case Qt::Key_A:
+                answerQuestion(0);
+                in_question = false;
+                break;
+            case Qt::Key_B:
+                (num_answers > 1) && answerQuestion(1);
+                in_question = false;
+                break;
+            case Qt::Key_C:
+                (num_answers > 2) && answerQuestion(2);
+                in_question = false;
+                break;
+            case Qt::Key_D:
+                (num_answers > 3) && answerQuestion(3);
+                in_question = false;
+                break;
+
+            }
+        }
+        else
+            if (event->key() < 128 && event->key() >= 0)
+                (this->*(key_fptrs[event->key()]))();
 }
 
 void displayGL::showInfo(QPainter *toPaint)
@@ -250,7 +283,7 @@ void displayGL::showInfo(QPainter *toPaint)
                                       Qt::AlignRight | Qt::TextSingleLine, Info);
     toPaint->setRenderHint(QPainter::Antialiasing);
     toPaint->setPen(Qt::white);
-    toPaint->drawText((width()-rect.width())/2, border, rect.width(), rect.height(),Qt::AlignRight|Qt::TextSingleLine, Info);
+    toPaint->drawText((width()-rect.width())/2, border, rect.width(), rect.height(),Qt::AlignCenter|Qt::TextSingleLine, Info);
     update();
 }
 
@@ -446,6 +479,49 @@ bool displayGL::drawEnemy(int player, int size, QPainter *painter)
     return true;
 }
 
+bool displayGL::drawQuestion(int current_level, int current_room, QPainter *painter)
+{
+    in_question = true;
+
+    // we must have a question in this room at this level or else this would not get here
+    QRect QuestionRect(20,20,this->width()-40, this->height()/2.5);
+    QPen borderpen (Qt::green);
+    borderpen.setWidth(3);
+    QBrush questionbrush(Qt::lightGray);
+    questionbrush.setStyle(Qt::SolidPattern);
+    painter->fillRect(QuestionRect, questionbrush);
+    painter->setPen(borderpen);
+    painter->drawRect(QuestionRect);
+
+    painter->setPen(Qt::white);
+    painter->setFont(QFont("Times", 20));
+    double QRLeft = QuestionRect.left();
+    double QRTop = QuestionRect.top();
+    painter->drawText(QRLeft+5, QRTop+5, QuestionRect.width()-10, QuestionRect.height()-10,
+                      Qt::AlignHCenter|Qt::TextWordWrap,
+                      the_rooms.rooms[current_level][current_room]->getQuestions()[0]->theQuestion);
+    // The only question in the room... for now
+    num_answers = the_rooms.rooms[current_level][current_room]->getQuestions()[0]->questionanswers.size();
+
+    for (int i = 0; i < num_answers; i++)
+    {
+        painter->setPen(Qt::darkBlue);
+        painter->setFont(QFont("Times", 14));
+        painter->drawText(QRLeft+20, QRTop+25+((i+1)*20), QuestionRect.width()-30, QuestionRect.height()-20,
+                          Qt::AlignHCenter|Qt::TextWordWrap,
+                          the_rooms.rooms[current_level][current_room]->getQuestions()[0]->questionanswers[i]);
+    }
+    update();
+    return true;
+}
+
+bool displayGL::answerQuestion(int ans)
+{
+    // answers the question attaches the stat to the player and deletes the question.
+    // it has already checked for appropriateness of the answer
+
+}
+
 bool displayGL::showthisitem(QPainter *painter)
 {
     uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
@@ -472,16 +548,15 @@ void displayGL::showminimap()
 
 bool displayGL::showminimap(QPainter *painter)
 {
-
     painter->setRenderHint(QPainter::Antialiasing);
-    QRect border(width()-height()/5,height()-height()/5, height()/5,height()/5);
-    QRect minimap(width()-height()/5.1, height()-height()/5.1,height()/5.1,height()/5.1);
-    QBrush borderbrush(Qt::red);
-    painter->setBrush(borderbrush);
-    painter->fillRect(border, borderbrush);
+    QRect minimap(width()-height()/5, height()-height()/5,height()/5,height()/5);
+    QPen borderpen(Qt::gray);
+    borderpen.setWidth(3);
     QBrush minimapbrush(Qt::black);
     painter->setBrush(minimapbrush);
     painter->fillRect(minimap,minimapbrush);
+    painter->setPen(borderpen);
+    painter->drawRect(minimap);
     QPen Player0(Qt::red);
     QPen RoomPen(Qt::gray);
     RoomPen.setWidth(15);

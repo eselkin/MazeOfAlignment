@@ -31,6 +31,21 @@ room::~room()
     stat_alterations.clear();
 }
 
+vector<stats *> room::getStats()
+{
+    return stat_alterations;
+}
+
+vector<items *> room::getItems()
+{
+    return avail_contents;
+}
+
+vector<Question *> room::getQuestions()
+{
+    return room_questions;
+}
+
 vector<stats *> room::getStats() const
 {
     return stat_alterations;
@@ -41,9 +56,19 @@ vector<items *> room::getItems() const
     return avail_contents;
 }
 
+vector<Question *> room::getQuestions() const
+{
+    return room_questions;
+}
+
 void room::addItem(items *newitem)
 {
     avail_contents.push_back(newitem);
+}
+
+void room::addQuestion(Question *newQuestion)
+{
+    room_questions.push_back(newQuestion);
 }
 
 items *room::removeItem(int item_num)
