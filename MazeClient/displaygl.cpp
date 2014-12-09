@@ -27,7 +27,7 @@
 
 using namespace std;
 
-displayGL::displayGL(QWidget *parent) :
+displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
     // GOSH, playing media files on Qt is crazy!
@@ -39,7 +39,7 @@ displayGL::displayGL(QWidget *parent) :
     //    mediaObject->play();
 
 
-    Evil =  new NetworkOfAlignment("192.168.1.76",9966); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
+    Evil =  new NetworkOfAlignment(serverID,serverPort); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
     // Will make a messagebox with line input for this address later or scan for ips with open 9966 port
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     setAutoFillBackground(false);

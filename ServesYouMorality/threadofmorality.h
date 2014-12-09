@@ -5,13 +5,6 @@
 #include <QTcpSocket>
 #include <QDebug>
 
-///
-/// CHANGE THE ABOVE TYPEDEF TO ADD #ifdef __APPLE__
-/// and the same next two lines if you get an error building
-/// on Apple... Windows Qt has a typedef for int already
-/// in QtGlobal
-///
-
 
 ///
 ///

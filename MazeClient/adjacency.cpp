@@ -146,6 +146,74 @@ Adjacency::Adjacency()
     adjacencytable[1][50][51] = new weights();
     adjacencytable[1][49][50] = new weights();
     adjacencytable[1][50][49] = new weights();
+
+
+    //Level2
+    adjacencytable[2][9][10] = new weights();
+    adjacencytable[2][10][9] = new weights();
+    adjacencytable[2][9][17] = new weights();
+    adjacencytable[2][17][9] = new weights();
+    adjacencytable[2][17][18] = new weights();
+    adjacencytable[2][18][17] = new weights();
+    adjacencytable[2][18][19] = new weights();
+    adjacencytable[2][19][18] = new weights();
+    adjacencytable[2][11][19] = new weights();
+    adjacencytable[2][19][11] = new weights();
+    adjacencytable[2][11][10] = new weights();
+    adjacencytable[2][11][12] = new weights();
+    adjacencytable[2][12][11] = new weights();
+    adjacencytable[2][12][20] = new weights();
+    adjacencytable[2][20][12] = new weights();
+    adjacencytable[2][20][28] = new weights();
+    adjacencytable[2][28][27] = new weights();
+    adjacencytable[2][27][28] = new weights();
+    adjacencytable[2][27][26] = new weights();
+    adjacencytable[2][26][25] = new weights();
+    adjacencytable[2][25][26] = new weights();
+    adjacencytable[2][25][17] = new weights();
+    adjacencytable[2][17][25] = new weights();
+    adjacencytable[2][25][33] = new weights();
+    adjacencytable[2][33][25] = new weights();
+    adjacencytable[2][33][34] = new weights();
+    adjacencytable[2][34][33] = new weights();
+    adjacencytable[2][33][41] = new weights();
+    adjacencytable[2][41][33] = new weights();
+    adjacencytable[2][41][42] = new weights();
+    adjacencytable[2][42][41] = new weights();
+    adjacencytable[2][42][34] = new weights();
+    adjacencytable[2][42][43] = new weights();
+    adjacencytable[2][43][42] = new weights();
+    adjacencytable[2][44][43] = new weights();
+    adjacencytable[2][43][44] = new weights();
+    adjacencytable[2][44][45] = new weights();
+    adjacencytable[2][45][44] = new weights();
+    adjacencytable[2][45][37] = new weights();
+    adjacencytable[2][37][45] = new weights();
+    adjacencytable[2][37][29] = new weights();
+    adjacencytable[2][29][37] = new weights();
+    adjacencytable[2][29][21] = new weights();
+    adjacencytable[2][21][29] = new weights();
+    adjacencytable[2][21][22] = new weights();
+    adjacencytable[2][22][21] = new weights();
+    adjacencytable[2][22][30] = new weights();
+    adjacencytable[2][30][38] = new weights();
+    adjacencytable[2][38][30] = new weights();
+    adjacencytable[2][38][46] = new weights();
+    adjacencytable[2][46][38] = new weights();
+    adjacencytable[2][46][54] = new weights();
+    adjacencytable[2][54][46] = new weights();
+    adjacencytable[2][54][53] = new weights();
+    adjacencytable[2][53][54] = new weights();
+    adjacencytable[2][53][52] = new weights();
+    adjacencytable[2][52][53] = new weights();
+    adjacencytable[2][52][51] = new weights();
+    adjacencytable[2][51][52] = new weights();
+    adjacencytable[2][51][43] = new weights();
+    adjacencytable[2][51][50] = new weights();
+    adjacencytable[2][50][51] = new weights();
+    adjacencytable[2][49][50] = new weights();
+    adjacencytable[2][50][49] = new weights();
+
 }
 
 Adjacency::~Adjacency()

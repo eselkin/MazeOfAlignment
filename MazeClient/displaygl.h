@@ -22,7 +22,7 @@ class displayGL : public QGLWidget
 public:
     //(fo.o)f
     typedef void (displayGL::*fptr)();
-    explicit displayGL(QWidget *parent = 0);
+    explicit displayGL(QString serverID, int serverPort, QWidget *parent = 0);
     ~displayGL();
 signals:
 
