@@ -115,6 +115,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     bool playerahead = false;
     int playerdepth = 0;
     int playerid = 0;
+    QMutex thisMutex;
 
     do {
         my_room = my_room + count_ahead;
@@ -122,30 +123,72 @@ void displayGL::paintEvent(QPaintEvent *event)
         {
             drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
             drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
-            for (int k = 0; k < PlayerLocations.size(); k++)
-                (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
+
+            thisMutex.lock();
+            int sizepl = PlayerLocations.size();
+            for (int k = 0; k < sizepl; k++)
+            {
+                if(PlayerLocations[k]==my_room && my_room!=current_room)
+                {
+                    playerahead = true;
+                    playerid = k;
+                    playerdepth = i;
+                }
+            }
+            thisMutex.unlock();
         }
         else
             if (current_direction == SOUTH)
             {
                 drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
                 drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
-                for (int k = 0; k < PlayerLocations.size(); k++)
-                    (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
+
+                thisMutex.lock();
+                int sizepl = PlayerLocations.size();
+                for (int k = 0; k < sizepl; k++)
+                {
+                    if(PlayerLocations[k]==my_room && my_room!=current_room)
+                    {
+                        playerahead = true;
+                        playerid = k;
+                        playerdepth = i;
+                    }
+                }
+                thisMutex.unlock();
             }
             else
                 if (current_direction == EAST)
                 {
                     drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
                     drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
-                    for (int k = 0; k < PlayerLocations.size(); k++)
-                        (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
+                    thisMutex.lock();
+                    int sizepl = PlayerLocations.size();
+                    for (int k = 0; k < sizepl; k++)
+                    {
+                        if(PlayerLocations[k]==my_room && my_room!=current_room)
+                        {
+                            playerahead = true;
+                            playerid = k;
+                            playerdepth = i;
+                        }
+                    }
+                    thisMutex.unlock();
                 }
                 else {
                     drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
                     drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
-                    for (int k = 0; k < PlayerLocations.size(); k++)
-                        (PlayerLocations[k]==my_room && my_room!=current_room) && (playerahead = true) && (playerid = k) && (playerdepth = i);
+                    thisMutex.lock();
+                    int sizepl = PlayerLocations.size();
+                    for (int k = 0; k < sizepl; k++)
+                    {
+                        if(PlayerLocations[k]==my_room && my_room!=current_room)
+                        {
+                            playerahead = true;
+                            playerid = k;
+                            playerdepth = i;
+                        }
+                    }
+                    thisMutex.unlock();
                 }
         count_ahead = countAhead(current_direction);
         forward = checkAhead(my_room, my_room+count_ahead);
@@ -154,11 +197,10 @@ void displayGL::paintEvent(QPaintEvent *event)
     forward && (drawBackWall(i, forward->isDoor(), current_level));
     !forward && (drawBackWall(i, 0, current_level));
 
-    (playerahead) && (drawEnemy(playerid, playerdepth, &painter));
-
     if (the_rooms.rooms[current_level][current_room]->getQuestions().size() > 0)
         drawQuestion(current_level, current_room, &painter);
 
+    (playerahead) && ( drawEnemy(playerid, playerdepth, &painter) );
     playerdepth = 0;
     playerid = 0;
     playerahead = 0;
@@ -470,10 +512,11 @@ bool displayGL::showitems(QPainter *painter)
 }
 bool displayGL::drawEnemy(int player, int size, QPainter *painter)
 {
-    double newsize = 500/size;
+    double newsize = (600*1.0/((size+1)*1.0));
+    qDebug() << "SIZE: " << size << " and 500/size: " << (500*1.0/((size+1)*1.0)) <<endl;
     double high = this->height()/2;
     double wide = this->width()/2;
-    QImage troll("./weapon_spear.png");
+    QImage troll("./troll.png");
     painter->drawImage(wide, high, troll.scaledToHeight(newsize));
     update();
     return true;
