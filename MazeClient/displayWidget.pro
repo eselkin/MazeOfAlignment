@@ -16,7 +16,9 @@ SOURCES += main.cpp \
     allItems.cpp \
     networkofalignment.cpp \
     question.cpp \
-    player.cpp
+    player.cpp \
+    serverinfo.cpp \
+    servinfo.cpp
 
 
 HEADERS += \
@@ -31,7 +33,9 @@ HEADERS += \
     roomlist.h \
     networkofalignment.h \
     question.h \
-    player.h
+    player.h \
+    serverinfo.h \
+    servinfo.h
 
 OTHER_FILES += \
     items.txt

@@ -4,6 +4,7 @@
 #include <QString>
 #include <QLineEdit>
 #include <QRegExp>
+#include "serverinfo.h"
 
 mWindow::mWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -14,15 +15,18 @@ mWindow::mWindow(QWidget *parent) :
     // From ... http://qt-project.org/doc/qt-4.7/qinputdialog.html
 
     bool OK = false;
-    QString Server = "";
-    QRegExp IPEXP("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
-    while (IPEXP.indexIn(Server) == -1)
-    {
-        OK = false;
-        Server = QInputDialog::getText(this, tr("Input Server IP address:"), tr("IP address:"), QLineEdit::Normal, "127.0.0.1", &OK);
-    }
-    myGLWidget = new displayGL(Server, 9966, this);
+    ServerInfo *SI = new ServerInfo;
+    SI->show();
+    connect(SI, SIGNAL(dServer(QString, int)), this, SLOT(setserver(QString, int)));
+    SI->exec();
+    myGLWidget = new displayGL(ServerIP, ServerPort, this);
     myGLWidget->resize(800,600);
     myGLWidget->setFocus();
     setCentralWidget(myGLWidget);
+}
+
+void mWindow::setserver(QString addr, int port)
+{
+    ServerIP =  addr;
+    ServerPort = port;
 }

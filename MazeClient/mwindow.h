@@ -13,10 +13,13 @@ public:
 signals:
 
 public slots:
+    void setserver(QString addr, int port);
+
 private:
     QWidget* centralWidget;
     displayGL* myGLWidget;
-
+    QString ServerIP;
+    int ServerPort;
 };
 
 #endif // MWINDOW_H
