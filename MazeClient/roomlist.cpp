@@ -61,7 +61,7 @@ roomlist::roomlist()
     q4->addStat(new stats("Good",5));
     q4->addAnswer("c. Charged interest");
     q4->addStat(new stats("Neutral",5));
-    q4->addAnswer("d. Don’t care about the exact amount; they just owe you a favor later");
+    q4->addAnswer("d. Don't care about the exact amount; they just owe you a favor later");
     q4->addStat(new stats("Chaotic",2));
     rooms[1][42]->addQuestion(q4);
 

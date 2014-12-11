@@ -3,7 +3,7 @@
 #include <QInputDialog>
 #include <QString>
 #include <QLineEdit>
-
+#include <QRegExp>
 
 mWindow::mWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -15,10 +15,11 @@ mWindow::mWindow(QWidget *parent) :
 
     bool OK = false;
     QString Server = "";
-    while (!OK && !Server.contains("^([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3})"))
+    QRegExp IPEXP("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+    while (IPEXP.indexIn(Server) == -1)
     {
         OK = false;
-        Server = QInputDialog::getText(this, tr("Input Server IP address:"), tr("IP address:"), QLineEdit::Normal,  QDir::home().dirName(), &OK);
+        Server = QInputDialog::getText(this, tr("Input Server IP address:"), tr("IP address:"), QLineEdit::Normal, "127.0.0.1", &OK);
     }
     myGLWidget = new displayGL(Server, 9966, this);
     myGLWidget->resize(800,600);

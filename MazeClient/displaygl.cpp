@@ -30,14 +30,6 @@ using namespace std;
 displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    // GOSH, playing media files on Qt is crazy!
-    //    Phonon::MediaObject *mediaObject = new Phonon::MediaObject(this);
-    //    mediaObject->setCurrentSource(Phonon::MediaSource("./song.wav"));
-    //    Phonon::AudioOutput *audioOutput =
-    //            new Phonon::AudioOutput(Phonon::MusicCategory, this);
-    //    Phonon::Path path = Phonon::createPath(mediaObject, audioOutput);
-    //    mediaObject->play();
-
 
     Evil =  new NetworkOfAlignment(serverID,serverPort); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
     // Will make a messagebox with line input for this address later or scan for ips with open 9966 port
