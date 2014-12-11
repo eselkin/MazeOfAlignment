@@ -6,6 +6,7 @@
 NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QObject *parent) :
     QObject(parent), ct_session(0)
 {
+
     // Create the socket
     ct_socket  = new QTcpSocket(this); // we connect the socket to this because it is not a thread, but an instance of an object
     // set up connection information
@@ -14,11 +15,11 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
     // when we receive a readyRead() from the thread of the server, we read it as a command coming from the server
     connect( ct_socket, SIGNAL(readyRead()), this, SLOT( readyRead()) );
     connect( ct_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
-    s_address = serverIPaddr;
-    s_port = serverPort;
     // MAKE THE CONNECTION
-    ct_socket->connectToHost(s_address, s_port);
+    ct_socket->connectToHost(serverIPaddr, serverPort);
 
+    if (!ct_socket->isOpen())
+        qDebug() << "CONNECTION TO HOST NOT MADE";
     // DIRECTLY COPIED FROM ... AND I'm not 100% sure we need it
     //    http://qt-project.org/doc/qt-5/qtnetwork-fortuneclient-client-cpp.html
 

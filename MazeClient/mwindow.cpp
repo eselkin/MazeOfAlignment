@@ -27,6 +27,8 @@ mWindow::mWindow(QWidget *parent) :
 
 void mWindow::setserver(QString addr, int port)
 {
+    qDebug() << "HERE" << endl;
+    qDebug() << "IP:" << addr << " AND PORT:" << port <<endl;
     ServerIP =  addr;
     ServerPort = port;
 }
