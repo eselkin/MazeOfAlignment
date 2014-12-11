@@ -17,8 +17,7 @@ SOURCES += main.cpp \
     networkofalignment.cpp \
     question.cpp \
     player.cpp \
-    serverinfo.cpp \
-    servinfo.cpp
+    serverinfo.cpp
 
 
 HEADERS += \
@@ -34,8 +33,7 @@ HEADERS += \
     networkofalignment.h \
     question.h \
     player.h \
-    serverinfo.h \
-    servinfo.h
+    serverinfo.h
 
 OTHER_FILES += \
     items.txt
