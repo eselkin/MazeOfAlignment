@@ -1,10 +1,17 @@
 #include "items.h"
 
-items::items(const QString& name, const QString& identifier, pair<pair<QString, int>,pair<QString, int> > newstat)
+items::items(const QString& name, const QString& identifier, QString stat_i, int val_i, QString stat_ii, int val_ii)
 {
     itemname = name;
     item_id = identifier;
-    stat_add = newstat;
+    stat_add = make_pair(make_pair(stat_i,val_i),make_pair(stat_ii,val_ii));
+}
+
+items::items(const QString &name, const QString &identifier, pair<mQPair, mQPair> statpair)
+{
+    itemname = name;
+    item_id = identifier;
+    stat_add = statpair;
 }
 
 items::items(const items &other)
@@ -35,6 +42,11 @@ QString items::getName() const
 QString items::getId() const
 {
     return item_id;
+}
+
+pair<mQPair, mQPair> items::getStats() const
+{
+    return stat_add;
 }
 
 void items::copy(const items &other)

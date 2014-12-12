@@ -14,7 +14,6 @@ mWindow::mWindow(QWidget *parent) :
     this->setGeometry(mainScreenSize.width()*.1,mainScreenSize.height()*.1, mainScreenSize.width()*.8, mainScreenSize.height()*.8);
     // From ... http://qt-project.org/doc/qt-4.7/qinputdialog.html
 
-    bool OK = false;
     ServerInfo *SI = new ServerInfo;
     SI->show();
     connect(SI, SIGNAL(dServer(QString, int)), this, SLOT(setserver(QString, int)));

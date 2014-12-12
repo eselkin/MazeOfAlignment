@@ -4,7 +4,7 @@ player::player()
 {
 }
 
-void player::addStat(pair<pair<QString, int>, pair<QString, int> > newstat)
+void player::addStat(pair<mQPair, mQPair> newstat)
 {
     if (newstat.first.first != "")
         addStat(newstat.first.first, newstat.first.second);
@@ -14,11 +14,21 @@ void player::addStat(pair<pair<QString, int>, pair<QString, int> > newstat)
 
 void player::addStat(QString newstat, int newqty)
 {
-    mystats.insert(newstat, newqty);
+    mystats.insert(&newstat, newqty);
 }
 
 void player::addItem(items *newitem)
 {
     myitems.push_back(newitem);
+
+}
+
+bool player::hasStat(QString stat, int val)
+{
+    mystats.find
+}
+
+bool player::hasItem(items *itemreq)
+{
 
 }

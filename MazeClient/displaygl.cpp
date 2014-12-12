@@ -427,6 +427,7 @@ void displayGL::moveForward()
     {
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
+        thePlayer. testForward->getStats()
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
         current_room = current_room + count_ahead;

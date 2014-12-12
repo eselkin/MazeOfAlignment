@@ -8,6 +8,7 @@
 #include <cmath>
 #include <iomanip>
 #include <vector>
+#include <QTextStream>
 #include "node.h"
 
 using namespace std;
@@ -19,8 +20,8 @@ template<typename T>
 class bst
 {
 public:
-    bst(PRINTORDER theOrder = IN_ORDER);
-    bst(const T &data, int count = 1, PRINTORDER order = IN_ORDER);
+    bst();
+    bst(const T &data, int count = 1);
     ~bst();
     bst(const bst<T> &other);
 
@@ -84,7 +85,7 @@ private:
 
 // Construct ordered, empty BST
 template<typename T>
-bst<T>::bst(PRINTORDER theOrder)
+bst<T>::bst()
 {
     bstroot.push_back(NULL); // where we really start adding
     bstroot.push_back(NULL); // where we really start adding
@@ -94,7 +95,7 @@ bst<T>::bst(PRINTORDER theOrder)
 
 // Construct bstroot only, ordered BST
 template<typename T>
-bst<T>::bst(const T &data, int count, PRINTORDER order)
+bst<T>::bst(const T &data, int count)
 {
     bstroot.push_back(NULL);
     bstroot.push_back(new node<T>(data)); // at position 1
@@ -241,21 +242,21 @@ void bst<T>::insert(const T& data, int count, int at_idx)
     addDepth(2*at_idx+1);
     if(!bstroot[at_idx])
     {
-        bstroot[at_idx] = new T(data); // T is a node pointer
+        bstroot[at_idx] = new node<T>(data); // T is a node pointer
         bstroot[at_idx]->height = 0;
         return; // height already assessed, move on to height of parents
     }
-    else if (bstroot[at_idx] && (data == *bstroot[at_idx]))
+    else if (bstroot[at_idx] && (data == bstroot[at_idx]->data))
     {
         *bstroot[at_idx] += data; // no height change or rebalancing needed
         return; // height does not change
     }
-    else if (bstroot[at_idx] && (data < *bstroot[at_idx]))
+    else if (bstroot[at_idx] && (data < bstroot[at_idx]->data))
     {   // height will change on the right!
         insert(data, count, 2*at_idx); // the recursive call, only returns .. this must exist.
 
         if ((height(2*at_idx) - height(2*at_idx+1)) == 2){
-            if (bstroot[2*at_idx] && (data < *bstroot[2*at_idx])) // if data chain continued to the right, we rotate left
+            if (bstroot[2*at_idx] && (data < bstroot[2*at_idx]->data)) // if data chain continued to the right, we rotate left
             {
                 rotateLeft(at_idx);
             }
@@ -265,11 +266,11 @@ void bst<T>::insert(const T& data, int count, int at_idx)
             }
         }
     }
-    else if (bstroot[at_idx] && data > *bstroot[at_idx])
+    else if (bstroot[at_idx] && data > bstroot[at_idx]->data)
     {   // height will change on the left!
         insert(data, count, (2*at_idx+1)); // the recursive call, only returns
         if (height(2*at_idx+1) - height(2*at_idx) == 2) {
-            if (bstroot[(2*at_idx+1)] && data > *bstroot[(2*at_idx+1)])
+            if (bstroot[(2*at_idx+1)] && data > bstroot[(2*at_idx+1)]->data)
             {
                 rotateRight(at_idx); // LEFT LEFT
             }

@@ -3,7 +3,6 @@
 #include <QVector>
 #include <QImage>
 #include <QString>
-#include "stats.h"
 #include "items.h"
 #include "allItems.h"
 #include "bst.h"
@@ -24,9 +23,10 @@ protected:
     int MonsterRoom;
     int MonsterLevel;
     allItems theItems;
+    bst<QString> mystats;
+    QString MonsterType;
 
 private:
-    QString MonsterType;
 
 };
 
