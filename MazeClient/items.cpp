@@ -1,10 +1,10 @@
 #include "items.h"
 
-items::items(const string& name, const string& identifier, stats stat_to_add)
+items::items(const QString& name, const QString& identifier, pair<pair<QString, int>,pair<QString, int> > newstat)
 {
     itemname = name;
     item_id = identifier;
-    stat_add = stat_to_add;
+    stat_add = newstat;
 }
 
 items::items(const items &other)
@@ -27,12 +27,12 @@ items::~items()
 
 }
 
-string items::getName() const
+QString items::getName() const
 {
     return itemname;
 }
 
-string items::getId() const
+QString items::getId() const
 {
     return item_id;
 }
@@ -41,6 +41,7 @@ void items::copy(const items &other)
 {
     itemname = other.getName();
     item_id = other.getId();
+    stat_add = other.getStats();
 }
 
 void items::nukem()

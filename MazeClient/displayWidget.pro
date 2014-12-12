@@ -9,7 +9,6 @@ SOURCES += main.cpp \
     mwindow.cpp \
     weights.cpp \
     items.cpp \
-    stats.cpp \
     adjacency.cpp \
     room.cpp \
     roomlist.cpp \
@@ -17,7 +16,9 @@ SOURCES += main.cpp \
     networkofalignment.cpp \
     question.cpp \
     player.cpp \
-    serverinfo.cpp
+    serverinfo.cpp \
+    monster.cpp \
+    zombie.cpp
 
 
 HEADERS += \
@@ -25,7 +26,6 @@ HEADERS += \
     mwindow.h \
     adjacency.h \
     weights.h \
-    stats.h \
     items.h \
     room.h \
     allItems.h \
@@ -33,7 +33,11 @@ HEADERS += \
     networkofalignment.h \
     question.h \
     player.h \
-    serverinfo.h
+    serverinfo.h \
+    monster.h \
+    bst.h \
+    node.h \
+    zombie.h
 
 OTHER_FILES += \
     items.txt

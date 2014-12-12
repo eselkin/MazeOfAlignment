@@ -25,13 +25,11 @@ room::~room()
     uint numattributes = stat_alterations.size();
     for (uint i =0; i < sizeofroom; i++)
         delete avail_contents[i];
-    for (uint i =0; i < numattributes; i++)
-        delete stat_alterations[i];
     avail_contents.clear();
     stat_alterations.clear();
 }
 
-vector<stats *> room::getStats()
+vector<pair< pair<QString, int>, pair<QString, int> > > room::getStats()
 {
     return stat_alterations;
 }
@@ -46,7 +44,7 @@ vector<Question *> room::getQuestions()
     return room_questions;
 }
 
-vector<stats *> room::getStats() const
+vector<pair< pair<QString, int>, pair<QString, int> > > room::getStats() const
 {
     return stat_alterations;
 }
@@ -99,7 +97,7 @@ void room::copy(const room &other)
         avail_contents.push_back(new items(*other.getItems()[i]));
     other_size = other.getStats().size();
     for (uint i = 0; i < other_size; i++)
-        stat_alterations.push_back(new stats(*other.getStats()[i]));
+        stat_alterations.push_back(other.getStats()[i]);
 }
 
 void room::nukem()

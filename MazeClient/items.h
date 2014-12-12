@@ -1,25 +1,25 @@
 #ifndef ITEMS_H
 #define ITEMS_H
-#include <string>
-#include "stats.h"
+#include <QString>
 
 using namespace std;
 
 class items {
 public:
-    items(const string &name, const string& identifier, stats stat_add = stats());
+    items(const QString &name, const QString& identifier, pair<pair<QString, int>, pair<QString, int> > newstat);
     items(const items &other);
     items& operator=(const items &other);
     ~items();
-    string getName() const;
-    string getId() const;
+    QString getName() const;
+    QString getId() const;
+    pair<pair<QString, int>, pair<QString, int> > getStats() const;
 
 private:
     void copy(const items &other);
     void nukem();
-    string itemname;
-    string item_id;
-    stats stat_add;
+    QString itemname;
+    QString item_id;
+    pair<pair<QString, int>, pair<QString, int> > stat_add;
 };
 
 #endif // ITEMS_H

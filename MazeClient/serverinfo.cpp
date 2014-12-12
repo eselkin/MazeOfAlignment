@@ -25,7 +25,7 @@ ServerInfo::ServerInfo()
 
     connect(P_OK, SIGNAL(clicked()), this, SLOT(ok_pushed()));
     connect(P_CANCEL, SIGNAL(clicked()), this, SLOT(cancel_pushed()));
-
+    ServerAddress->setFocus();
 }
 
 

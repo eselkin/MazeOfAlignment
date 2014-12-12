@@ -1,19 +1,21 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "items.h"
-#include "stats.h"
+#include "bst.h"
 #include <QVector>
+#include <QString>
 
 class player
 {
 public:
     player();
-    void addStat(stats* newstat);
+    void addStat(QString newstat, int newqty);
+    void addStat(pair<pair <QString, int>, pair <QString, int> > newstat);
     void addItem(items* newitem);
 
 private:
     QVector<items*> myitems;
-    QVector<stats*> mystats;
+    bst<QString> mystats;
 };
 
 #endif // PLAYER_H

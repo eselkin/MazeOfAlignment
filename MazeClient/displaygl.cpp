@@ -496,9 +496,9 @@ bool displayGL::showitems(QPainter *painter)
     uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
     for (uint i = 0; i < item_size; i++)
     {
-        string filename =  the_rooms.rooms[current_level][current_room]->getItems()[i]->getId();
+        QString filename =  the_rooms.rooms[current_level][current_room]->getItems()[i]->getId();
         filename.append(".png");
-        painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename.c_str())));
+        painter->drawImage(this->width()/2,this->height()/1.1,QImage(QString(filename)));
     }
     return true;
 }
@@ -565,7 +565,7 @@ bool displayGL::showthisitem(QPainter *painter)
     uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
     if (item_at >= 0 && item_at < item_size)
     {
-        string filename =  the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getId();
+        QString filename =  the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getId();
         filename.append(".png");
         QRect bg((this->width()/2)-20, (this->height()/2)-20, 100, 100); // a square to put the item in
         QBrush bgbrush(Qt::black);
@@ -574,7 +574,7 @@ bool displayGL::showthisitem(QPainter *painter)
         painter->setPen(bgoutline);
         painter->fillRect(bg, bgbrush);
         painter->drawRect(bg); // outline the box
-        painter->drawImage(this->width()/2,this->height()/2,QImage(QString(filename.c_str())).scaledToWidth(60));
+        painter->drawImage(this->width()/2,this->height()/2,QImage(QString(filename)).scaledToWidth(60));
     }
     return true;
 }

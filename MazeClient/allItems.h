@@ -3,12 +3,12 @@
 #include <vector>
 #include <QMap>
 #include "items.h"
-#include "stats.h"
+#include <QString>
 // we do have an items copy constructor to make copies of even pointers to items
 struct allItems{
 public :
     allItems();
-    QMap<string, items*> itemlist;
+    QMap<QString, items*> itemlist;
 };
 
 

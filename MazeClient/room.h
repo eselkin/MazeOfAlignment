@@ -14,10 +14,10 @@ public:
     room& operator=(const room &other);
     ~room();
 
-    vector<stats*> getStats();
+    vector<pair<pair<QString, int>, pair<QString, int> > > getStats();
     vector<items*> getItems();
     vector<Question*> getQuestions(); // non const
-    vector<stats*> getStats() const;
+    vector<pair<pair<QString, int>, pair<QString, int> > > getStats() const;
     vector<items*> getItems() const;
     vector<Question*> getQuestions() const; // non const
     void addItem(items *newitem);
@@ -29,7 +29,7 @@ private:
     void copy(const room &other);
     void nukem();
     vector<items*> avail_contents; // pointers so that when someone takes them, they can be transferred in just one memory space!
-    vector<stats*> stat_alterations;
+    vector<pair< pair<QString, int>, pair<QString, int> > > stat_alterations; // This allows for Lawful(10)-Neutral(20) etc. to be given to the entrant.
     vector<Question*> room_questions;
 };
 
