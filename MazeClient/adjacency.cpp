@@ -72,6 +72,7 @@ Adjacency::Adjacency()
     //Level1
     adjacencytable[1][9][10] = new weights();
     adjacencytable[1][10][9] = new weights();
+    adjacencytable[1][10][9]->addStat("Good", 20, "Lawful", 20); // 0-8... 0=Lawful Good .. to go back to the beginning you must be LG
     adjacencytable[1][9][17] = new weights();
     adjacencytable[1][17][9] = new weights();
     adjacencytable[1][17][9]->setDoor(3);

@@ -427,10 +427,47 @@ void displayGL::moveForward()
     {
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
-        thePlayer. testForward->getStats()
+        bool hasstats = false;
+        int thesize = testForward->getStats().size();
+        if (thesize == 0)
+            hasstats = true;
+        for( int i = 0; i < thesize; i++)
+        {
+            if (testForward->getStats()[i].first.first == "")
+            {
+                hasstats = true; // no stats required
+                break;
+            } else
+                if (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second))
+                    hasstats = true;
+                else
+                    return; // not adequate stats
+
+            if (testForward->getStats()[i].second.first == "")
+            {
+                hasstats = true; // no stats required
+                break;
+            } else
+                if (thePlayer.hasStat(testForward->getStats()[i].second.first, testForward->getStats()[i].second.second))
+                    hasstats = true;
+                else
+                    return; // not adequate stats
+        }
+
+        bool hasitems = false;
+
+        thesize = testForward->getItems().size();
+        if (thesize == 0)
+            hasitems = true;
+        for( int i = 0; i < thesize; i++)
+            if (thePlayer.hasItem(testForward->getItems()[i]))
+                hasitems = true;
+            else
+                return; // does not have a required item
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
-        current_room = current_room + count_ahead;
+        if (hasitems && hasstats)
+            current_room = current_room + count_ahead;
     }
     Evil->moveToServer(current_room);
     update();

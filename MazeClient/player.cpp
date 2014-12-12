@@ -25,10 +25,16 @@ void player::addItem(items *newitem)
 
 bool player::hasStat(QString stat, int val)
 {
-    mystats.find
+    return mystats[stat] > val;
 }
 
 bool player::hasItem(items *itemreq)
 {
-
+    bool hasit = false;
+    int itemsize = myitems.size();
+    for (int i = 0; i < itemsize; i++)
+    {
+        (myitems[i] == itemreq) && (hasit == false) && (hasit = true);
+    }
+    return hasit;
 }

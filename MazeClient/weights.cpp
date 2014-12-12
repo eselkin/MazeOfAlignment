@@ -18,7 +18,7 @@ void weights::addStat(pair<mQPair, mQPair> statpair)
     statsReq.push_back(statpair);
 }
 
-vector<pair<mQPair, mQPair>> &weights::getStats()
+vector<pair<mQPair, mQPair> > &weights::getStats()
 {
     return statsReq;
 }

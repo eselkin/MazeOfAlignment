@@ -50,7 +50,7 @@ public:
 
     QTextStream& print(QTextStream &out, int idx);
 
-    int& operator[](const T& data);
+    int& operator[](const T& data); // returns count
 
 
 private:
@@ -566,7 +566,7 @@ template<typename T>
 int &bst<T>::operator[](const T &data)
 {
 
-    return bstroot[find(1, data)]; // Find the index of the item and then return its count as ref
+    return bstroot[find(1, data)]->theCount(); // Find the index of the item and then return its count as ref
 }
 
 
