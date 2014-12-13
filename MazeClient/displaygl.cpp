@@ -427,22 +427,32 @@ void displayGL::moveForward()
     {
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
-        //        bool hasstats = false;
-        int thesize;//= testForward->getStats().size();
-        //        if (thesize == 0)
-        //            hasstats = true;
-        //        for( int i = 0; i < thesize; i++)
-        //        {
-        //            if (testForward->getStats()[i].first.first == "")
-        //            {
-        //                hasstats = true; // no stats required
-        //                break;
-        //            } else
-        //                if (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second))
-        //                    hasstats = true;
-        //                else
-        //                    return; // not adequate stats
+        bool hasstats = false;
+        int thesize = testForward->getStats().size();
+        qDebug() << "the size of stats: "<< thesize <<endl;
+        if (thesize == 0)
+            hasstats = true;
+        for( int i = 0; i < thesize; i++)
+        {
 
+            qDebug() << "FIRST FIRST:" << testForward->getStats()[0].first.first <<endl;
+            if (testForward->getStats()[i].first.first == "")
+            {
+                hasstats = true; // no stats required
+                break;
+            } else
+            {
+                if (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second))
+                {
+                    qDebug() << "TESTED TRUE" <<endl;
+                    hasstats = true;
+                }
+                else
+                {
+                    qDebug() << "TESTED FALSE" <<endl;
+                    return; // not adequate stats
+                }
+            }
         //            if (testForward->getStats()[i].second.first == "")
         //            {
         //                hasstats = true; // no stats required
@@ -452,7 +462,7 @@ void displayGL::moveForward()
         //                    hasstats = true;
         //                else
         //                    return; // not adequate stats
-        //        }
+        }
 
         bool hasitems = false;
 

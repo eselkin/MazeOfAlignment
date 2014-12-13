@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <vector>
 #include <QTextStream>
+#include <QDebug>
 #include "node.h"
 
 using namespace std;
@@ -50,7 +51,7 @@ public:
 
     QTextStream& print(QTextStream &out, int idx);
 
-    int& operator[](const T& data); // returns count
+    int operator[](const T& data); // returns count
 
 
 private:
@@ -563,12 +564,22 @@ T bst<T>::remove(const T &data, int count)
 }
 
 template<typename T>
-int &bst<T>::operator[](const T &data)
+int bst<T>::operator[](const T &data)
 {
-
-    return bstroot[find(1, data)]->theCount(); // Find the index of the item and then return its count as ref
+    try {
+        if (find(1, data) <= 0)
+        {
+            qDebug() << "find: " << find(1,data);
+            return -1;
+        }
+        else
+            return bstroot[find(1, data)]->theCount(); // Find the index of the item and then return its count as ref
+    }
+    catch (...)
+    {
+        qDebug () << "Caught an error!" << endl;
+    }
 }
-
 
 template<typename T>
 void bst<T>::nukem()

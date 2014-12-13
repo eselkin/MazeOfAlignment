@@ -10,6 +10,7 @@ typedef pair<QString, int> mQPair;
 
 class player
 {
+
 public:
     player();
     void addStat(QString newstat, int newqty);
@@ -22,6 +23,7 @@ public:
 private:
     QVector<items*> myitems;
     bst<QString> mystats;
+
 };
 
 #endif // PLAYER_H
