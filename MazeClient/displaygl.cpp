@@ -622,7 +622,7 @@ bool displayGL::showthisitem(QPainter *painter)
     uint item_size = the_rooms.rooms[current_level][current_room]->getItems().size();
     if (item_at >= 0 && item_at < item_size)
     {
-        QString filename =  the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getId();
+        QString filename = the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getId();
         filename.append(".png");
         QRect bg((this->width()/2)-20, (this->height()/2)-20, 100, 100); // a square to put the item in
         QBrush bgbrush(Qt::black);
@@ -632,6 +632,9 @@ bool displayGL::showthisitem(QPainter *painter)
         painter->fillRect(bg, bgbrush);
         painter->drawRect(bg); // outline the box
         painter->drawImage(this->width()/2,this->height()/2,QImage(QString(filename)).scaledToWidth(60));
+        painter->drawText((width()/2)-20, (this->height()/2)+80, 100, 100, Qt::AlignHCenter|Qt::TextWordWrap,
+                          the_rooms.rooms[current_level][current_room]->getItems()[item_at]->getName());
+
     }
     return true;
 }
@@ -643,14 +646,16 @@ bool displayGL::showmyitem(QPainter *painter)
     {
         QString filename = thePlayer.getItems()[item_at]->getId();
         filename.append(".png");
-        QRect bg(width()-100, 20, 100, 100); // a square to put the item in
-        QBrush bgbrush(Qt::darkCyan);
+        QRect bg(width()-120, 20, 100, 100); // a square to put the item in
+        QBrush bgbrush(Qt::darkGreen);
         QPen bgoutline(Qt::darkGray);
         bgoutline.setWidth(2);
         painter->setPen(bgoutline);
         painter->fillRect(bg, bgbrush);
         painter->drawRect(bg); // outline the box
-        painter->drawImage(width()-90,40,QImage(QString(filename)).scaledToWidth(60));
+        painter->drawImage(width()-105,40,QImage(QString(filename)).scaledToWidth(60));
+        painter->drawText(width()-120, 120, 100, 100, Qt::AlignHCenter|Qt::TextWordWrap,
+                          thePlayer.getItems()[item_at]->getName());
     }
     return true;
 }
