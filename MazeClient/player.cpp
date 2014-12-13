@@ -22,6 +22,17 @@ void player::addItem(items *newitem)
     myitems.push_back(newitem);
 }
 
+void player::dropItem(items *remitem)
+{
+    QVector<items*>::iterator vIT;
+    for (vIT=myitems.begin(); vIT != myitems.end(); vIT++)
+        if ((*vIT)->getId() == remitem->getId())
+            myitems.erase(vIT);
+}
+
+
+// No dropping stats, just adding negative quantities
+
 bool player::hasStat(QString stat, int val)
 {
     return mystats[stat] > val;
