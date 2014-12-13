@@ -200,6 +200,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
     (in_rm_inventory) && showthisitem(&painter);
+    (in_inventory) && showmyitem(&painter);
     painter.end();
     update();
 }
@@ -234,7 +235,6 @@ void displayGL::mousePressEvent(QMouseEvent *e)
 
 void displayGL::keyPressEvent(QKeyEvent *event)
 {
-
     if (in_rm_inventory)
     {
         items* item_to_get;
@@ -251,12 +251,7 @@ void displayGL::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Enter:
             (item_at >= 0 && item_at < num_items_here) &&
                     (item_to_get = the_rooms.rooms[current_level][current_room]->removeItem(item_at));
-            //
-            ///
-            // then add to the player!
-            ///
-            //
-            thePlayer.addItem(item_to_get);
+            thePlayer.addItem(item_to_get); /// Give the player the item
             glFlush();
             in_rm_inventory = false;
             break;
@@ -265,9 +260,8 @@ void displayGL::keyPressEvent(QKeyEvent *event)
             break;
         }
     }
-    else
-        if (in_question)
-        {
+    else if (in_question)
+    {
             switch(event->key())
             {
             case Qt::Key_A:
@@ -288,10 +282,36 @@ void displayGL::keyPressEvent(QKeyEvent *event)
                 break;
 
             }
+    }
+    else if (in_inventory)
+    {
+        items* remitem;
+        int num_items_here = thePlayer.getItems().size();
+        switch(event->key())
+        {
+        case Qt::Key_Left:
+            ((item_at-1) >= 0) && item_at--;
+            break;
+        case Qt::Key_Right:
+            ((item_at+1) < num_items_here) && item_at++;
+            break;
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            (item_at >= 0 && item_at < num_items_here) &&
+                    (remitem = thePlayer.getItems()[item_at]);
+            thePlayer.dropItem(remitem);
+            the_rooms.rooms[current_level][current_room]->addItem(remitem);
+            glFlush();
+            in_inventory = false;
+            break;
+        case Qt::Key_Escape:
+            in_inventory = false;
+            break;
         }
-        else
-            if (event->key() < 128 && event->key() >= 0)
-                (this->*(key_fptrs[event->key()]))();
+    }
+    else
+        if (event->key() < 128 && event->key() >= 0)
+            (this->*(key_fptrs[event->key()]))();
 }
 
 void displayGL::showInfo(QPainter *toPaint)
@@ -434,54 +454,32 @@ void displayGL::moveForward()
             hasstats = true;
         for( int i = 0; i < thesize; i++)
         {
-
-            qDebug() << "FIRST FIRST:" << testForward->getStats()[0].first.first <<endl;
             if (testForward->getStats()[i].first.first == "")
-            {
                 hasstats = true; // no stats required
-                break;
-            } else
-            {
-                if (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second))
-                {
-                    qDebug() << "TESTED TRUE" <<endl;
-                    hasstats = true;
-                }
-                else
-                {
-                    qDebug() << "TESTED FALSE" <<endl;
-                    return; // not adequate stats
-                }
-            }
-        //            if (testForward->getStats()[i].second.first == "")
-        //            {
-        //                hasstats = true; // no stats required
-        //                break;
-        //            } else
-        //                if (thePlayer.hasStat(testForward->getStats()[i].second.first, testForward->getStats()[i].second.second))
-        //                    hasstats = true;
-        //                else
-        //                    return; // not adequate stats
-        }
+            else
+                hasstats = (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second)) ? true : false;
 
+            if (testForward->getStats()[i].second.first == "")
+                hasstats = true; // no stats required
+            else
+                if ( hasstats == true ) // must already be true or false
+                    hasstats = (thePlayer.hasStat(testForward->getStats()[i].second.first, testForward->getStats()[i].second.second)) ? true : false;
+            // not adequate stats
+        }
         bool hasitems = false;
 
         thesize = testForward->getItems().size();
-        qDebug() << "THE SIZE: " << thesize <<endl;
         if (thesize == 0)
             hasitems = true;
         for( int i = 0; i < thesize; i++)
             if (thePlayer.hasItem(testForward->getItems()[i]))
-            {
                 hasitems = true;
-                qDebug() << "TESTED ITEMS...";
-            }
             else
                 return; // does not have a required item
 
         // YADA YADA YADA ... player has adequate stats, items, etc.
         // testForward has the list of items we must check against our inventory
-        if (hasitems) //(hasitems && hasstats)
+        if (hasitems && hasstats)
             current_room = current_room + count_ahead;
     }
     Evil->moveToServer(current_room);
@@ -542,6 +540,12 @@ void displayGL::DropItem()
 {
     // adds item to room
     // on screen list will appear with ability to select item to drop
+    int num_items = thePlayer.getItems().size();
+    if (num_items > 0)
+    {
+        in_inventory = true;
+        item_at = 0;
+    }
 }
 
 bool displayGL::showitems(QPainter *painter)
@@ -628,6 +632,25 @@ bool displayGL::showthisitem(QPainter *painter)
         painter->fillRect(bg, bgbrush);
         painter->drawRect(bg); // outline the box
         painter->drawImage(this->width()/2,this->height()/2,QImage(QString(filename)).scaledToWidth(60));
+    }
+    return true;
+}
+
+bool displayGL::showmyitem(QPainter *painter)
+{
+    uint item_size = thePlayer.getItems().size();
+    if (item_at >= 0 && item_at < item_size)
+    {
+        QString filename = thePlayer.getItems()[item_at]->getId();
+        filename.append(".png");
+        QRect bg(width()-100, 20, 100, 100); // a square to put the item in
+        QBrush bgbrush(Qt::darkCyan);
+        QPen bgoutline(Qt::darkGray);
+        bgoutline.setWidth(2);
+        painter->setPen(bgoutline);
+        painter->fillRect(bg, bgbrush);
+        painter->drawRect(bg); // outline the box
+        painter->drawImage(width()-90,40,QImage(QString(filename)).scaledToWidth(60));
     }
     return true;
 }

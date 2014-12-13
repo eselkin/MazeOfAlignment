@@ -72,6 +72,7 @@ private:
     bool in_inventory, in_rm_inventory, in_question;
     int  item_at, num_answers;
     void doNothing();
+    bool showmyitem(QPainter *painter);
     bool showitems(QPainter *painter);
     bool showminimap(QPainter *painter);
     bool showthisitem(QPainter *painter);

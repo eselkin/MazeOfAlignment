@@ -80,7 +80,7 @@ Adjacency::Adjacency()
 
     adjacencytable[1][17][9] = new weights();
     adjacencytable[1][17][9]->addItem("gold_key", "key_gold");
-    adjacencytable[1][17][9]->addItem("black_key", "key_black");
+    //adjacencytable[1][17][9]->addItem("black_key", "key_black");
 
     adjacencytable[1][17][9]->setDoor(3);
     adjacencytable[1][9][17]->setDoor(3);

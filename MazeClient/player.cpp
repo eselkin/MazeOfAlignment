@@ -23,12 +23,17 @@ void player::addItem(items *newitem)
     myitems.push_back(newitem);
 }
 
-void player::dropItem(items *remitem)
+bool player::dropItem(items *remitem)
 {
-    QVector<items*>::iterator vIT;
-    for (vIT=myitems.begin(); vIT != myitems.end(); vIT++)
-        if ((*vIT)->getId() == remitem->getId())
-            myitems.erase(vIT);
+    for (int i=0; i < myitems.size(); i++)
+        if (myitems[i]->getId() == remitem->getId()) // drop the first item with that ID
+            myitems.remove(i);
+    return true;
+}
+
+QVector<items *> &player::getItems()
+{
+    return myitems;
 }
 
 

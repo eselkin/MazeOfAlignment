@@ -18,7 +18,8 @@ public:
     void addItem(items* newitem);
     bool hasStat(QString stat, int val);
     bool hasItem(items* itemreq);
-    void dropItem(items *remitem);
+    bool dropItem(items *remitem);
+    QVector<items*>& getItems();
 
 private:
     QVector<items*> myitems;
