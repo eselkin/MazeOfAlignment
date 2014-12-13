@@ -447,42 +447,14 @@ void displayGL::moveForward()
     {
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
-        bool hasstats = false;
-        int thesize = testForward->getStats().size();
-        qDebug() << "the size of stats: "<< thesize <<endl;
-        if (thesize == 0)
-            hasstats = true;
-        for( int i = 0; i < thesize; i++)
-        {
-            if (testForward->getStats()[i].first.first == "")
-                hasstats = true; // no stats required
-            else
-                hasstats = (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second)) ? true : false;
-
-            if (testForward->getStats()[i].second.first == "")
-                hasstats = true; // no stats required
-            else
-                if ( hasstats == true ) // must already be true or false
-                    hasstats = (thePlayer.hasStat(testForward->getStats()[i].second.first, testForward->getStats()[i].second.second)) ? true : false;
-            // not adequate stats
-        }
-        bool hasitems = false;
-
-        thesize = testForward->getItems().size();
-        if (thesize == 0)
-            hasitems = true;
-        for( int i = 0; i < thesize; i++)
-            if (thePlayer.hasItem(testForward->getItems()[i]))
-                hasitems = true;
-            else
-                return; // does not have a required item
-
-        // YADA YADA YADA ... player has adequate stats, items, etc.
-        // testForward has the list of items we must check against our inventory
+        bool hasstats = checkstats(testForward);
+        bool hasitems = checkitems(testForward);
         if (hasitems && hasstats)
+        {
             current_room = current_room + count_ahead;
+            Evil->moveToServer(current_room); // only send the move if we have the correct items and stats
+        }
     }
-    Evil->moveToServer(current_room);
     update();
     updateGL();
 }
@@ -495,15 +467,55 @@ void displayGL::moveBackward()
     weights* testForward;
     if ( (testForward = checkAhead(current_room, current_room + count_ahead)) )
     {
+        bool hasstats = checkstats(testForward);
+        bool hasitems = checkitems(testForward);
         // This is where we test if we meet the weights requirement!!!!!!!!!!!!!!!!!!!
         //
-        // YADA YADA YADA ... player has adequate stats, items, etc.
-        // testForward has the list of items we must check against our inventory
-        current_room = current_room + count_ahead;
+        if (hasitems && hasstats)
+        {
+            current_room = current_room + count_ahead;
+            Evil->moveToServer(current_room); // only send the move if we have the correct items and stats
+        }
     }
-    Evil->moveToServer(current_room);
     update();
     updateGL();
+}
+
+
+bool displayGL::checkstats(weights* testForward)
+{
+    bool hasstats= false;
+    int thesize = testForward->getStats().size();
+    if (thesize == 0)
+        hasstats = true;
+    for( int i = 0; i < thesize; i++)
+    {
+        if (testForward->getStats()[i].first.first == "")
+            hasstats = true; // no stats required
+        else
+            hasstats = (thePlayer.hasStat(testForward->getStats()[i].first.first, testForward->getStats()[i].first.second)) ? true : false;
+
+        if (hasstats == true  && testForward->getStats()[i].second.first == "")
+            hasstats = true; // no stats required
+        else
+            if ( hasstats == true ) // must already be true or false
+                hasstats = (thePlayer.hasStat(testForward->getStats()[i].second.first, testForward->getStats()[i].second.second)) ? true : false;
+        // not adequate stats
+    }
+    return hasstats;
+}
+
+
+bool displayGL::checkitems(weights* testForward)
+{
+    bool hasitems = false;
+    int thesize = testForward->getItems().size();
+    if (thesize == 0)
+        return true; // no items to test
+    for( int i = 0; i < thesize; i++)
+        if (!thePlayer.hasItem(testForward->getItems()[i]))
+            return false; // does not have a required item
+    return true;
 }
 
 void displayGL::turnLeft()
@@ -562,10 +574,9 @@ bool displayGL::showitems(QPainter *painter)
 bool displayGL::drawEnemy(int player, int size, QPainter *painter)
 {
     double newsize = (600*1.0/((size+1)*1.0));
-    qDebug() << "SIZE: " << size << " and 500/size: " << (500*1.0/((size+1)*1.0)) <<endl;
     double high = this->height()/2;
     double wide = this->width()/2;
-    QImage troll("./troll.png");
+    QImage troll("./troll.png"); // gotta make this related to what user selects at some point
     painter->drawImage(wide, high, troll.scaledToHeight(newsize));
     update();
     return true;

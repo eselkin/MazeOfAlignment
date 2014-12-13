@@ -61,6 +61,8 @@ private:
     int current_room, current_level;
     Adjacency adjacencyTable;
     weights* checkAhead(int room_number, int next_room);
+    bool checkstats(weights *testForward);
+    bool checkitems(weights *testForward);
     int countAhead(DIRECTION dir);
     fptr key_fptrs[128];
     void moveForward();

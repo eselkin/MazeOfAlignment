@@ -11,8 +11,10 @@ roomlist::roomlist()
 
     rooms[0][9]->addItem(listofitems.itemlist["key_black"]);
     rooms[1][49]->addItem(listofitems.itemlist["orb_win"]);
+    rooms[1][54]->addItem(listofitems.itemlist["key_blue"]);
+    rooms[1][22]->addItem(listofitems.itemlist["key_red"]);
+    rooms[1][21]->addItem(listofitems.itemlist["weapon_axe"]);
     rooms[1][17]->addItem(listofitems.itemlist["key_gold"]);
-    rooms[1][17]->addItem(listofitems.itemlist["orb_win"]);
     rooms[1][17]->addItem(listofitems.itemlist["key_black"]);
     rooms[1][17]->addItem(listofitems.itemlist["weapon_spear"]);
 
@@ -22,7 +24,7 @@ roomlist::roomlist()
     q1->addAnswer("a. It is has the greatest potential for POWERRRR");
     q1->addStat("Evil",5,"Chaotic",5);
     q1->addAnswer("b. It is a standard and law-abiding weapon, reliable in all situations");
-    q1->addStat("Lawful",5, "Good", 10);
+    q1->addStat("Lawful",20, "Good", 20);
     q1->addAnswer("c. It is the best for taking advantage of opportune moments");
     q1->addStat("Neutral",5, "Chaotic", 5);
     q1->addAnswer("d. It smashes things standing in my way");
