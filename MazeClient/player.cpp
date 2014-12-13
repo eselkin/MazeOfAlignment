@@ -19,9 +19,7 @@ void player::addStat(QString newstat, int newqty)
 
 void player::addItem(items *newitem)
 {
-    qDebug() << "PICKING UP ITEM" <<endl;
     myitems.push_back(newitem);
-
 }
 
 bool player::hasStat(QString stat, int val)
@@ -31,14 +29,9 @@ bool player::hasStat(QString stat, int val)
 
 bool player::hasItem(items *itemreq)
 {
-    qDebug() << "HERE IN HAS ITEM!" <<endl;
-    bool hasit = false;
     int itemsize = myitems.size();
     for (int i = 0; i < itemsize; i++)
-    {
-        qDebug() << " HAVE:" << myitems[i]->getId() << " LOOKING FOR: " << itemreq->getId() << endl;
         if (myitems[i]->getId() == itemreq->getId())
             return true;
-    }
     return false;
 }
