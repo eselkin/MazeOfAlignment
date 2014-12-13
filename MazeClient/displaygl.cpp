@@ -254,6 +254,7 @@ void displayGL::keyPressEvent(QKeyEvent *event)
             thePlayer.addItem(item_to_get); /// Give the player the item
             glFlush();
             in_rm_inventory = false;
+            checkifwon();
             break;
         case Qt::Key_Escape:
             in_rm_inventory = false;

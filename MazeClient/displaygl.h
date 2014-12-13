@@ -63,6 +63,7 @@ private:
     weights* checkAhead(int room_number, int next_room);
     bool checkstats(weights *testForward);
     bool checkitems(weights *testForward);
+    void checkifwon();
     int countAhead(DIRECTION dir);
     fptr key_fptrs[128];
     void moveForward();
