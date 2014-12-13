@@ -245,11 +245,13 @@ void bst<T>::insert(const T& data, int count, int at_idx)
     {
         bstroot[at_idx] = new node<T>(data); // T is a node pointer
         bstroot[at_idx]->height = 0;
+        bstroot[at_idx]->count = count; // oops was missing this
         return; // height already assessed, move on to height of parents
     }
     else if (bstroot[at_idx] && (data == bstroot[at_idx]->data))
     {
         *bstroot[at_idx] += data; // no height change or rebalancing needed
+        bstroot[at_idx]->count += count;
         return; // height does not change
     }
     else if (bstroot[at_idx] && (data < bstroot[at_idx]->data))

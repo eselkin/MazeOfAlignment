@@ -7,9 +7,15 @@ player::player()
 void player::addStat(pair<mQPair, mQPair> newstat)
 {
     if (newstat.first.first != "")
+    {
+        qDebug() << "newstat value 1: " << newstat.first.second;
         addStat(newstat.first.first, newstat.first.second);
+    }
     if (newstat.second.first != "")
+    {
+        qDebug() << "newstat value 2: " << newstat.second.second;
         addStat(newstat.second.first, newstat.second.second);
+    }
 }
 
 void player::addStat(QString newstat, int newqty)
@@ -19,6 +25,7 @@ void player::addStat(QString newstat, int newqty)
 
 void player::addItem(items *newitem)
 {
+    addStat(newitem->getStats());
     myitems.push_back(newitem);
 }
 
@@ -35,6 +42,7 @@ void player::dropItem(items *remitem)
 
 bool player::hasStat(QString stat, int val)
 {
+    qDebug() << "MYSTAT: " << stat << " is: " << mystats[stat] << " AND REQ IS: " << val;
     return mystats[stat] > val;
 }
 
