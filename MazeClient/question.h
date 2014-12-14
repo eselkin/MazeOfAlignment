@@ -21,7 +21,7 @@ struct Question
     Question& operator =(const Question& other);
     void addAnswer(QString answer);
     void addStat(pair<mQPair, mQPair>);
-    void addStat(QString stat_i, int val_i, QString stat_ii, int val_ii);
+    void addStat(QString stat_i, int val_i, QString stat_ii="", int val_ii=0);
     void changeQuestion(QString q);
     void copy(const Question& other);
     void nukem();

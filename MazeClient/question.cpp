@@ -29,7 +29,7 @@ void Question::addAnswer(QString answer)
     questionanswers.push_back(answer);
 }
 
-void Question::addStat(QString stat_i, int val_i, QString stat_ii = "", int val_ii = 0)
+void Question::addStat(QString stat_i, int val_i, QString stat_ii, int val_ii)
 {
     addStat(make_pair(make_pair(stat_i, val_i), make_pair(stat_ii, val_ii)));
 }
