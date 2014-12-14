@@ -371,6 +371,7 @@ void displayGL::myGameOver(QString playerID)
         current_level++;
         current_room = start_loc[current_level];
         current_direction = (DIRECTION)(rand()%4);
+        thePlayer.hasItem(theItems.itemlist["orb_win"]) && thePlayer.dropItem(theItems.itemlist["orb_win"]);
     } else
     {
         // display out that the game is over
