@@ -96,6 +96,7 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         emit LocationsChanged(PlayerLocations);
     } else if (CKeyVal[0] == "WINNING")
     {
+        emit GameOver(QString::number(ct_socket->socketDescriptor()));
         // someone won, maybe even us so check it
         // advance to the next level if it exists...
         // If not, compare points? and end.
@@ -116,6 +117,22 @@ void NetworkOfAlignment::moveToServer(int current_room)
     ct_socket->write(newCommand);
     ct_socket->write("\r\n");
     ct_socket->flush();
+}
+
+bool NetworkOfAlignment::winToServer()
+{
+    QString command = "WINNING::";
+    int packetsize = command.size();
+    command.prepend(tr("//"));
+    command.prepend(QString::number(packetsize));
+    QByteArray newCommand;
+    qDebug() << "STRING:" << command <<endl;
+
+    newCommand.append(command);
+    ct_socket->write(newCommand);
+    ct_socket->write("\r\n");
+    ct_socket->flush();
+    return true;
 }
 
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)

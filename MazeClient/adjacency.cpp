@@ -13,8 +13,9 @@ Adjacency::Adjacency()
     //Level0
     adjacencytable[0][9][10] = new weights();
     adjacencytable[0][9][10]->addItem("blue key", "key_blue");
-    adjacencytable[0][9][10]->addStat("Health", 90, "Strength", 80);
-    adjacencytable[0][9][10]->addStat("Evil", 20, "Lawful", 20); // 0-8... 0=Lawful Good
+    adjacencytable[0][9][10]->addItem("black key", "key_black");
+    adjacencytable[0][9][10]->addItem("red key", "key_red");
+    adjacencytable[0][9][10]->addStat("Evil", 5, "Lawful", 5); // 0-8... 0=Lawful Good
     adjacencytable[0][10][9] = new weights();
     adjacencytable[0][10][9]->addItem("blue key", "key_blue");
     adjacencytable[0][10][9]->addStat("Health", 50,"Strength", 100);   // cannot go back with no Health

@@ -49,10 +49,13 @@ void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
     else if (CKeyVal[0] == "WINNING")
     {
         commandString="WINNING::";
-        commandString.append(QString::number(PlayerID));
+        commandString.append(QString::number(PlayerID)); // just broadcast this to all players
     }
     else if (CKeyVal[0] == "SCORE")
     {
+        // After winning is received on the server, clients will send a SCORE VALUE...
+        // when received from all clients, will emit back in unison
+
         //        commandString="SCORE::";
         //        commandString.append() NOT SURE ABOUT THIS YET SCORE OR ALIGNMENT
         //        IT COULD BE DISPLAYED SOMEHOW
@@ -69,13 +72,6 @@ void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
     newPacketCommand.append(command);
     qDebug() << "THE PACKET: " << newPacketCommand <<endl;
 
-    //    QMutex thisMutex;
-    //    thisMutex.lock();
-    //    int thread_num = threads.size();
-    //    for (int i = 0; i < thread_num; i++)
-    //        threads[i]->commandToSocket(newPacketCommand);
-    //    thisMutex.unlock();
-    // Instead of emit, which wasn't getting to the right location and Qt complained even though it is the correct way to do things
     emit sendCommand(newPacketCommand);
 }
 

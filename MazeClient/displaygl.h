@@ -11,6 +11,7 @@
 #include "weights.h"
 #include "adjacency.h"
 #include "roomlist.h"
+#include "allItems.h"
 #include "networkofalignment.h"
 #include "player.h"
 
@@ -35,6 +36,7 @@ public slots:
     void keyPressEvent(QKeyEvent *e);
     void showInfo(QPainter *toPaint);
     void ChangeLocations(QStringList playerlocations);
+    void myGameOver(QString playerID);
 
 protected slots:
 
@@ -60,10 +62,10 @@ private:
     DIRECTION current_direction;
     int current_room, current_level;
     Adjacency adjacencyTable;
+    allItems theItems;
     weights* checkAhead(int room_number, int next_room);
     bool checkstats(weights *testForward);
     bool checkitems(weights *testForward);
-    void checkifwon();
     int countAhead(DIRECTION dir);
     fptr key_fptrs[128];
     void moveForward();
@@ -72,6 +74,7 @@ private:
     void turnRight();
     void PickUpItem();
     void DropItem();
+    void checkifwon();
     bool in_inventory, in_rm_inventory, in_question;
     int  item_at, num_answers;
     void doNothing();
@@ -82,6 +85,7 @@ private:
     void showminimap(); // the function pointer function
     bool show_map;
     player thePlayer;
+    int* start_loc;
 };
 
 #endif // DISPLAYGL_H

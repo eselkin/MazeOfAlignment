@@ -25,6 +25,8 @@
 #include "adjacency.h"
 #include "roomlist.h"
 
+#define MAX_LEVELS 2
+
 using namespace std;
 
 displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
@@ -34,10 +36,15 @@ displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     Evil =  new NetworkOfAlignment(serverID,serverPort); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
     // Will make a messagebox with line input for this address later or scan for ips with open 9966 port
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
+    connect(Evil, SIGNAL(GameOver(QString)), this, SLOT(myGameOver(QString)));
     setAutoFillBackground(false);
     current_direction = WEST;
-    current_level = 1;
-    current_room = 17;
+    start_loc = new int[10];
+    start_loc[0]=9;
+    start_loc[1]=17;
+    start_loc[2]=22;
+    current_level = 0;
+    current_room = start_loc[0];
     init_fp();
     show_map = false;
 }
@@ -355,6 +362,24 @@ void displayGL::ChangeLocations(QStringList playerlocations)
     thisMutex.unlock();
 }
 
+void displayGL::myGameOver(QString playerID)
+{
+    // Got signal that someone won....
+    // Go to next level
+    if (current_level < MAX_LEVELS)
+    {
+        current_level++;
+        current_room = start_loc[current_level];
+        current_direction = (DIRECTION)(rand()%4);
+    } else
+    {
+        // display out that the game is over
+        // DISPLAY SCORES
+        qDebug() << "WON!" <<endl;
+    }
+
+}
+
 // Basically a draw a vertical trapezoid function
 // Whatever calls it will give at what depth it needs to be drawn and what side of the wall it's on
 bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, int level)
@@ -559,6 +584,11 @@ void displayGL::DropItem()
         in_inventory = true;
         item_at = 0;
     }
+}
+
+void displayGL::checkifwon()
+{
+    (thePlayer.hasItem(theItems.itemlist["orb_win"])) && (Evil->winToServer());
 }
 
 bool displayGL::showitems(QPainter *painter)

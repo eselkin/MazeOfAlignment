@@ -22,6 +22,7 @@ public:
 signals:
     void commandToThread(QByteArray packetcommand);
     void LocationsChanged(QStringList playerlocations);
+    void GameOver(QString Player);
 
 public slots:
     void readyRead();
@@ -29,6 +30,7 @@ public slots:
     void SessionOpened();
     void commandToClient(QByteArray packetcommand);
     void moveToServer(int current_room);
+    bool winToServer();
 
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);

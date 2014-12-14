@@ -10,6 +10,11 @@ roomlist::roomlist()
     }
 
     rooms[0][9]->addItem(listofitems.itemlist["key_black"]);
+    rooms[0][9]->addItem(listofitems.itemlist["key_blue"]);
+    rooms[0][9]->addItem(listofitems.itemlist["key_red"]);
+    rooms[0][9]->addItem(listofitems.itemlist["key_silver"]);
+    rooms[0][49]->addItem(listofitems.itemlist["orb_win"]);
+
     rooms[1][49]->addItem(listofitems.itemlist["orb_win"]);
     rooms[1][54]->addItem(listofitems.itemlist["key_blue"]);
     rooms[1][22]->addItem(listofitems.itemlist["key_red"]);

@@ -10,6 +10,6 @@ allItems::allItems()
     itemlist.insert("key_silver",   new items("Silver Key", "key_silver",   "Lawful",  10, "Neutral",  5));
     itemlist.insert("weapon_spear", new items("Spear",      "weapon_spear", "Damage",  10, "Strength", 5));
     itemlist.insert("weapon_axe",   new items("Axe",        "weapon_axe",   "Damage",  15, "Strength", 10));
-    itemlist.insert("orb_win",      new items("The Orb",    "orb_win",      "Good",    20));
+    itemlist.insert("orb_win",      new items("The Orb",    "orb_win",      "Good",    20, "Winning",  100));
 }
 
