@@ -14,6 +14,7 @@
 #include "allItems.h"
 #include "networkofalignment.h"
 #include "player.h"
+#include "zombie.h"
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -86,6 +87,7 @@ private:
     bool show_map;
     player thePlayer;
     int* start_loc;
+    zombie aZombie;
 };
 
 #endif // DISPLAYGL_H

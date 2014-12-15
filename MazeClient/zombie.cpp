@@ -7,3 +7,13 @@ zombie::zombie()
     MonsterWeapon = theItems.itemlist["weapon_spear"];
     MonsterType = "Zombie";
 }
+
+void zombie::MakeMove()
+{
+    if (canAttack())
+}
+
+void zombie::Attack()
+{
+
+}

@@ -8,6 +8,9 @@ public:
     zombie();
 
     // privates from protected of monster
+public slots:
+    void MakeMove();
+    void Attack();
 
 };
 
