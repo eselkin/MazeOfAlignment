@@ -31,8 +31,8 @@ protected:
     allItems theItems;
     bst<QString> mystats;
     QString MonsterType;
-    int startlocations[10];
     roomlist the_rooms;
+
 private:
 
 };

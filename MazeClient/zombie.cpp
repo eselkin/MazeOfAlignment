@@ -10,7 +10,6 @@ zombie::zombie()
 
 void zombie::MakeMove()
 {
-    if (canAttack())
 }
 
 void zombie::Attack()
