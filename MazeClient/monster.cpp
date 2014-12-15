@@ -2,7 +2,7 @@
 
 monster::monster()
 {
-    playerAdvanced(0);
+    //playerAdvanced(0);
 }
 
 void monster::playerAdvanced(int level)

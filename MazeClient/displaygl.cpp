@@ -45,6 +45,9 @@ displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     start_loc[2]=22;
     current_level = 0;
     current_room = start_loc[0];
+    MonsterPointers = new monster*[5]; // 5 monsters to start
+    for (int i = 0; i < 5; i++)
+        MonsterPointers[i] = new zombie;
     init_fp();
     show_map = false;
 }
@@ -466,6 +469,10 @@ int displayGL::countAhead(DIRECTION dir)
 
 void displayGL::moveForward()
 {
+    // move zombies first
+    for (int i = 0; i < 5; i++)
+        MonsterPointers[i]->MakeMove();
+
     int count_ahead = countAhead(current_direction);
     if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
         return; // Easy out first, less time to compute bad moves

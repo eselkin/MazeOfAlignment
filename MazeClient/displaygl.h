@@ -87,7 +87,8 @@ private:
     bool show_map;
     player thePlayer;
     int* start_loc;
-    zombie aZombie;
+    monster** MonsterPointers;
+
 };
 
 #endif // DISPLAYGL_H
