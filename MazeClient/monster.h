@@ -9,6 +9,8 @@
 #include "networkofalignment.h"
 #include "roomlist.h"
 
+enum DIRECTION { EAST, WEST, NORTH, SOUTH };
+
 class monster
 {
 public:
@@ -28,6 +30,7 @@ protected:
     int PlayerRoom;
     int MonsterRoom;
     int MonsterLevel;
+    DIRECTION MonsterDirection;
     allItems theItems;
     bst<QString> mystats;
     QString MonsterType;

@@ -87,7 +87,7 @@ private:
     bool show_map;
     player thePlayer;
     int* start_loc;
-    monster** MonsterPointers;
+    monster* MonsterPointers[10];
 
 };
 
