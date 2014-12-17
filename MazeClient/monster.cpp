@@ -38,6 +38,11 @@ bool monster::canAttack()
 
 }
 
+void monster::TakeDamage(int damage)
+{
+
+}
+
 
 vector<int>& monster::UniformCostSearch()
 {
