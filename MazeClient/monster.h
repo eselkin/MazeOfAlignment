@@ -23,9 +23,13 @@ public slots:
     void MakeMove();
     void Attack();
     bool canAttack();
+    void TakeDamage(int damage);
+
+public signals:
+    void DamagePlayer(int damage);
 
 protected:
-    int UniformCostSearch();
+    vector<int>& UniformCostSearch();
     void FindNextDistances(vector<int> &NodeDistances, int vertex);  // updates node distances from current vertex with shortest distance
     int ShortestDistance(vector<int> &Distances, bool Paths[]);
     bst<string> MonsterStats;

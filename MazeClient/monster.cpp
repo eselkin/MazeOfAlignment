@@ -19,12 +19,18 @@ void monster::PlayerMoved(int location)
 
 void monster::MakeMove()
 {
-
+    if (PlayerRoom == MonsterRoom)
+        Attack();
+    else
+    {
+        vector<int> path = UniformCostSearch();
+        MonsterRoom = path[1]; // the next move from the current room toward the player
+    }
 }
 
 void monster::Attack()
 {
-
+    emit DamagePlayer(MonsterStats["Damage"]);
 }
 
 bool monster::canAttack()
@@ -33,7 +39,7 @@ bool monster::canAttack()
 }
 
 
-int monster::UniformCostSearch()
+vector<int>& monster::UniformCostSearch()
 {
     int NUM_VERTICIES = 64;
     // A Dijkstra method with weights all 1 or NULL
@@ -59,8 +65,10 @@ int monster::UniformCostSearch()
     {
         // just search for shortest route (fewest jumps) to Player Location
         vertex = ShortestDistance(NodeDistances, SPTreeset); // returns vertex not already set in SPTreeset ( after return it is set though )
+        previous.push_back(vertex); // keep track of the path from the first vertex match
         FindNextDistances(NodeDistances, vertex);
     }
+    return previous;
 }
 
 void monster::FindNextDistances(vector<int> &NodeDistances, int vertex)
