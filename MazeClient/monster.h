@@ -24,6 +24,9 @@ public slots:
     bool canAttack();
 
 protected:
+    int UniformCostSearch();
+    void FindNextDistances(vector<int> &NodeDistances, int vertex);  // updates node distances from current vertex with shortest distance
+    int ShortestDistance(vector<int> &Distances, vector<int> &Paths);
     bst<string> MonsterStats;
     items* MonsterWeapon;
     QImage MonsterImage;
