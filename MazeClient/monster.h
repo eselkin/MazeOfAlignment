@@ -8,6 +8,7 @@
 #include "bst.h"
 #include "networkofalignment.h"
 #include "roomlist.h"
+#include "adjacency.h"
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
@@ -26,7 +27,7 @@ public slots:
 protected:
     int UniformCostSearch();
     void FindNextDistances(vector<int> &NodeDistances, int vertex);  // updates node distances from current vertex with shortest distance
-    int ShortestDistance(vector<int> &Distances, vector<int> &Paths);
+    int ShortestDistance(vector<int> &Distances, bool Paths[]);
     bst<string> MonsterStats;
     items* MonsterWeapon;
     QImage MonsterImage;
@@ -38,7 +39,7 @@ protected:
     bst<QString> mystats;
     QString MonsterType;
     roomlist the_rooms;
-
+    Adjacency AdjTable;
 private:
 
 };

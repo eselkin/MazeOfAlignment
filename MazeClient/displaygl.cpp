@@ -468,10 +468,6 @@ int displayGL::countAhead(DIRECTION dir)
 
 void displayGL::moveForward()
 {
-    // move zombies first
-    for (int i = 0; i < 5; i++)
-        MonsterPointers[i]->MakeMove();
-
     int count_ahead = countAhead(current_direction);
     if ((current_room + count_ahead) > 54 || (current_room + count_ahead) < 9)
         return; // Easy out first, less time to compute bad moves
@@ -488,6 +484,9 @@ void displayGL::moveForward()
             Evil->moveToServer(current_room); // only send the move if we have the correct items and stats
         }
     }
+    // move zombies after person moves
+    for (int i = 0; i < 5; i++)
+        MonsterPointers[i]->MakeMove();
     update();
     updateGL();
 }

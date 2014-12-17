@@ -40,30 +40,43 @@ int monster::UniformCostSearch()
 
     // start is MonsterRoom and looking for path to PlayerRoom... return is next room to enter based on path
     vector<int> NodeDistances; // dist[]
-    vector<int> SPTreeset;  // Q? Shortest Paths
+    bool SPTreeset[64];        // Q? Shortest Paths T/F
     vector<int> previous;      // previous gets things put in it which should be the next hop /// we can have at most 64 hops, so
 
+
+    // GOTTA FIGURE OUT HOW TO STORE PREVIOUS SO WE CAN KEEP A PATH
+
+
     for (int i = 0; i < NUM_VERTICIES; i++)
+    {
         NodeDistances.push_back(INFINITY);
+        SPTreeset[i] = false;
+    }
     NodeDistances[MonsterRoom] = 0; // my starting point to myself is myself
-    SPTreeset.clear();
     previous.clear();
-    int vertex = ShortestDistance(NodeDistances, SPTreeset);
-    FindNextDistances(NodeDistances, vertex);
+    int vertex = 0; // can't be player room... Except watch out before player moves... but since move only gets called after player moves...
+    while (vertex != PlayerRoom)
+    {
+        // just search for shortest route (fewest jumps) to Player Location
+        vertex = ShortestDistance(NodeDistances, SPTreeset); // returns vertex not already set in SPTreeset ( after return it is set though )
+        FindNextDistances(NodeDistances, vertex);
+    }
 }
 
 void monster::FindNextDistances(vector<int> &NodeDistances, int vertex)
 {
-
+    int nearest[4] = { vertex-1, vertex-8, vertex+1, vertex+8 };
+    for ( int i = 0; i < 4; i++ ) // If it's not NULL (no weight) then uniform weight
+        (AdjTable.getWeight(vertex, nearest[i], MonsterLevel)) && (NodeDistances[nearest[i]]=(NodeDistances[vertex]+1));  /// adds on to the distance to the prior vertex point
 }
 
-int monster::ShortestDistance(vector<int>& Distances, vector<int>& Paths)
+int monster::ShortestDistance(vector<int>& Distances, bool Paths[])
 {
     int i = 0;
     int NUM_VERTICES = Distances.size();
-    int current_shortest = 0;
+    int current_shortest = 0; // just start at the beginning always... probably not efficient
     for (; i < NUM_VERTICES; i++)
-        (Distances[i] < Distances[current_shortest]) && (current_shortest = i);
-    Paths.push_back(current_shortest);
+        (Distances[i] < Distances[current_shortest]) && (!Paths[i]) && (current_shortest = i) && (Paths[i] = true);
+    // check if it's in Paths, if not, set it to true and make it the current shortest
     return current_shortest;
 }

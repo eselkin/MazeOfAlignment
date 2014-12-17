@@ -16,8 +16,6 @@
 #include "player.h"
 #include "zombie.h"
 
-enum DIRECTION { EAST, WEST, NORTH, SOUTH };
-
 class displayGL : public QGLWidget
 {
     Q_OBJECT
