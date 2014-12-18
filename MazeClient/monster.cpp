@@ -30,7 +30,7 @@ void monster::MakeMove()
 
 void monster::Attack()
 {
-    emit DamagePlayer(MonsterStats["Damage"]);
+    //emit DamagePlayer(MonsterStats["Damage"]);
 }
 
 bool monster::canAttack()

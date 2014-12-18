@@ -25,7 +25,7 @@ public slots:
     bool canAttack();
     void TakeDamage(int damage);
 
-public signals:
+signals:
     void DamagePlayer(int damage);
 
 protected:
