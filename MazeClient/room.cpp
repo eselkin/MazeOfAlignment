@@ -23,8 +23,6 @@ room::~room()
 {
     uint sizeofroom = avail_contents.size();
     uint numattributes = stat_alterations.size();
-    for (uint i =0; i < sizeofroom; i++)
-        delete avail_contents[i];
     avail_contents.clear();
     stat_alterations.clear();
 }

@@ -571,7 +571,7 @@ int bst<T>::operator[](const T &data)
     try {
         if (find(1, data) <= 0)
         {
-            qDebug() << "find: " << find(1,data);
+            qDebug() << "find: "  << find(1,data) << "to find: " << data<< endl;
             return -1;
         }
         else

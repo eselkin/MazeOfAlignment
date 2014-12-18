@@ -28,7 +28,7 @@ public slots:
     void TakeDamage(int damage);
 
 signals:
-    void DamagePlayer(int);
+    void DamagePlayer(int damage);
 
 protected:
     vector<int>& UniformCostSearch();
