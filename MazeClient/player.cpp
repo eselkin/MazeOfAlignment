@@ -1,6 +1,8 @@
 #include "player.h"
 #include <QDebug>
-player::player()
+
+player::player(QObject *parent):
+    QObject(parent)
 {
 }
 
@@ -34,6 +36,12 @@ bool player::dropItem(items *remitem)
 QVector<items *> &player::getItems()
 {
     return myitems;
+}
+
+void player::TakeDamage(int damage)
+{
+    QString HLTH=tr("Health");
+    mystats.insert(&HLTH, -1*damage);
 }
 
 

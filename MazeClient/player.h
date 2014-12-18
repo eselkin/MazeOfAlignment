@@ -3,16 +3,17 @@
 #include "items.h"
 #include "bst.h"
 #include <QVector>
+#include <QObject>
 #include <QString>
 
 using namespace std;
 typedef pair<QString, int> mQPair;
 
-class player
+class player : public QObject
 {
-
+    Q_OBJECT
 public:
-    player();
+    explicit player(QObject *parent = 0);
     void addStat(QString newstat, int newqty);
     void addStat(pair<mQPair,mQPair> newstat);
     void addItem(items* newitem);
@@ -20,6 +21,12 @@ public:
     bool hasItem(items* itemreq);
     bool dropItem(items *remitem);
     QVector<items*>& getItems();
+
+public slots:
+    void TakeDamage(int damage);
+
+signals:
+    void DamageOther(int);
 
 private:
     QVector<items*> myitems;

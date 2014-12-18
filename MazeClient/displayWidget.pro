@@ -2,6 +2,13 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 QT += core gui opengl network
+
+macx {
+    LIBS +=-L"/System/Library/Frameworks"
+    LIBS +=-L"/System/Library/Frameworks/OpenGL.framework/Libraries"
+    LIBS += -framework GLUT -framework OpenGL -framework Cocoa
+}
+
 TARGET = MazeOfAlignment
 
 SOURCES += main.cpp \

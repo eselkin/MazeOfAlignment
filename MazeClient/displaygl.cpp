@@ -46,7 +46,10 @@ displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     current_level = 0;
     current_room = start_loc[0];
     for (int i = 0; i < 5; i++)
+    {
         MonsterPointers[i] = new zombie;
+        connect(MonsterPointers[i], SIGNAL(DamagePlayer(int)), &thePlayer, SLOT(TakeDamage(int)));
+    }
     init_fp();
     show_map = false;
 }

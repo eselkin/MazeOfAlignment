@@ -2,6 +2,7 @@
 #define MONSTER_H
 #include <QVector>
 #include <QImage>
+#include <QObject>
 #include <QString>
 #include "items.h"
 #include "allItems.h"
@@ -12,10 +13,11 @@
 
 enum DIRECTION { EAST, WEST, NORTH, SOUTH };
 
-class monster
+class monster : public QObject
 {
+    Q_OBJECT
 public:
-    monster();
+    explicit monster(QObject *parent = 0);
 
 public slots:
     void PlayerMoved(int location);
@@ -25,8 +27,8 @@ public slots:
     bool canAttack();
     void TakeDamage(int damage);
 
-public signals:
-    void DamagePlayer(int damage);
+signals:
+    void DamagePlayer(int);
 
 protected:
     vector<int>& UniformCostSearch();
