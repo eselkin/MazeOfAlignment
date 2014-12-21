@@ -18,12 +18,14 @@ public:
     void addStat(pair<mQPair,mQPair> newstat);
     void addItem(items* newitem);
     bool hasStat(QString stat, int val);
+    int  getStat(QString stat);
     bool hasItem(items* itemreq);
     bool dropItem(items *remitem);
+    bool doDamage();
     QVector<items*>& getItems();
 
 public slots:
-    void TakeDamage(int damage);
+    bool TakeDamage(int damage);
 
 signals:
     void DamageOther(int);

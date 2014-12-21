@@ -8,16 +8,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#ifdef __WIN32__ || __LINUX__
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#endif
-
 #include <QDebug>
 #include <iostream>
 #include <QPixmap>
@@ -32,11 +22,12 @@ using namespace std;
 displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-
     Evil =  new NetworkOfAlignment(serverID,serverPort); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
-    // Will make a messagebox with line input for this address later or scan for ips with open 9966 port
+
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     connect(Evil, SIGNAL(GameOver(QString)), this, SLOT(myGameOver(QString)));
+    connect(Evil, SIGNAL(gotDamage(int)), &thePlayer, SLOT(TakeDamage(int))); // if it's us (chked already) we take the damage
+
     setAutoFillBackground(false);
     current_direction = WEST;
     start_loc = new int[10];
@@ -68,7 +59,8 @@ void displayGL::init_fp()
     key_fptrs[Qt::Key_A] = key_fptrs[Qt::Key_4] = &displayGL::turnLeft;
     key_fptrs[Qt::Key_D] = key_fptrs[Qt::Key_6] = &displayGL::turnRight;
     key_fptrs[Qt::Key_M] = key_fptrs[Qt::Key_5] = &displayGL::showminimap;
-    key_fptrs[Qt::Key_Space] = &displayGL::PickUpItem;
+    key_fptrs[Qt::Key_Space] = &displayGL::attack;
+    key_fptrs[Qt::Key_O] = &displayGL::PickUpItem;
     key_fptrs[Qt::Key_P] = &displayGL::DropItem;
 }
 
@@ -714,6 +706,27 @@ bool displayGL::showmyitem(QPainter *painter)
 void displayGL::showminimap()
 {
     show_map = !show_map;
+}
+
+void displayGL::attack()
+{
+    for (int i = 0; i < 5; i++)
+        (MonsterPointers[i]->getRoom() == current_room) && (MonsterPointers[i]->TakeDamage(thePlayer.getStat("Damage")));
+    vector<int> damage_who;
+    for (int i = 0; i < PlayerLocations.size(); i++)
+        if (PlayerLocations[i].first == current_room && PlayerLocations[i].second != Evil->getSocketID())
+            damage_who.push_back(PlayerLocations[i].second); // damage everyone in the room except myself
+    QString dmg_player;
+    // DAMAGE::#dmg-ID,ID,ID...
+    dmg_player = QString::number(thePlayer.getStat("Damage"));
+    dmg_player.append(tr("-"));
+    for (int i = 0; i < damage_who.size(); i++)
+    {
+        if (i) dmg_player.append(tr(","));
+        dmg_player.append(damage_who[i]);
+    }
+    qDebug() << "DAMAGE WHO: "  << damage_who.size() << endl;
+    (damage_who.size() > 0) && (Evil->damageToServer(dmg_player));
 }
 
 bool displayGL::showminimap(QPainter *painter)

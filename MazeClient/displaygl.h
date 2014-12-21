@@ -1,9 +1,16 @@
 #ifndef DISPLAYGL_H
 #define DISPLAYGL_H
+
+#if defined(__WIN32__) || defined(__LINUX__)
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+
 #if defined(__APPLE__) && defined(__MACH__)
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
+
 #include <QGLWidget>
 #include <QImage>
 #include <QKeyEvent>
@@ -15,6 +22,7 @@
 #include "networkofalignment.h"
 #include "player.h"
 #include "zombie.h"
+
 
 class displayGL : public QGLWidget
 {
@@ -85,11 +93,11 @@ private:
     bool showminimap(QPainter *painter);
     bool showthisitem(QPainter *painter);
     void showminimap(); // the function pointer function
+    void attack();
     bool show_map;
     player thePlayer;
     int* start_loc;
     monster* MonsterPointers[10];
-
 };
 
 #endif // DISPLAYGL_H

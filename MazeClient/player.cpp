@@ -4,6 +4,9 @@
 player::player(QObject *parent):
     QObject(parent)
 {
+    QString HLTH=tr("Health"), DMG=tr("Damage");
+    mystats.insert(&HLTH, 100);
+    mystats.insert(&DMG, 5);
 }
 
 void player::addStat(pair<mQPair, mQPair> newstat)
@@ -30,7 +33,12 @@ bool player::dropItem(items *remitem)
     for (int i=0; i < myitems.size(); i++)
         if (myitems[i]->getId() == remitem->getId()) // drop the first item with that ID
             myitems.remove(i);
+
     return true;
+}
+
+bool player::doDamage()
+{
 }
 
 QVector<items *> &player::getItems()
@@ -38,15 +46,19 @@ QVector<items *> &player::getItems()
     return myitems;
 }
 
-void player::TakeDamage(int damage)
+bool player::TakeDamage(int damage)
 {
     QString HLTH=tr("Health");
     mystats.insert(&HLTH, -1*damage);
 }
 
 
-// No dropping stats, just adding negative quantities
+int player::getStat(QString stat)
+{
+    return mystats[stat];
+}
 
+// No dropping stats, just adding negative quantities
 bool player::hasStat(QString stat, int val)
 {
     return mystats[stat] > val;

@@ -25,7 +25,7 @@ public slots:
     void MakeMove();
     void Attack();
     bool canAttack();
-    void TakeDamage(int damage);
+    bool TakeDamage(int damage);
     int getRoom();
     int getType();
 signals:

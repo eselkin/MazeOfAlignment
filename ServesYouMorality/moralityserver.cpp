@@ -60,6 +60,11 @@ void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
         //        commandString.append() NOT SURE ABOUT THIS YET SCORE OR ALIGNMENT
         //        IT COULD BE DISPLAYED SOMEHOW
     }
+    else if (CKeyVal[0] == "DAMAGE")
+    {
+        emit sendCommand(packetcommand); // the same one that came from the client since already in the right format
+        return;
+    }
     else
     {
         return;

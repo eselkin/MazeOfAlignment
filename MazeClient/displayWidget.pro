@@ -1,7 +1,6 @@
 TEMPLATE = app
 CONFIG += console
-CONFIG -= app_bundle
-QT += core gui opengl network
+QT += core gui multimedia opengl network
 
 macx {
     LIBS +=-L"/System/Library/Frameworks"

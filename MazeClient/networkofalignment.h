@@ -23,6 +23,7 @@ signals:
     void commandToThread(QByteArray packetcommand);
     void LocationsChanged(QStringList playerlocations);
     void GameOver(QString Player);
+    void gotDamage(int);
 
 public slots:
     void readyRead();
@@ -31,6 +32,7 @@ public slots:
     void commandToClient(QByteArray packetcommand);
     void moveToServer(int current_room);
     bool winToServer();
+    bool damageToServer(QString listfordmg);
     int getSocketID();
 
 private slots:

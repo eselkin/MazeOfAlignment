@@ -100,6 +100,28 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         // someone won, maybe even us so check it
         // advance to the next level if it exists...
         // If not, compare points? and end.
+    } else if (CKeyVal[0] == "DAMAGE")
+    {
+        QStringList dmglist = CKeyVal[1].split("-", QString::SkipEmptyParts);
+        int damage = dmglist[0].toInt();
+        if (!dmglist[1].contains(","))
+        {
+            // just one to damage
+            if (dmglist[1].toInt() != ct_socket->socketDescriptor())
+                return;
+            // damaging us
+            emit gotDamage(damage);
+            return;
+        }
+        QStringList players = dmglist[1].split(",", QString::SkipEmptyParts);
+        for(int i = 0; i < players.size(); i++)
+        {
+            if (players[i].toInt() != ct_socket->socketDescriptor())
+                continue;
+            else
+               emit gotDamage(damage);
+        }
+        return;
     }
 }
 
@@ -128,6 +150,22 @@ bool NetworkOfAlignment::winToServer()
     QByteArray newCommand;
     qDebug() << "STRING:" << command <<endl;
 
+    newCommand.append(command);
+    ct_socket->write(newCommand);
+    ct_socket->write("\r\n");
+    ct_socket->flush();
+    return true;
+}
+
+bool NetworkOfAlignment::damageToServer(QString listfordmg)
+{
+    QString command = "DAMAGE::";
+    command.append(listfordmg);
+    int packetsize = command.size();
+    command.prepend(tr("//"));
+    command.prepend(QString::number(packetsize));
+    QByteArray newCommand;
+    qDebug() << "STRING: " << command << endl;
     newCommand.append(command);
     ct_socket->write(newCommand);
     ct_socket->write("\r\n");

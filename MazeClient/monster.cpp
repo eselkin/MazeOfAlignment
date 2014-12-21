@@ -3,6 +3,9 @@
 monster::monster(QObject *parent) :
     QObject(parent), MonsterType(0)
 {
+    QString HLTH=tr("Health"), DMG=tr("Damage");
+    mystats.insert(&HLTH, 100);
+    mystats.insert(&DMG, 5);
     playerAdvanced(0);
 }
 
@@ -43,9 +46,10 @@ bool monster::canAttack()
 
 }
 
-void monster::TakeDamage(int damage)
+bool monster::TakeDamage(int damage)
 {
-
+    QString HLTH=tr("Health");
+    mystats.insert(&HLTH, -1*damage);
 }
 
 int monster::getRoom()
