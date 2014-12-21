@@ -135,6 +135,11 @@ bool NetworkOfAlignment::winToServer()
     return true;
 }
 
+int NetworkOfAlignment::getSocketID()
+{
+    return ct_socket->socketDescriptor();
+}
+
 void NetworkOfAlignment::displayError(QAbstractSocket::SocketError socketError)
 {
     // blah, the one from the Qt Tutorials on Fortune network client, but no message boxes... that's silly here

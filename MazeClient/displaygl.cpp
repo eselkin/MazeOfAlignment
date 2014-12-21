@@ -8,7 +8,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-#ifdef __WIN32__||__LINUX__
+#ifdef __WIN32__ || __LINUX__
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
@@ -116,84 +116,26 @@ void displayGL::paintEvent(QPaintEvent *event)
     weights* forward = NULL;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    bool playerahead = false;
-    int playerdepth = 0;
-    int playerid = 0;
     QMutex thisMutex;
-
+    vector< vector<int> > P_Loc_Sz; // possibly have to be vectors when you can select what number's bitpattern will display how you look!
+    vector< vector<int> > M_Loc_Sz; // Monster # (from which you can get type), Depth
     do {
         my_room = my_room + count_ahead;
-        if (current_direction == NORTH)
+        switch(current_direction)
         {
-            drawSideWall(0,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
-            drawSideWall(1,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
-
-            thisMutex.lock();
-            int sizepl = PlayerLocations.size();
-            for (int k = 0; k < sizepl; k++)
-            {
-                if(PlayerLocations[k]==my_room && my_room!=current_room)
-                {
-                    playerahead = true;
-                    playerid = k;
-                    playerdepth = i;
-                }
-            }
-            thisMutex.unlock();
+        case NORTH:
+            drawRoom(WEST, EAST, my_room, i, P_Loc_Sz, M_Loc_Sz);
+            break;
+        case SOUTH:
+            drawRoom(EAST, WEST, my_room, i, P_Loc_Sz, M_Loc_Sz);
+            break;
+        case EAST:
+            drawRoom(NORTH, SOUTH, my_room, i, P_Loc_Sz, M_Loc_Sz);
+            break;
+        default:
+            drawRoom(SOUTH, NORTH, my_room, i, P_Loc_Sz, M_Loc_Sz);
+            break;
         }
-        else
-            if (current_direction == SOUTH)
-            {
-                drawSideWall(0,checkAhead(my_room,my_room+countAhead(EAST)), i, current_level);
-                drawSideWall(1,checkAhead(my_room,my_room+countAhead(WEST)), i, current_level);
-
-                thisMutex.lock();
-                int sizepl = PlayerLocations.size();
-                for (int k = 0; k < sizepl; k++)
-                {
-                    if(PlayerLocations[k]==my_room && my_room!=current_room)
-                    {
-                        playerahead = true;
-                        playerid = k;
-                        playerdepth = i;
-                    }
-                }
-                thisMutex.unlock();
-            }
-            else
-                if (current_direction == EAST)
-                {
-                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
-                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
-                    thisMutex.lock();
-                    int sizepl = PlayerLocations.size();
-                    for (int k = 0; k < sizepl; k++)
-                    {
-                        if(PlayerLocations[k]==my_room && my_room!=current_room)
-                        {
-                            playerahead = true;
-                            playerid = k;
-                            playerdepth = i;
-                        }
-                    }
-                    thisMutex.unlock();
-                }
-                else {
-                    drawSideWall(0,checkAhead(my_room,my_room+countAhead(SOUTH)), i, current_level);
-                    drawSideWall(1,checkAhead(my_room,my_room+countAhead(NORTH)), i, current_level);
-                    thisMutex.lock();
-                    int sizepl = PlayerLocations.size();
-                    for (int k = 0; k < sizepl; k++)
-                    {
-                        if(PlayerLocations[k]==my_room && my_room!=current_room)
-                        {
-                            playerahead = true;
-                            playerid = k;
-                            playerdepth = i;
-                        }
-                    }
-                    thisMutex.unlock();
-                }
         count_ahead = countAhead(current_direction);
         forward = checkAhead(my_room, my_room+count_ahead);
         i++;
@@ -204,10 +146,11 @@ void displayGL::paintEvent(QPaintEvent *event)
     if (the_rooms.rooms[current_level][current_room]->getQuestions().size() > 0)
         drawQuestion(current_level, current_room, &painter);
 
-    (playerahead) && ( drawEnemy(playerid, playerdepth, &painter) );
-    playerdepth = 0;
-    playerid = 0;
-    playerahead = 0;
+    // DRAW PEOPLE AND MONSTERS AFTER BACK WALL (PNGs WITH TRANSPARENCY)
+    (P_Loc_Sz.size() > 0) && ( drawEnemies(P_Loc_Sz, &painter) );
+    (M_Loc_Sz.size() > 0) && ( drawMonsters(M_Loc_Sz, &painter) );
+
+
     showInfo(&painter); // show the info at the top of the screen
     showitems(&painter); // show available items in the room
     (show_map) && showminimap(&painter); // no ifs or buts, but one and
@@ -362,7 +305,7 @@ void displayGL::ChangeLocations(QStringList playerlocations)
     for (int i = 0; i < playerlocations.size(); i++)
     {
         QStringList player_loc = playerlocations[i].split("-");
-        PlayerLocations.push_back(player_loc[1].toInt());
+        PlayerLocations.push_back(make_pair(player_loc[1].toInt(),player_loc[0].toInt())); // reverse and make a pair
     }
     thisMutex.unlock();
 }
@@ -431,6 +374,38 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     glFlush();
     glDisable(GL_TEXTURE_2D);
     return 1;
+}
+
+bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
+{
+    drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
+    drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);
+    QMutex thisMutex;
+    thisMutex.lock();
+    int sizepl = PlayerLocations.size();
+    for (int k = 0; k < sizepl; k++)
+    {
+        if (PlayerLocations[k].first==my_room && PlayerLocations[k].second!=Evil->getSocketID())
+        {
+            vector<int> player_in_room;
+            player_in_room.push_back(my_room); // where they are
+            player_in_room.push_back(PlayerLocations[k].second); // player's id
+            player_in_room.push_back(depth); // depth away from me
+            P_Loc_Sz.push_back(player_in_room);
+        }
+    }
+    thisMutex.unlock();
+    for (int k = 0; k < 5; k++)
+    {
+        if (MonsterPointers[k]->getRoom() == my_room)
+        {
+            vector<int> monster_in_room;
+            monster_in_room.push_back(my_room);
+            monster_in_room.push_back(MonsterPointers[k]->getType());
+            monster_in_room.push_back(depth);
+            M_Loc_Sz.push_back(monster_in_room);
+        }
+    }
 }
 
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
@@ -614,13 +589,35 @@ bool displayGL::showitems(QPainter *painter)
     }
     return true;
 }
-bool displayGL::drawEnemy(int player, int size, QPainter *painter)
+
+bool displayGL::drawEnemies(vector< vector <int> >& Enemies, QPainter *painter)
 {
-    double newsize = (600*1.0/((size+1)*1.0));
     double high = this->height()/2;
     double wide = this->width()/2;
     QImage troll("./troll.png"); // gotta make this related to what user selects at some point
-    painter->drawImage(wide, high, troll.scaledToHeight(newsize));
+    // room id depth
+    int Num_Enemies = Enemies.size();
+    for (int i = 0; i < Num_Enemies; i++)
+    {
+        double newsize = (600*1.0/((Enemies[i][2]+1)*1.0));
+        painter->drawImage(wide, high, troll.scaledToHeight(newsize));
+    }
+    update();
+    return true;
+}
+
+bool displayGL::drawMonsters(vector< vector <int> >& Monsters, QPainter *painter)
+{
+    // room type depth
+    double high = this->height()/2;
+    double wide = this->width()/2;
+    int Num_Monsters = Monsters.size();
+    QImage zombie("./zombie.png"); // gotta make this related to what user selects at some point
+    for (int i = 0; i < Num_Monsters; i++)
+    {
+        double newsize = (600*1.0/((Monsters[i][2]+1)*1.0));
+        painter->drawImage(wide, high, zombie.scaledToHeight(newsize));
+    }
     update();
     return true;
 }
@@ -744,9 +741,6 @@ bool displayGL::showminimap(QPainter *painter)
         {
             painter->setPen(RoomPen);
             painter->drawPoint(starting_x,starting_y-(j*21));
-            // ask server to return array of room where Players are
-            // if (serverresponse...)
-
 
             //
             //            DANGER
@@ -772,13 +766,12 @@ bool displayGL::showminimap(QPainter *painter)
             //            }
             QMutex thisMutex;
             thisMutex.lock();
-            QVector<int> temp(PlayerLocations);
+            QVector< pair<int,int> > temp(PlayerLocations); // ROOM LOC, PLAYERID (THREADED SOCKET IDS, SENT BY SERVER SO UNIQUE)
             thisMutex.unlock();
             for (int m = 0; m < temp.size(); m++)
             {
-                if (temp[m] == k)
+                if (temp[m].first == k)
                 {
-                    qDebug() << "temp[" << m << "]: "<< temp[m] << endl;
                     QPen Player1;
                     if (!(m%2))
                         Player1.setColor(QColor((m+3), (m+3), (m+3)*50));
@@ -786,7 +779,6 @@ bool displayGL::showminimap(QPainter *painter)
                         Player1.setColor(QColor((m+3)*50, (m+3), (m+3)*50));
                     else if (!(m%5))
                         Player1.setColor(QColor((m+3), (m+3)*30, (m+3)));
-
                     Player1.setWidth(12);
                     painter->setPen(Player1);
                     painter->drawPoint(starting_x,starting_y-(j*21));

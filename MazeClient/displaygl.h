@@ -45,16 +45,19 @@ protected:
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
     bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
+    bool drawRoom(DIRECTION one, DIRECTION two, int my_room, int depth, vector< vector<int> >& P_Loc_Sz, vector< vector<int> >& M_Loc_Sz);
     void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
-    bool drawEnemy(int player, int size, QPainter *painter);
+    bool drawEnemies(vector<vector<int> > &Enemies, QPainter *painter);
+    bool drawMonsters(vector<vector<int> > &Monsters, QPainter *painter);
     bool drawQuestion(int current_level, int current_room, QPainter *painter);
     bool answerQuestion(int ans);
+
 private slots:
 
 private:
     NetworkOfAlignment *Evil; // Just for fun, this is the network connection for the client
     roomlist the_rooms;
-    QVector<int> PlayerLocations;
+    QVector< pair<int, int> > PlayerLocations; // int location and int ID of player
     QImage m_images[40];
     GLuint texture_ids[40]; // Texture IDS
     double level_r[7],level_g[7], level_b[7];

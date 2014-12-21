@@ -31,6 +31,7 @@ public slots:
     void commandToClient(QByteArray packetcommand);
     void moveToServer(int current_room);
     bool winToServer();
+    int getSocketID();
 
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);

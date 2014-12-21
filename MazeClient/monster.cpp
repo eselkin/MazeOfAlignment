@@ -1,7 +1,7 @@
 #include "monster.h"
 
 monster::monster(QObject *parent) :
-    QObject(parent)
+    QObject(parent), MonsterType(0)
 {
     playerAdvanced(0);
 }
@@ -46,6 +46,16 @@ bool monster::canAttack()
 void monster::TakeDamage(int damage)
 {
 
+}
+
+int monster::getRoom()
+{
+    return MonsterRoom;
+}
+
+int monster::getType()
+{
+    return MonsterType;
 }
 
 

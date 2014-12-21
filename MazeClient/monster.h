@@ -26,7 +26,8 @@ public slots:
     void Attack();
     bool canAttack();
     void TakeDamage(int damage);
-
+    int getRoom();
+    int getType();
 signals:
     void DamagePlayer(int damage);
 
@@ -40,12 +41,13 @@ protected:
     int PlayerRoom;
     int MonsterRoom;
     int MonsterLevel;
+    int MonsterType;
     DIRECTION MonsterDirection;
     allItems theItems;
     bst<QString> mystats;
-    QString MonsterType;
     roomlist the_rooms;
     Adjacency AdjTable;
+
 private:
 
 };
