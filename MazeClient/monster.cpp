@@ -26,8 +26,8 @@ void monster::MakeMove()
     {
         vector<int> RoomPath = UniformCostSearch(); // player room
         int PathSize = RoomPath.size();
-        if (PathSize > 0)
-            MonsterRoom = RoomPath[1];
+        if (PathSize > 1)
+            MonsterRoom = RoomPath[PathSize-2];
         qDebug() << " MONSTER ROOM: " << MonsterRoom << " PLAYER: " << PlayerRoom <<endl;
     }
 }
@@ -66,18 +66,23 @@ vector<int> monster::UniformCostSearch()
         NodeDistances.push_back(INFINITY);
         SPTreeset[i] = false;
     }
-    NodeDistances[MonsterRoom] = 0; // my starting point to myself is myself
+    NodeDistances[PlayerRoom] = 0; // my starting point to myself is myself
     previous.clear();
-    int vertex = MonsterRoom; // can't be player room... Except watch out before player moves... but since move only gets called after player moves...
+    int vertex = PlayerRoom; // can't be player room... Except watch out before player moves... but since move only gets called after player moves...
     // entering into loop
-    char temp;
-    while (vertex != PlayerRoom)
+    while (vertex != MonsterRoom)
     {
         // just search for shortest route (fewest jumps) to Player Location
         vertex = ShortestDistance(NodeDistances, SPTreeset); // returns vertex not already set in SPTreeset ( after return it is set though )
 
+        //
+        ///
+        /// THIS IS AN ISSUE
         if (vertex == 0)
             break;
+        ///
+        ///
+        //
 
         previous.push_back(vertex); // keep track of the path from the first vertex match
         FindNextDistances(NodeDistances, vertex);
