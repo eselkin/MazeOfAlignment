@@ -100,6 +100,9 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         // someone won, maybe even us so check it
         // advance to the next level if it exists...
         // If not, compare points? and end.
+    } else if (CKeyVal[0] == "SOCKETID")
+    {
+        ct_socket->setSocketDescriptor(CKeyVal[1].toInt());
     } else if (CKeyVal[0] == "DAMAGE")
     {
         QStringList dmglist = CKeyVal[1].split("-", QString::SkipEmptyParts);

@@ -22,7 +22,6 @@ void ThreadOfMorality::run()
     connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()), Qt::DirectConnection);
     connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     qDebug() << getSocketDescriptor() << " client connected.";
-
     exec(); // execute and hold in memory
 }
 
@@ -59,10 +58,22 @@ void ThreadOfMorality::disconnected()
 
 void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
-    qDebug() << "BYTE:" << thebytes <<endl;
-    socket->write(thebytes);
-    socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
-    socket->flush();
+        qDebug() << "BYTE:" << thebytes <<endl;
+        socket->write(thebytes);
+        socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
+        socket->flush();
+
+        QString commandString="SOCKETID::";
+        commandString.append(QString::number(socket->socketDescriptor()));
+        int packetsize = commandString.size();
+        QByteArray newBytes;
+        newBytes.append(QString::number(packetsize));
+        newBytes.append(tr("//"));
+        newBytes.append(commandString);
+        socket->write(newBytes);
+        socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
+        socket->flush();
+
 }
 
 int ThreadOfMorality::getSocketDescriptor() const

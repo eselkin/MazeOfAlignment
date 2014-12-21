@@ -712,10 +712,18 @@ void displayGL::attack()
 {
     for (int i = 0; i < 5; i++)
         (MonsterPointers[i]->getRoom() == current_room) && (MonsterPointers[i]->TakeDamage(thePlayer.getStat("Damage")));
+
     vector<int> damage_who;
     for (int i = 0; i < PlayerLocations.size(); i++)
+    {
         if (PlayerLocations[i].first == current_room && PlayerLocations[i].second != Evil->getSocketID())
+        {
+            qDebug() << "PL" << PlayerLocations[i].second << " SOCKET: " << Evil->getSocketID() << endl;
             damage_who.push_back(PlayerLocations[i].second); // damage everyone in the room except myself
+        }
+    }
+    if (damage_who.size() == 0)
+        return;
     QString dmg_player;
     // DAMAGE::#dmg-ID,ID,ID...
     dmg_player = QString::number(thePlayer.getStat("Damage"));
@@ -726,7 +734,7 @@ void displayGL::attack()
         dmg_player.append(damage_who[i]);
     }
     qDebug() << "DAMAGE WHO: "  << damage_who.size() << endl;
-    (damage_who.size() > 0) && (Evil->damageToServer(dmg_player));
+    Evil->damageToServer(dmg_player);
 }
 
 bool displayGL::showminimap(QPainter *painter)
@@ -755,28 +763,6 @@ bool displayGL::showminimap(QPainter *painter)
             painter->setPen(RoomPen);
             painter->drawPoint(starting_x,starting_y-(j*21));
 
-            //
-            //            DANGER
-            //
-            // THIS IS JUST A TEST NOT TO BE USED IN THE GAME!
-            //            switch(rand()%5) // give a chance for just grey square
-            //            {
-            //            case 0:
-            //            case 1:
-            //                painter->setPen(Player1);
-            //                painter->drawPoint(starting_x,starting_y-(j*20));
-            //                break;
-            //            case 2:
-            //                painter->setPen(Player2);
-            //                painter->drawPoint(starting_x,starting_y-(j*20));
-            //                break;
-            //            case 3:
-            //                painter->setPen(Player3);
-            //                painter->drawPoint(starting_x,starting_y-(j*20));
-            //                break;
-            //            default:
-            //                break;
-            //            }
             QMutex thisMutex;
             thisMutex.lock();
             QVector< pair<int,int> > temp(PlayerLocations); // ROOM LOC, PLAYERID (THREADED SOCKET IDS, SENT BY SERVER SO UNIQUE)
