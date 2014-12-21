@@ -34,6 +34,7 @@ void monster::MakeMove()
 
 void monster::Attack()
 {
+    qDebug () << "ATTACKING!" << endl;
     emit DamagePlayer(MonsterStats["Damage"]);
 }
 
