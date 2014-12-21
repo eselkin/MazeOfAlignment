@@ -31,7 +31,7 @@ signals:
     void DamagePlayer(int damage);
 
 protected:
-    vector<int>& UniformCostSearch();
+    vector<int> UniformCostSearch();
     void FindNextDistances(vector<int> &NodeDistances, int vertex);  // updates node distances from current vertex with shortest distance
     int ShortestDistance(vector<int> &Distances, bool Paths[]);
     bst<string> MonsterStats;

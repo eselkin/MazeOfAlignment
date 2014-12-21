@@ -47,7 +47,7 @@ displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     current_room = start_loc[0];
     for (int i = 0; i < 5; i++)
     {
-        MonsterPointers[i] = new zombie;
+        MonsterPointers[i] = new monster;
         connect(MonsterPointers[i], SIGNAL(DamagePlayer(int)), &thePlayer, SLOT(TakeDamage(int)));
     }
     init_fp();
@@ -485,11 +485,14 @@ void displayGL::moveForward()
         {
             current_room = current_room + count_ahead;
             Evil->moveToServer(current_room); // only send the move if we have the correct items and stats
+            // move zombies after person successfully moves
+            for (int i = 0; i < 5; i++)
+            {
+                MonsterPointers[i]->PlayerMoved(current_room);
+                MonsterPointers[i]->MakeMove();
+            }
         }
     }
-    // move zombies after person moves
-    for (int i = 0; i < 5; i++)
-        MonsterPointers[i]->MakeMove();
     update();
     updateGL();
 }

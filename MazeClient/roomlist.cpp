@@ -14,6 +14,9 @@ roomlist::roomlist()
     rooms[0][9]->addItem(listofitems.itemlist["key_red"]);
     rooms[0][9]->addItem(listofitems.itemlist["key_silver"]);
     rooms[0][49]->addItem(listofitems.itemlist["orb_win"]);
+    rooms[0][11]->addItem(listofitems.itemlist["weapon_axe"]);
+    rooms[0][26]->addItem(listofitems.itemlist["weapon_spear"]);
+    rooms[0][35]->addItem(listofitems.itemlist["weapon_spear"]);
 
     rooms[1][49]->addItem(listofitems.itemlist["orb_win"]);
     rooms[1][54]->addItem(listofitems.itemlist["key_blue"]);
