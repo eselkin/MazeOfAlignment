@@ -27,7 +27,7 @@ displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     connect(Evil, SIGNAL(GameOver(QString)), this, SLOT(myGameOver(QString)));
     connect(Evil, SIGNAL(gotDamage(int)), &thePlayer, SLOT(TakeDamage(int))); // if it's us (chked already) we take the damage
-
+    connect(Evil, SIGNAL(serverSocket(int)), this, SLOT(getServerSocket(int)));
     setAutoFillBackground(false);
     current_direction = WEST;
     start_loc = new int[10];
@@ -319,6 +319,11 @@ void displayGL::myGameOver(QString playerID)
         qDebug() << "WON!" <<endl;
     }
 
+}
+
+void displayGL::getServerSocket(int socket)
+{
+    myServerSocket = socket;
 }
 
 // Basically a draw a vertical trapezoid function
