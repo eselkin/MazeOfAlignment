@@ -33,7 +33,7 @@ public slots:
     void moveToServer(int current_room);
     bool winToServer();
     bool damageToServer(QString listfordmg);
-    void pollNetworkID();
+    //void pollNetworkID();
     int getSocketID();
 
 

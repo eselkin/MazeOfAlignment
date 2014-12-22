@@ -67,16 +67,15 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
     }
     else if (CKeyVal[0] == "SOCKETID")
     {
-
-        QString commandString="SOCKETID::";
-        commandString.append(QString::number(theThread->getSocketDescriptor()));
-        int packetsize = commandString.size();
-        QByteArray newBytes;
-        newBytes.append(QString::number(packetsize));
-        newBytes.append(tr("//"));
-        newBytes.append(commandString);
-        theThread->commandToSocket(newBytes);
-        return;
+        //        QString commandString="SOCKETID::";
+        //        commandString.append(QString::number(theThread->getSocketDescriptor()));
+        //        int packetsize = commandString.size();
+        //        QByteArray newBytes;
+        //        newBytes.append(QString::number(packetsize));
+        //        newBytes.append(tr("//"));
+        //        newBytes.append(commandString);
+        //        theThread->commandToSocket(newBytes);
+        //        return;
     }
     else
     {
@@ -143,7 +142,7 @@ void MoralityServer::incomingConnection(int socketDescriptor)
     qDebug() << "Socket: " << socketDescriptor << " connecting.";
     ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
     threads.push_back(thread); // keep a hold of the thread addresses for broadcast to their slots since the SIGNAL/SLOT WAY CAUSES PROBLEMS
-    connect(thread, SIGNAL(commandToServer(int,QByteArray)), this, SLOT(getCommand(int,QByteArray)));
+    connect(thread, SIGNAL(commandToServer(int,ThreadOfMorality*,QByteArray)), this, SLOT(getCommand(int,ThreadOfMorality*,QByteArray)));
     connect(thread, SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
     connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
     connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
