@@ -36,7 +36,7 @@ public:
 signals:
     void error(QTcpSocket::SocketError e);
     void socketdisconnect(int SD); // issue disconnect so server can catch it and remove player info
-    void commandToServer(int ID, QByteArray packetcommand);
+    void commandToServer(int ID, ThreadOfMorality* theThread, QByteArray packetcommand);
 
 public slots:
     void readyRead();

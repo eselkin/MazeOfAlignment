@@ -35,7 +35,7 @@ signals:
     void sendCommand(QByteArray packetcommand);
 
 public slots:
-    void getCommand(int PlayerID,  QByteArray packetcommand);
+    void getCommand(int PlayerID, ThreadOfMorality *theThread,  QByteArray packetcommand);
     void removeplayer(int PlayerID);
 
 protected:

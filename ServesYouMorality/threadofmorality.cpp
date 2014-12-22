@@ -45,22 +45,9 @@ void ThreadOfMorality::readyRead()
     //....
     // This will then signal the server (parent) and that will then in turn signal all the threads.
     //....
-    emit commandToServer(socket->socketDescriptor(), Data);
+    emit commandToServer(socket->socketDescriptor(), this, Data);
 }
 
-void ThreadOfMorality::sendID()
-{
-    QString commandString="SOCKETID::";
-    commandString.append(QString::number(socket->socketDescriptor()));
-    int packetsize = commandString.size();
-    QByteArray newBytes;
-    newBytes.append(QString::number(packetsize));
-    newBytes.append(tr("//"));
-    newBytes.append(commandString);
-    socket->write(newBytes);
-    socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
-    socket->flush();
-}
 
 void ThreadOfMorality::disconnected()
 {

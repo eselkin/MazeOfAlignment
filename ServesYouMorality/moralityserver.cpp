@@ -20,7 +20,7 @@ void MoralityServer::StartServer(int myport)
     }
 }
 
-void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
+void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByteArray packetcommand)
 {
     qDebug() << "GETTING COMMAND FROM THE THREAD" <<endl;
     // RESPOND TO THE CLIENT REQUEST HERE!
@@ -63,6 +63,19 @@ void MoralityServer::getCommand(int PlayerID, QByteArray packetcommand)
     else if (CKeyVal[0] == "DAMAGE")
     {
         emit sendCommand(packetcommand); // the same one that came from the client since already in the right format
+        return;
+    }
+    else if (CKeyVal[0] == "SOCKETID")
+    {
+
+        QString commandString="SOCKETID::";
+        commandString.append(QString::number(theThread->getSocketDescriptor()));
+        int packetsize = commandString.size();
+        QByteArray newBytes;
+        newBytes.append(QString::number(packetsize));
+        newBytes.append(tr("//"));
+        newBytes.append(commandString);
+        theThread->commandToSocket(newBytes);
         return;
     }
     else
