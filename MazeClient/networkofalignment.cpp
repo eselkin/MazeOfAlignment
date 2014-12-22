@@ -2,6 +2,9 @@
 #include <QNetworkSession>
 #include <QStringList>
 #include <QDebug>
+#include <iostream>
+
+using namespace std;
 
 NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QObject *parent) :
     QObject(parent), ct_session(0)
@@ -51,8 +54,7 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
 
 void NetworkOfAlignment::pollNetworkID()
 {
-    ct_socket->waitForConnected();
-    //    ct_socket->waitForReadyRead();
+    ct_socket->waitForReadyRead();
     QString commandString="SOCKETID::";
     int packetsize = commandString.size();
     QByteArray newBytes;
@@ -119,8 +121,10 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         // If not, compare points? and end.
     } else if (CKeyVal[0] == "SOCKETID")
     {
-        qDebug() << "SETTING SOCKET ID" <<endl;
+        char temp;
+        qDebug() << "SETTING SOCKET ID TO: " << CKeyVal[1] <<endl;
         ct_socket->setSocketDescriptor(CKeyVal[1].toInt());
+        cin >> temp;
     } else if (CKeyVal[0] == "DAMAGE")
     {
         QStringList dmglist = CKeyVal[1].split("-", QString::SkipEmptyParts);
