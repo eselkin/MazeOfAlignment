@@ -382,7 +382,7 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int depth, v
     int sizepl = PlayerLocations.size();
     for (int k = 0; k < sizepl; k++)
     {
-        if (PlayerLocations[k].first==my_room && PlayerLocations[k].second!=Evil->getSocketID())
+        if (PlayerLocations[k].first==my_room && PlayerLocations[k].second!=myServerSocket)
         {
             vector<int> player_in_room;
             player_in_room.push_back(my_room); // where they are
@@ -721,9 +721,9 @@ void displayGL::attack()
     vector<int> damage_who;
     for (int i = 0; i < PlayerLocations.size(); i++)
     {
-        if (PlayerLocations[i].first == current_room && PlayerLocations[i].second != Evil->getSocketID())
+        if (PlayerLocations[i].first == current_room && PlayerLocations[i].second != myServerSocket)
         {
-            qDebug() << "PL" << PlayerLocations[i].second << " SOCKET: " << Evil->getSocketID() << endl;
+            qDebug() << "PL" << PlayerLocations[i].second << " SOCKET: " << myServerSocket << endl;
             damage_who.push_back(PlayerLocations[i].second); // damage everyone in the room except myself
         }
     }
