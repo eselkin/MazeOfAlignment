@@ -26,6 +26,7 @@ signals:
     void gotDamage(int);
 
 public slots:
+    void pollNetworkID();
     void readyRead();
     void disconnected();
     void SessionOpened();
@@ -33,7 +34,6 @@ public slots:
     void moveToServer(int current_room);
     bool winToServer();
     bool damageToServer(QString listfordmg);
-    //void pollNetworkID();
     int getSocketID();
 
 

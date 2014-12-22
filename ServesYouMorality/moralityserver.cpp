@@ -67,15 +67,15 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
     }
     else if (CKeyVal[0] == "SOCKETID")
     {
-        //        QString commandString="SOCKETID::";
-        //        commandString.append(QString::number(theThread->getSocketDescriptor()));
-        //        int packetsize = commandString.size();
-        //        QByteArray newBytes;
-        //        newBytes.append(QString::number(packetsize));
-        //        newBytes.append(tr("//"));
-        //        newBytes.append(commandString);
-        //        theThread->commandToSocket(newBytes);
-        //        return;
+        QString commandString="SOCKETID::";
+        commandString.append(QString::number(theThread->getSocketDescriptor()));
+        int packetsize = commandString.size();
+        QByteArray newBytes;
+        newBytes.append(QString::number(packetsize));
+        newBytes.append(tr("//"));
+        newBytes.append(commandString);
+        theThread->commandToSocket(newBytes);
+        return;
     }
     else
     {

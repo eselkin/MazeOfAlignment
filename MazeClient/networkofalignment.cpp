@@ -45,6 +45,23 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
         ct_session->open();
     }
 
+    pollNetworkID();
+
+}
+
+void NetworkOfAlignment::pollNetworkID()
+{
+    ct_socket->waitForConnected();
+    //    ct_socket->waitForReadyRead();
+    QString commandString="SOCKETID::";
+    int packetsize = commandString.size();
+    QByteArray newBytes;
+    newBytes.append(QString::number(packetsize));
+    newBytes.append(tr("//"));
+    newBytes.append(commandString);
+    ct_socket->write(newBytes);
+    ct_socket->write("\r\n");
+    ct_socket->flush();
 }
 
 void NetworkOfAlignment::readyRead()
@@ -100,6 +117,10 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         // someone won, maybe even us so check it
         // advance to the next level if it exists...
         // If not, compare points? and end.
+    } else if (CKeyVal[0] == "SOCKETID")
+    {
+        qDebug() << "SETTING SOCKET ID" <<endl;
+        ct_socket->setSocketDescriptor(CKeyVal[1].toInt());
     } else if (CKeyVal[0] == "DAMAGE")
     {
         QStringList dmglist = CKeyVal[1].split("-", QString::SkipEmptyParts);
