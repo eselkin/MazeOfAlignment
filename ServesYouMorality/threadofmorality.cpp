@@ -48,6 +48,20 @@ void ThreadOfMorality::readyRead()
     emit commandToServer(socket->socketDescriptor(), Data);
 }
 
+void ThreadOfMorality::sendID()
+{
+    QString commandString="SOCKETID::";
+    commandString.append(QString::number(socket->socketDescriptor()));
+    int packetsize = commandString.size();
+    QByteArray newBytes;
+    newBytes.append(QString::number(packetsize));
+    newBytes.append(tr("//"));
+    newBytes.append(commandString);
+    socket->write(newBytes);
+    socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
+    socket->flush();
+}
+
 void ThreadOfMorality::disconnected()
 {
     qDebug() << socketDescriptor << " Disconnected";
@@ -62,18 +76,6 @@ void ThreadOfMorality::commandToSocket(QByteArray thebytes)
         socket->write(thebytes);
         socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
         socket->flush();
-
-        QString commandString="SOCKETID::";
-        commandString.append(QString::number(socket->socketDescriptor()));
-        int packetsize = commandString.size();
-        QByteArray newBytes;
-        newBytes.append(QString::number(packetsize));
-        newBytes.append(tr("//"));
-        newBytes.append(commandString);
-        socket->write(newBytes);
-        socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
-        socket->flush();
-
 }
 
 int ThreadOfMorality::getSocketDescriptor() const

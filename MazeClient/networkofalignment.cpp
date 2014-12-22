@@ -45,6 +45,19 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
         ct_session->open();
     }
 
+    pollNetworkID();
+}
+void NetworkOfAlignment::pollNetworkID()
+{
+        QString commandString="SOCKETID::";
+        int packetsize = commandString.size();
+        QByteArray newBytes;
+        newBytes.append(QString::number(packetsize));
+        newBytes.append(tr("//"));
+        newBytes.append(commandString);
+        ct_socket->write(newBytes);
+        ct_socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
+        ct_socket->flush();
 }
 
 void NetworkOfAlignment::readyRead()

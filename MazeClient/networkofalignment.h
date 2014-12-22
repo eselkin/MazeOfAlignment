@@ -33,7 +33,9 @@ public slots:
     void moveToServer(int current_room);
     bool winToServer();
     bool damageToServer(QString listfordmg);
+    void pollNetworkID();
     int getSocketID();
+
 
 private slots:
     void displayError(QAbstractSocket::SocketError socketError);
