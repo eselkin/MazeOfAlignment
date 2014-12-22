@@ -44,6 +44,7 @@ public slots:
     void showInfo(QPainter *toPaint);
     void ChangeLocations(QStringList playerlocations);
     void myGameOver(QString playerID);
+    void getServerSocket(int);
 
 protected slots:
 
@@ -97,6 +98,7 @@ private:
     bool show_map;
     player thePlayer;
     int* start_loc;
+    int myServerSocket;
     monster* MonsterPointers[10];
 };
 

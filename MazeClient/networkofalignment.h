@@ -24,6 +24,7 @@ signals:
     void LocationsChanged(QStringList playerlocations);
     void GameOver(QString Player);
     void gotDamage(int);
+    void serverSocket(int);
 
 public slots:
     void pollNetworkID();
