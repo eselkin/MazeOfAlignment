@@ -54,7 +54,7 @@ NetworkOfAlignment::NetworkOfAlignment(QString serverIPaddr, int serverPort, QOb
 
 void NetworkOfAlignment::pollNetworkID()
 {
-    ct_socket->waitForReadyRead();
+    ct_socket->waitForReadyRead(1000);
     QString commandString="SOCKETID::";
     int packetsize = commandString.size();
     QByteArray newBytes;
@@ -121,10 +121,7 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         // If not, compare points? and end.
     } else if (CKeyVal[0] == "SOCKETID")
     {
-        char temp;
-        qDebug() << "SETTING SOCKET ID TO: " << CKeyVal[1] <<endl;
-        ct_socket->setSocketDescriptor(CKeyVal[1].toInt());
-        cin >> temp;
+        emit serverSocket(CKeyVal[1].toInt());
     } else if (CKeyVal[0] == "DAMAGE")
     {
         QStringList dmglist = CKeyVal[1].split("-", QString::SkipEmptyParts);
