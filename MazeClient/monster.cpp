@@ -5,7 +5,7 @@ monster::monster(QObject *parent) :
 {
     QString HLTH=tr("Health"), DMG=tr("Damage");
     MonsterStats.insert(&HLTH, 100); // same for all monsters
-    MonsterStats.insert(&DMG, 5); // this will change for monster types in their constructors
+    MonsterStats.insert(&DMG, 17); // this will change for monster types in their constructors
     playerAdvanced(0); // same for all monsters
 }
 

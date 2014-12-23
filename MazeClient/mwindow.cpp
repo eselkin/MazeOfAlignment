@@ -18,10 +18,17 @@ mWindow::mWindow(QWidget *parent) :
     SI->show();
     connect(SI, SIGNAL(dServer(QString, int)), this, SLOT(setserver(QString, int)));
     SI->exec();
-    myGLWidget = new displayGL(ServerIP, ServerPort, this);
-    myGLWidget->resize(800,600);
-    myGLWidget->setFocus();
+
+    centralWidget = new QWidget;
+    WindowLayout  = new QVBoxLayout(centralWidget);
+    myGLWidget = new displayGL(ServerIP, ServerPort, centralWidget);
+    menu = new QMenuBar(this);
+    fileMenu = new QMenu("&File",menu);
+    menu->addMenu(fileMenu);
+    menu->show();
+    myGLWidget->resize(this->width()*.9,this->height()*.9);
     setCentralWidget(myGLWidget);
+    myGLWidget->setFocus();
 }
 
 void mWindow::setserver(QString addr, int port)

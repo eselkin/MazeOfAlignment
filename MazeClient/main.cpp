@@ -19,6 +19,7 @@ int main(int argc, char** argv)
     //    sound.play();
     QApplication ThisApp(argc, argv);
     mWindow MAZEGAME;
+    MAZEGAME.setGeometry(20,20,900,650);
     MAZEGAME.show();
     return ThisApp.exec(); // enters a loop // done running
 }

@@ -1,6 +1,15 @@
 #ifndef MWINDOW_H
 #define MWINDOW_H
 
+#include <QFile>
+#include <QMenu>
+#include <QAction>
+#include <QString>
+#include <QWidget>
+#include <QMenuBar>
+#include <QStatusBar>
+#include <QVBoxLayout>
+#include <QFileDialog>
 #include <QMainWindow>
 #include "displaygl.h"
 
@@ -17,7 +26,10 @@ public slots:
 
 private:
     QWidget* centralWidget;
+    QVBoxLayout* WindowLayout;
     displayGL* myGLWidget;
+    QMenuBar* menu;
+    QMenu* fileMenu;
     QString ServerIP;
     int ServerPort;
 };
