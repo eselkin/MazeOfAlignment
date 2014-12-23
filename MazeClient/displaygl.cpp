@@ -22,12 +22,14 @@ using namespace std;
 displayGL::displayGL(QString serverID, int serverPort, QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
+
     Evil =  new NetworkOfAlignment(serverID,serverPort); // SET UP THE NETWORK CONNECTION FOR THE CLIENT
 
     connect(Evil, SIGNAL(LocationsChanged(QStringList)), this, SLOT(ChangeLocations(QStringList)));
     connect(Evil, SIGNAL(GameOver(QString)), this, SLOT(myGameOver(QString)));
     connect(Evil, SIGNAL(gotDamage(int)), &thePlayer, SLOT(TakeDamage(int))); // if it's us (chked already) we take the damage
     connect(Evil, SIGNAL(serverSocket(int)), this, SLOT(getServerSocket(int)));
+    connect(&thePlayer, SIGNAL(rebirth()), this, SLOT(bornagain()));
     setAutoFillBackground(false);
     current_direction = WEST;
     start_loc = new int[10];
@@ -178,6 +180,7 @@ void displayGL::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, G
 
 void displayGL::mousePressEvent(QMouseEvent *e)
 {
+    e->accept();
 }
 
 void displayGL::keyPressEvent(QKeyEvent *event)
@@ -324,6 +327,16 @@ void displayGL::myGameOver(QString playerID)
 void displayGL::getServerSocket(int socket)
 {
     myServerSocket = socket;
+}
+
+void displayGL::bornagain()
+{
+    thePlayer.resetstats();
+    current_room = start_loc[current_level];
+    current_direction = (DIRECTION)(rand()%4);
+    thePlayer.hasItem(theItems.itemlist["orb_win"]) && thePlayer.dropItem(theItems.itemlist["orb_win"]);
+    update();
+    glFlush();
 }
 
 // Basically a draw a vertical trapezoid function

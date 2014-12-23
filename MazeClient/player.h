@@ -26,9 +26,11 @@ public:
 
 public slots:
     bool TakeDamage(int damage);
+    bool resetstats();
 
 signals:
     void DamageOther(int);
+    void rebirth();
 
 private:
     QVector<items*> myitems;

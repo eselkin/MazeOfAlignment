@@ -37,7 +37,7 @@ protected:
     vector<int> UniformCostSearch();
     void FindNextDistances(vector<int> &NodeDistances, int vertex);  // updates node distances from current vertex with shortest distance
     int ShortestDistance(vector<int> &Distances, bool Paths[]);
-    bst<string> MonsterStats;
+    bst<QString> MonsterStats;
     items* MonsterWeapon;
     QImage MonsterImage;
     int PlayerRoom;
@@ -46,7 +46,6 @@ protected:
     int MonsterType;
     DIRECTION MonsterDirection;
     allItems theItems;
-    bst<QString> mystats;
     roomlist the_rooms;
     Adjacency AdjTable;
 

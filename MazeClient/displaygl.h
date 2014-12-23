@@ -45,6 +45,7 @@ public slots:
     void ChangeLocations(QStringList playerlocations);
     void myGameOver(QString playerID);
     void getServerSocket(int);
+    void bornagain();
 
 protected slots:
 

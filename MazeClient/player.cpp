@@ -46,10 +46,22 @@ QVector<items *> &player::getItems()
     return myitems;
 }
 
-bool player::TakeDamage(int damage)
+bool player::resetstats()
 {
     QString HLTH=tr("Health");
+    mystats.insert(&HLTH, (-1*mystats[HLTH]) + 100);
+    return true;
+}
+
+bool player::TakeDamage(int damage)
+{
+    qDebug() << "PLAYER TAKING DAMAGE" <<endl;
+    QString HLTH=tr("Health");
     mystats.insert(&HLTH, -1*damage);
+    qDebug() << "HEALTH: " << mystats[HLTH] << "AFTER DMG: " << damage ;
+
+    if (mystats[HLTH] <= 0)
+        emit rebirth();
 }
 
 

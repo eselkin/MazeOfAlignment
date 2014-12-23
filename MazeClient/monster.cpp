@@ -4,9 +4,9 @@ monster::monster(QObject *parent) :
     QObject(parent), MonsterType(0)
 {
     QString HLTH=tr("Health"), DMG=tr("Damage");
-    mystats.insert(&HLTH, 100);
-    mystats.insert(&DMG, 5);
-    playerAdvanced(0);
+    MonsterStats.insert(&HLTH, 100); // same for all monsters
+    MonsterStats.insert(&DMG, 5); // this will change for monster types in their constructors
+    playerAdvanced(0); // same for all monsters
 }
 
 void monster::playerAdvanced(int level)
@@ -45,11 +45,10 @@ bool monster::canAttack()
 {
 }
 
-
 bool monster::regenerate()
 {
     QString HLTH=tr("Health");
-    mystats.insert(&HLTH, 100);
+    MonsterStats.insert(&HLTH, 100);
     playerAdvanced(MonsterLevel); // respawn
 }
 
@@ -58,8 +57,8 @@ bool monster::TakeDamage(int damage)
 {
     qDebug() << "TAKING DAMAGE IN MONSTER" <<endl;
     QString HLTH=tr("Health");
-    mystats.insert(&HLTH, -1*damage);
-    if ( mystats[HLTH] <= 0 )
+    MonsterStats.insert(&HLTH, -1*damage);
+    if ( MonsterStats[HLTH] <= 0 )
         regenerate();
 }
 
