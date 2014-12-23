@@ -28,6 +28,8 @@ public slots:
     bool TakeDamage(int damage);
     int getRoom();
     int getType();
+    bool regenerate();
+
 signals:
     void DamagePlayer(int damage);
 

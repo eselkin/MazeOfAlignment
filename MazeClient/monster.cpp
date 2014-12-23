@@ -43,13 +43,24 @@ void monster::Attack()
 
 bool monster::canAttack()
 {
-
 }
+
+
+bool monster::regenerate()
+{
+    QString HLTH=tr("Health");
+    mystats.insert(&HLTH, 100);
+    playerAdvanced(MonsterLevel); // respawn
+}
+
 
 bool monster::TakeDamage(int damage)
 {
+    qDebug() << "TAKING DAMAGE IN MONSTER" <<endl;
     QString HLTH=tr("Health");
     mystats.insert(&HLTH, -1*damage);
+    if ( mystats[HLTH] <= 0 )
+        regenerate();
 }
 
 int monster::getRoom()
@@ -90,14 +101,8 @@ vector<int> monster::UniformCostSearch()
         // just search for shortest route (fewest jumps) to Player Location
         vertex = ShortestDistance(NodeDistances, SPTreeset); // returns vertex not already set in SPTreeset ( after return it is set though )
 
-        //
-        ///
-        /// THIS IS AN ISSUE
         if (vertex == 0)
             break;
-        ///
-        ///
-        //
 
         previous.push_back(vertex); // keep track of the path from the first vertex match
         FindNextDistances(NodeDistances, vertex);
