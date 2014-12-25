@@ -104,6 +104,7 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
     //    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
     //        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
     QStringList CKeyVal = BytesCommand[1].split("::", QString::SkipEmptyParts);
+    qDebug() << "0:" << CKeyVal[0]<< " 1:" << CKeyVal[1] <<endl;
     if (CKeyVal[0] == "LOCATION")
     {
         QStringList PlayerLocations;
@@ -145,6 +146,7 @@ void NetworkOfAlignment::commandToClient(QByteArray packetcommand)
         }
         return;
     }
+
 }
 
 void NetworkOfAlignment::moveToServer(int current_room)

@@ -1,6 +1,6 @@
 #ifndef MORALITYSERVER_H
 #define MORALITYSERVER_H
-#include "threadofmorality.h"
+#include "moralthread.h"
 #include <QTcpServer>
 #include <QDebug>
 #include <QVector>
@@ -35,7 +35,7 @@ signals:
     void sendCommand(QByteArray packetcommand);
 
 public slots:
-    void getCommand(int PlayerID, ThreadOfMorality *theThread,  QByteArray packetcommand);
+    void getCommand(int PlayerID, MoralThread *theThread,  QByteArray packetcommand);
     void removeplayer(int PlayerID);
 
 protected:
@@ -46,7 +46,7 @@ protected:
 private:
     qint32 num_clients;
     qint8 level;                 // everyone is on one level
-    QVector< ThreadOfMorality *> threads; // vector of thread pointers
+    QVector< MoralThread *> Morals; // vector of MoralThread object pointers
     QVector<int> descriptors; // when joined, order matters for locations
     QVector<int>  locations;   // after joining, a 0 location is added, then replaced when user is placed into a room and submits it to the server
 };

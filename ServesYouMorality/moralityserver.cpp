@@ -1,4 +1,5 @@
 #include "moralityserver.h"
+#include <QThread>
 #include <QStringList>
 #include <QString>
 #include <QMutex>
@@ -20,9 +21,10 @@ void MoralityServer::StartServer(int myport)
     }
 }
 
-void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByteArray packetcommand)
+void MoralityServer::getCommand(int PlayerID, MoralThread *theThread, QByteArray packetcommand)
 {
     qDebug() << "GETTING COMMAND FROM THE THREAD" <<endl;
+    qDebug() << "COMMAND: " << packetcommand << endl;
     // RESPOND TO THE CLIENT REQUEST HERE!
     // Response to the client would be more difficult and would have to have repeating keys for which we can use regular expressions to split
     //    LOCATION::ID1-1,ID2-4,ID3-19 // {socket descriptor that your computer would turn into player 0, 1, 2, ... n players
@@ -35,7 +37,7 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
     qint16 bytesize(BytesCommand[0].toInt());
     //    if (BytesCommand[1].size() != bytesize)  // no it's not really bytes
     //        qDebug() << "incorrect packet size!"; // but do nothing... really how big are our packets? 20 bytes?
-    QStringList CKeyVal = BytesCommand[1].split("::", QString::SkipEmptyParts);
+    QStringList CKeyVal = BytesCommand[1].split("::");
     QString commandString;
     if (CKeyVal[0] == "LOCATION")
     {
@@ -65,10 +67,24 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
         emit sendCommand(packetcommand); // the same one that came from the client since already in the right format
         return;
     }
-    else if (CKeyVal[0] == "SOCKETID")
+    else if (incomingcommand.contains("SOCKETID"))
     {
-        QString commandString="SOCKETID::";
+        commandString="SOCKETID::";
         commandString.append(QString::number(theThread->getSocketDescriptor()));
+        QString command;
+        command = QString::number(commandString.size()); // packet size
+        command.append(tr("//"));
+        command.append(commandString);
+        QByteArray newPacketCommand;
+        newPacketCommand.append(command);
+        for (int i =0; i < Morals.size(); i++)
+        {
+            if (Morals[i]->getSocketDescriptor() == theThread->getSocketDescriptor())
+            {
+                Morals[i]->commandToSocket(newPacketCommand);
+                return;
+            }
+        }
     }
     else
     {
@@ -80,9 +96,11 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
     command.append(commandString);
     QByteArray newPacketCommand;
     newPacketCommand.append(command);
+    for (int i =0; i < Morals.size(); i++)
+    {
+        Morals[i]->commandToSocket(newPacketCommand);
+    }
     qDebug() << "THE PACKET: " << newPacketCommand <<endl;
-
-    emit sendCommand(newPacketCommand);
 }
 
 void MoralityServer::removeplayer(int PlayerID)
@@ -134,11 +152,14 @@ void MoralityServer::incomingConnection(int socketDescriptor)
 {
     descriptors.push_back(socketDescriptor);
     locations.push_back(0);
-    ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
-    connect(thread, SIGNAL(finished()), this, SLOT(deleteLater()));
-    connect(thread, SIGNAL(commandToServer(int,ThreadOfMorality*,QByteArray)), this, SLOT(getCommand(int,ThreadOfMorality*,QByteArray)));
-    connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
-    connect(thread, SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
     qDebug() << "Socket: " << socketDescriptor << " connecting.";
-    thread->start();
+    QThread* aThread = new QThread();
+    Morals.push_back(new MoralThread(socketDescriptor));
+    Morals[Morals.size()-1]->moveToThread(aThread);
+    connect(Morals[Morals.size()-1], SIGNAL(destroyed()), aThread, SLOT(quit()));
+    connect(this, SIGNAL(sendCommand(QByteArray)), Morals[Morals.size()-1], SLOT(commandToSocket(QByteArray)));
+    connect(Morals[Morals.size()-1], SIGNAL(commandToServer(int,MoralThread*,QByteArray)), this, SLOT(getCommand(int,MoralThread*,QByteArray)));
+    connect(Morals[Morals.size()-1], SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
+    connect(aThread, SIGNAL(finished()), aThread, SLOT(deleteLater()));
+    connect(aThread, SIGNAL(finished()), this, SLOT(deleteLater()));
 }

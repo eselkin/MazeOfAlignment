@@ -28,29 +28,13 @@ class MoralThread : public QObject
 public:
     explicit MoralThread(int ID, QObject *parent = 0);
     ~MoralThread();
-
-signals:
-
-public slots:
-};
-
-#endif // MORALTHREAD_H
-
-
-class ThreadOfMorality : public QThread
-{
-    Q_OBJECT
-public:
-    explicit ThreadOfMorality(int ID, QObject *parent = 0);
-    void run();
-
     int getSocketDescriptor() const;
     void setSocketDescriptor(const int &value);
 
 signals:
     void error(QTcpSocket::SocketError e);
     void socketdisconnect(int SD); // issue disconnect so server can catch it and remove player info
-    void commandToServer(int ID, ThreadOfMorality* theThread, QByteArray packetcommand);
+    void commandToServer(int ID, MoralThread *theThread, QByteArray packetcommand);
 
 public slots:
     void readyRead();
@@ -62,4 +46,4 @@ private:
     int socketDescriptor;
 };
 
-#endif // THREADOFMORALITY_H
+#endif // MORALTHREAD_H
