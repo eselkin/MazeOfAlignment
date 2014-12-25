@@ -1,5 +1,6 @@
 #include "threadofmorality.h"
 #include <QDebug>
+#include <QStringList>
 
 ThreadOfMorality::ThreadOfMorality(int ID, QObject *parent) :
     QThread(parent), socketDescriptor(ID)
@@ -59,10 +60,26 @@ void ThreadOfMorality::disconnected()
 
 void ThreadOfMorality::commandToSocket(QByteArray thebytes)
 {
-        qDebug() << "BYTE:" << thebytes <<endl;
+    if (thebytes.contains("SOCKETID"))
+    {
+        QString temp = QString(thebytes);
+        QStringList templist = temp.split("::",QString::SkipEmptyParts);
+        temp = templist[1];
+        if (temp.toInt() == socket->socketDescriptor())
+        {
+            socket->write(thebytes);
+            socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
+            socket->flush();
+            qDebug() << "BYTE:" << thebytes <<endl;
+        }
+    }
+    else
+    {
         socket->write(thebytes);
         socket->write("\r\n"); // terminate the line because we will be using readLine on the socket for the client.
         socket->flush();
+        qDebug() << "BYTE:" << thebytes <<endl;
+    }
 }
 
 int ThreadOfMorality::getSocketDescriptor() const

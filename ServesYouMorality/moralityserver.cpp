@@ -69,20 +69,13 @@ void MoralityServer::getCommand(int PlayerID, ThreadOfMorality* theThread, QByte
     {
         QString commandString="SOCKETID::";
         commandString.append(QString::number(theThread->getSocketDescriptor()));
-        int packetsize = commandString.size();
-        QByteArray newBytes;
-        newBytes.append(QString::number(packetsize));
-        newBytes.append(tr("//"));
-        newBytes.append(commandString);
-        theThread->commandToSocket(newBytes);
-        return;
     }
     else
     {
         return;
     }
     QString command;
-    command = QString::number(commandString.size());
+    command = QString::number(commandString.size()); // packet size
     command.append(tr("//"));
     command.append(commandString);
     QByteArray newPacketCommand;
@@ -139,14 +132,13 @@ QString MoralityServer::getLocations()
 
 void MoralityServer::incomingConnection(int socketDescriptor)
 {
-    qDebug() << "Socket: " << socketDescriptor << " connecting.";
-    ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
-    threads.push_back(thread); // keep a hold of the thread addresses for broadcast to their slots since the SIGNAL/SLOT WAY CAUSES PROBLEMS
-    connect(thread, SIGNAL(commandToServer(int,ThreadOfMorality*,QByteArray)), this, SLOT(getCommand(int,ThreadOfMorality*,QByteArray)));
-    connect(thread, SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
-    connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
     descriptors.push_back(socketDescriptor);
     locations.push_back(0);
+    ThreadOfMorality *thread = new ThreadOfMorality(socketDescriptor, this);
+    connect(thread, SIGNAL(finished()), this, SLOT(deleteLater()));
+    connect(thread, SIGNAL(commandToServer(int,ThreadOfMorality*,QByteArray)), this, SLOT(getCommand(int,ThreadOfMorality*,QByteArray)));
+    connect(this, SIGNAL(sendCommand(QByteArray)), thread, SLOT(commandToSocket(QByteArray)));
+    connect(thread, SIGNAL(socketdisconnect(int)), this, SLOT(removeplayer(int)));
+    qDebug() << "Socket: " << socketDescriptor << " connecting.";
     thread->start();
 }

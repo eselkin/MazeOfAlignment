@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     player.cpp \
     serverinfo.cpp \
     monster.cpp \
-    zombie.cpp
+    zombie.cpp \
+    moralthread.cpp
 
 
 HEADERS += \
@@ -43,7 +44,8 @@ HEADERS += \
     monster.h \
     bst.h \
     node.h \
-    zombie.h
+    zombie.h \
+    moralthread.h
 
 OTHER_FILES += \
     items.txt
