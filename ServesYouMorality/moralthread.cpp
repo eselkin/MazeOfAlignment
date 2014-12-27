@@ -1,5 +1,5 @@
 #include "moralthread.h"
-
+#include <QStringList>
 MoralThread::MoralThread(int ID, QObject *parent) :
     QObject(parent) , socketDescriptor(ID)
 {
