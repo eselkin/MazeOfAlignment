@@ -103,39 +103,33 @@ void displayGL::paintEvent(QPaintEvent *event)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    int count_ahead = 0; // forward
     int my_room = current_room;
     int i = 0;
 
-    weights* forward = NULL;
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QMutex thisMutex;
     vector< vector<int> > P_Loc_Sz; // possibly have to be vectors when you can select what number's bitpattern will display how you look!
     vector< vector<int> > M_Loc_Sz; // Monster # (from which you can get type), Depth
-    do {
-        my_room = my_room + count_ahead;
-        switch(current_direction)
-        {
-        case NORTH:
-            drawRoom(WEST, EAST, my_room, i, P_Loc_Sz, M_Loc_Sz);
-            break;
-        case SOUTH:
-            drawRoom(EAST, WEST, my_room, i, P_Loc_Sz, M_Loc_Sz);
-            break;
-        case EAST:
-            drawRoom(NORTH, SOUTH, my_room, i, P_Loc_Sz, M_Loc_Sz);
-            break;
-        default:
-            drawRoom(SOUTH, NORTH, my_room, i, P_Loc_Sz, M_Loc_Sz);
-            break;
-        }
-        count_ahead = countAhead(current_direction);
-        forward = checkAhead(my_room, my_room+count_ahead);
-        i++;
-    } while (forward && i < 4 && !forward->isDoor()); // stops at a door, can't see through it
-    forward && (drawBackWall(i, forward->isDoor(), current_level));
-    !forward && (drawBackWall(i, 0, current_level));
+    int count_ahead = countAhead(current_direction);
+    weights* forward = checkAhead(my_room, my_room+count_ahead);
+    switch(current_direction)
+    {
+    case NORTH:
+        drawRoom(WEST, EAST, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        break;
+    case SOUTH:
+        drawRoom(EAST, WEST, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        break;
+    case EAST:
+        drawRoom(NORTH, SOUTH, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        break;
+    default:
+        drawRoom(SOUTH, NORTH, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        break;
+    }
+    forward && (drawBackWall(i+1, forward->isDoor(), current_level));
+    !forward && (drawBackWall(i+1, 0, current_level));
 
     if (the_rooms.rooms[current_level][current_room]->getQuestions().size() > 0)
         drawQuestion(current_level, current_room, &painter);
@@ -152,6 +146,45 @@ void displayGL::paintEvent(QPaintEvent *event)
     (in_inventory) && showmyitem(&painter);
     painter.end();
     update();
+}
+
+bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights* forward, int& depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
+{
+
+    forward = checkAhead(my_room, my_room+count_ahead);
+    if (forward && depth <= 4)
+        drawRoom(one, two, (my_room+count_ahead), count_ahead, forward, ++depth, P_Loc_Sz, M_Loc_Sz);
+    // recursion plus depth augmenting
+    // Once we have no further depth to check
+
+    drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
+    drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);
+    QMutex thisMutex;
+    thisMutex.lock();
+    int sizepl = PlayerLocations.size();
+    for (int k = 0; k < sizepl; k++)
+    {
+        if (PlayerLocations[k].first==my_room && PlayerLocations[k].second!=myServerSocket)
+        {
+            vector<int> player_in_room;
+            player_in_room.push_back(my_room); // where they are
+            player_in_room.push_back(PlayerLocations[k].second); // player's id
+            player_in_room.push_back(depth); // depth away from me
+            P_Loc_Sz.push_back(player_in_room);
+        }
+    }
+    thisMutex.unlock();
+    for (int k = 0; k < 5; k++)
+    {
+        if (MonsterPointers[k]->getRoom() == my_room)
+        {
+            vector<int> monster_in_room;
+            monster_in_room.push_back(my_room);
+            monster_in_room.push_back(MonsterPointers[k]->getType());
+            monster_in_room.push_back(depth);
+            M_Loc_Sz.push_back(monster_in_room);
+        }
+    }
 }
 
 void displayGL::resizeGL(int w, int h)
@@ -407,37 +440,6 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     }
 }
 
-bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
-{
-    drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
-    drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);
-    QMutex thisMutex;
-    thisMutex.lock();
-    int sizepl = PlayerLocations.size();
-    for (int k = 0; k < sizepl; k++)
-    {
-        if (PlayerLocations[k].first==my_room && PlayerLocations[k].second!=myServerSocket)
-        {
-            vector<int> player_in_room;
-            player_in_room.push_back(my_room); // where they are
-            player_in_room.push_back(PlayerLocations[k].second); // player's id
-            player_in_room.push_back(depth); // depth away from me
-            P_Loc_Sz.push_back(player_in_room);
-        }
-    }
-    thisMutex.unlock();
-    for (int k = 0; k < 5; k++)
-    {
-        if (MonsterPointers[k]->getRoom() == my_room)
-        {
-            vector<int> monster_in_room;
-            monster_in_room.push_back(my_room);
-            monster_in_room.push_back(MonsterPointers[k]->getType());
-            monster_in_room.push_back(depth);
-            M_Loc_Sz.push_back(monster_in_room);
-        }
-    }
-}
 
 // Precondition: side walls (trapezoids) are drawn and filled with texture?
 // Postcondition: back wall is drawn at depth of end of walls that are visible
