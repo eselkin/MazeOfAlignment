@@ -171,7 +171,6 @@ void displayGL::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, G
     const GLdouble pi = 3.1415926535897932384626433832795;
     GLdouble fW, fH;
 
-    //fH = tan( (fovY / 2) / 180 * pi ) * zNear;
     fH = tan( fovY / 360 * pi ) * zNear;
     fW = fH * aspect;
 
@@ -393,7 +392,7 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     else
     {
         // DRAW A CORNER ( isDoor == 0 )
-        end_x = (wallstops[start_depth+1] * (left_right ? 1 : -1));
+        end_x = (wallstops[start_depth+2] * (left_right ? 1 : -1));
         start_x = end_x + (wallstops[start_depth])*(left_right ? 1 : -1);
         glBegin(GL_QUADS);
         glTexCoord2f(0.0, 0.0); glVertex3f(start_x,-1.0,-1.*start_depth-2);
