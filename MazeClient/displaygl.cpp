@@ -348,18 +348,18 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
     /*
      *  |\     |     /|
      *  | \    |    / |
-     *  |  |\  |  /|  |
+     *  |  |_  |  /|  |
      *  |  | |-+-| |  |
      * -+--+-+-2-+1+-0+-
-     *  |  | |-+-| |  |
-     *  |  |/__|__\|  |
+     *  |  |_|-+-| |  |
+     *  |  |___|__\|  |   A Hallway with one corner to the left
      *  | /    |    \ |
      *  |/_____|_____\|
      *         |
      */
 
-    double start_x = wallstops[start_depth] * (left_right ? 1 : -1);
-    double end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
+    double start_x;
+    double end_x;
     glLoadIdentity();
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -375,15 +375,37 @@ bool displayGL::drawSideWall(bool left_right, weights* access, int start_depth, 
         glBindTexture(GL_TEXTURE_2D, texture_ids[0]);
     }
 
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 0.0); glVertex3f(start_x,-1.0,-1.*start_depth-1);
-    glTexCoord2f(0.0, 1.0); glVertex3f(start_x, 1.0,-1.*start_depth-1);
-    glTexCoord2f(1.0, 1.0); glVertex3f(end_x,   1.0,-1.*start_depth-2);
-    glTexCoord2f(1.0, 0.0); glVertex3f(end_x,  -1.0,-1.*start_depth-2);
-    glEnd();
-    glFlush();
-    glDisable(GL_TEXTURE_2D);
-    return 1;
+    if ( !access || access->isDoor() )
+    {
+        // SIDE WALL(no weights) OR DOOR (isDoor > 0)
+        start_x = wallstops[start_depth] * (left_right ? 1 : -1);
+        end_x = wallstops[start_depth+1] * (left_right ? 1 : -1);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0); glVertex3f(start_x,-1.0,-1.*start_depth-1);
+        glTexCoord2f(0.0, 1.0); glVertex3f(start_x, 1.0,-1.*start_depth-1);
+        glTexCoord2f(1.0, 1.0); glVertex3f(end_x,   1.0,-1.*start_depth-2);
+        glTexCoord2f(1.0, 0.0); glVertex3f(end_x,  -1.0,-1.*start_depth-2);
+        glEnd();
+        glFlush();
+        glDisable(GL_TEXTURE_2D);
+        return 1;
+    }
+    else
+    {
+        // DRAW A CORNER ( isDoor == 0 )
+        end_x = (wallstops[start_depth+1] * (left_right ? 1 : -1));
+        start_x = end_x + (wallstops[start_depth])*(left_right ? 1 : -1);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0); glVertex3f(start_x,-1.0,-1.*start_depth-2);
+        glTexCoord2f(0.0, 1.0); glVertex3f(start_x, 1.0,-1.*start_depth-2);
+        glTexCoord2f(1.0, 1.0); glVertex3f(end_x,   1.0,-1.*start_depth-2);
+        glTexCoord2f(1.0, 0.0); glVertex3f(end_x,  -1.0,-1.*start_depth-2);
+        glEnd();
+        glFlush();
+        glDisable(GL_TEXTURE_2D);
+        return 1;
+
+    }
 }
 
 bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
@@ -819,4 +841,3 @@ void displayGL::doNothing()
 {
     // nada
 }
-

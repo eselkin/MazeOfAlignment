@@ -11,7 +11,7 @@
 #include "roomlist.h"
 #include "adjacency.h"
 
-enum DIRECTION { EAST, WEST, NORTH, SOUTH };
+enum DIRECTION { NORTH, EAST, SOUTH, WEST };
 
 class monster : public QObject
 {

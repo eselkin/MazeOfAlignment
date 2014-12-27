@@ -32,6 +32,7 @@ public:
     typedef void (displayGL::*fptr)();
     explicit displayGL(QString serverID, int serverPort, QWidget *parent = 0);
     ~displayGL();
+
 signals:
 
 public slots:
