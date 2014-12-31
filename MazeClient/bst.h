@@ -291,7 +291,7 @@ template <typename T>
 void bst<T>::addDepth(int idx)
 {
     int current_depth = depth(idx);
-    while (bstroot.size() < pow(2, current_depth)+1)
+    while (bstroot.size() < pow(2.0, 1.*current_depth)+1)
         bstroot.push_back(NULL); // put NULL POINTERS IN AT THE NEXT ROW, UP TO THE NUMBER NEEDED FOR ALL THE ELEMENTS THAT COULD BE A DEPENDENT OF THIS ROW, IF THEY DON'T EXIST
 }
 
