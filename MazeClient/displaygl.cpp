@@ -104,7 +104,7 @@ void displayGL::paintEvent(QPaintEvent *event)
     glLoadIdentity();
 
     int my_room = current_room;
-    int i = 0;
+    int i = -1;
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -128,8 +128,8 @@ void displayGL::paintEvent(QPaintEvent *event)
         drawRoom(SOUTH, NORTH, my_room, count_ahead, forward,0, i, P_Loc_Sz, M_Loc_Sz);
         break;
     }
-    forward && (drawBackWall(i+1, forward->isDoor(), current_level));
-    !forward && (drawBackWall(i+1, 0, current_level));
+    forward && (drawBackWall(i, forward->isDoor(), current_level));
+    !forward && (drawBackWall(i, 0, current_level));
 
     if (the_rooms.rooms[current_level][current_room]->getQuestions().size() > 0)
         drawQuestion(current_level, current_room, &painter);
@@ -150,7 +150,7 @@ void displayGL::paintEvent(QPaintEvent *event)
 
 bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights* forward, int depth, int& max_depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
 {
-    current_depth = depth + 1;
+    int current_depth = depth + 1;
     (current_depth > max_depth) && (max_depth = current_depth); // happens before the next recursion, so when they all pop back this will be the max.
     forward = checkAhead(my_room, my_room+count_ahead); // check this room to the next room I'm looking into
     (forward && current_depth <= 3)
@@ -160,7 +160,7 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
     //
     // The current_depth should be 0-3
     // Say it's 3
-
+    qDebug() << "CURRENT DEPTH: " << current_depth <<endl;
     drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
     drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);
     QMutex thisMutex;
@@ -173,7 +173,7 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
             vector<int> player_in_room;
             player_in_room.push_back(my_room); // where they are
             player_in_room.push_back(PlayerLocations[k].second); // player's id
-            player_in_room.push_back(depth); // depth away from me
+            player_in_room.push_back(current_depth); // depth away from me
             P_Loc_Sz.push_back(player_in_room);
         }
     }
@@ -185,7 +185,7 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
             vector<int> monster_in_room;
             monster_in_room.push_back(my_room);
             monster_in_room.push_back(MonsterPointers[k]->getType());
-            monster_in_room.push_back(depth);
+            monster_in_room.push_back(current_depth);
             M_Loc_Sz.push_back(monster_in_room);
         }
     }
