@@ -112,20 +112,20 @@ void displayGL::paintEvent(QPaintEvent *event)
     vector< vector<int> > P_Loc_Sz; // possibly have to be vectors when you can select what number's bitpattern will display how you look!
     vector< vector<int> > M_Loc_Sz; // Monster # (from which you can get type), Depth
     int count_ahead = countAhead(current_direction);
-    weights* forward = checkAhead(my_room, my_room+count_ahead);
+    weights* forward = NULL;
     switch(current_direction)
     {
     case NORTH:
-        drawRoom(WEST, EAST, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        drawRoom(WEST, EAST, my_room, count_ahead, forward,0, i, P_Loc_Sz, M_Loc_Sz);
         break;
     case SOUTH:
-        drawRoom(EAST, WEST, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        drawRoom(EAST, WEST, my_room, count_ahead, forward,0, i, P_Loc_Sz, M_Loc_Sz);
         break;
     case EAST:
-        drawRoom(NORTH, SOUTH, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        drawRoom(NORTH, SOUTH, my_room, count_ahead, forward,0, i, P_Loc_Sz, M_Loc_Sz);
         break;
     default:
-        drawRoom(SOUTH, NORTH, my_room, count_ahead, forward, i, P_Loc_Sz, M_Loc_Sz);
+        drawRoom(SOUTH, NORTH, my_room, count_ahead, forward,0, i, P_Loc_Sz, M_Loc_Sz);
         break;
     }
     forward && (drawBackWall(i+1, forward->isDoor(), current_level));
@@ -148,14 +148,18 @@ void displayGL::paintEvent(QPaintEvent *event)
     update();
 }
 
-bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights* forward, int& depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
+bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights* forward, int depth, int& max_depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz)
 {
-
-    forward = checkAhead(my_room, my_room+count_ahead);
-    if (forward && depth <= 4)
-        drawRoom(one, two, (my_room+count_ahead), count_ahead, forward, ++depth, P_Loc_Sz, M_Loc_Sz);
-    // recursion plus depth augmenting
-    // Once we have no further depth to check
+    current_depth = depth + 1;
+    (current_depth > max_depth) && (max_depth = current_depth); // happens before the next recursion, so when they all pop back this will be the max.
+    forward = checkAhead(my_room, my_room+count_ahead); // check this room to the next room I'm looking into
+    (forward && current_depth <= 3)
+            && drawRoom(one, two, (my_room+count_ahead), count_ahead, forward, current_depth, max_depth, P_Loc_Sz, M_Loc_Sz);
+    // the first time we get here is if we're hitting a wall we are looking at
+    // or we've looked too far.
+    //
+    // The current_depth should be 0-3
+    // Say it's 3
 
     drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
     drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);

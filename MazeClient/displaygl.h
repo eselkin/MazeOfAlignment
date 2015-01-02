@@ -56,7 +56,7 @@ protected:
     bool drawBackWall(int depth, int type, int level);
     bool drawDoor(bool left_right, int start_depth);
     bool drawSideWall(bool left_right, weights *access, int start_depth, int level);
-    bool drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights *forward, int &depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz);
+    bool drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ahead, weights *forward, int depth, int &max_depth, vector<vector<int> > &P_Loc_Sz, vector<vector<int> > &M_Loc_Sz);
     void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
     bool drawEnemies(vector<vector<int> > &Enemies, QPainter *painter);
     bool drawMonsters(vector<vector<int> > &Monsters, QPainter *painter);
