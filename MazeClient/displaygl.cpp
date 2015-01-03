@@ -153,14 +153,13 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
     int current_depth = depth + 1;
     (current_depth > max_depth) && (max_depth = current_depth); // happens before the next recursion, so when they all pop back this will be the max.
     forward = checkAhead(my_room, my_room+count_ahead); // check this room to the next room I'm looking into
-    (forward && current_depth <= 3)
+    (forward && current_depth < 3)
             && drawRoom(one, two, (my_room+count_ahead), count_ahead, forward, current_depth, max_depth, P_Loc_Sz, M_Loc_Sz);
     // the first time we get here is if we're hitting a wall we are looking at
     // or we've looked too far.
     //
     // The current_depth should be 0-3
     // Say it's 3
-    qDebug() << "CURRENT DEPTH: " << current_depth <<endl;
     drawSideWall(0,checkAhead(my_room,my_room+countAhead(one)), depth, current_level);
     drawSideWall(1,checkAhead(my_room,my_room+countAhead(two)), depth, current_level);
     QMutex thisMutex;
@@ -177,7 +176,6 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
             P_Loc_Sz.push_back(player_in_room);
         }
     }
-    thisMutex.unlock();
     for (int k = 0; k < 5; k++)
     {
         if (MonsterPointers[k]->getRoom() == my_room)
@@ -189,6 +187,7 @@ bool displayGL::drawRoom(DIRECTION one, DIRECTION two, int my_room, int count_ah
             M_Loc_Sz.push_back(monster_in_room);
         }
     }
+    thisMutex.unlock();
 }
 
 void displayGL::resizeGL(int w, int h)
